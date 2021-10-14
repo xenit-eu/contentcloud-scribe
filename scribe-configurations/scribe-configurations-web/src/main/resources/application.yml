@@ -1,0 +1,50 @@
+server:
+  port: 8081
+
+initializr:
+  group-id:
+    value: eu.xenit.contentcloud.apps
+  dependencies:
+    - name: Web
+      content:
+        - name: Web
+          id: web
+          description: Servlet web application with Spring MVC and Tomcat
+        - name: Spring Data JPA
+          id: data-jpa
+          description: Persist data in SQL stores with Java Persistence API using Spring Data and Hibernate.
+          facets:
+            - jpa
+            - native
+          aliases:
+            - jpa
+          links:
+            - rel: guide
+              href: https://spring.io/guides/gs/accessing-data-jpa/
+              description: Accessing Data with JPA
+            - rel: reference
+              href: https://docs.spring.io/spring-boot/docs/{bootVersion}/reference/htmlsingle/#boot-features-jpa-and-spring-data
+  languages:
+    - name: Java
+      id: java
+      default: true
+  javaVersions:
+    - id: 11
+      default: true
+  packagings:
+    - name: Jar
+      id: jar
+      default: true
+  types:
+    - name: Gradle Project
+      id: gradle-project
+      description: Generate a Gradle based project archive
+      tags:
+        build: gradle
+        format: project
+      default: true
+      action: /starter.zip
+  bootVersions:
+    - name: 2.5.4
+      id: 2.5.4
+      default: true

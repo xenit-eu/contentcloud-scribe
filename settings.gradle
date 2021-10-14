@@ -1,0 +1,13 @@
+pluginManagement {
+    plugins {
+        id 'org.springframework.boot' version "${springBootVersion}"
+        id 'io.spring.dependency-management' version "${springDependencyManagementVersion}"
+        id 'io.freefair.lombok' version "${lombokPluginVersion}"
+    }
+}
+
+rootProject.name = 'contentcloud-scribe'
+
+include 'scribe-dependencies'
+
+include 'scribe-configurations:scribe-configurations-web'
