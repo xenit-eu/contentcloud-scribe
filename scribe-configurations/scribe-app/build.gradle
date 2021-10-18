@@ -16,19 +16,17 @@ repositories {
 dependencies {
     implementation platform(project(":scribe-dependencies"))
 
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'io.spring.initializr:initializr-web'
-    implementation 'io.spring.initializr:initializr-generator-spring'
+    implementation project(':scribe-drivers:scribe-driver-web')
+    implementation project(':scribe-infrastructure')
 
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
+    implementation project(':scribe-generator')
+
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'io.spring.initializr:initializr-metadata'
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-
-//    testImplementation 'org.junit.jupiter:junit-jupiter-engine'
-//    testImplementation 'org.assertj:assertj-core'
-
-
-
 }
 
 test {

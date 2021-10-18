@@ -1,28 +1,22 @@
 plugins {
-//	id 'org.springframework.boot' version '2.5.4'
-//	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
-//	id 'java'
+	id 'org.springframework.boot' version '2.5.4'
+	id 'io.spring.dependency-management' version '1.0.0.RELEASE'
+	id 'java'
 }
 
+group = 'eu.xenit.contentcloud.apps'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
 
-allprojects {
-	group = 'eu.xenit.contentcloud.scribe'
-	version = '0.0.1-SNAPSHOT'
-//	sourceCompatibility = '11'
+repositories {
+	mavenCentral()
 }
 
-//
-//repositories {
-//	mavenCentral()
-//}
-//
-//dependencies {
-//	implementation 'org.springframework.boot:spring-boot-starter'
-//	compileOnly 'org.projectlombok:lombok'
-//	annotationProcessor 'org.projectlombok:lombok'
-//	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-//}
-//
-//test {
-//	useJUnitPlatform()
-//}
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+test {
+	useJUnitPlatform()
+}

@@ -9,5 +9,7 @@ pluginManagement {
 rootProject.name = 'contentcloud-scribe'
 
 include 'scribe-dependencies'
-
-include 'scribe-configurations:scribe-configurations-web'
+include 'scribe-generator'
+include 'scribe-drivers:scribe-driver-web'
+include 'scribe-configurations:scribe-app'
+include 'scribe-infrastructure'

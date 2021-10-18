@@ -5,6 +5,17 @@ initializr:
   group-id:
     value: eu.xenit.contentcloud.apps
   dependencies:
+    - name: Developer Tools
+      content:
+        - name: Lombok
+          id: lombok
+          groupId: org.projectlombok
+          artifactId: lombok
+          scope: annotationProcessor
+          description: Java annotation library which helps to reduce boilerplate code.
+          facets:
+            - native
+          starter: false
     - name: Web
       content:
         - name: Web
