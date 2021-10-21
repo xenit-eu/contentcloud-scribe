@@ -14,31 +14,28 @@
  * limitations under the License.
  */
 
-package eu.xenit.contentcloud.scribe.generator.entitymodel;
+package eu.xenit.contentcloud.scribe.generator.repository;
 
 import eu.xenit.contentcloud.scribe.changeset.Entity;
+import eu.xenit.contentcloud.scribe.generator.entitymodel.EntityModel;
 import io.spring.initializr.generator.language.Annotation;
 import io.spring.initializr.generator.language.SourceCodeWriter;
-import io.spring.initializr.generator.language.java.JavaFieldDeclaration;
 import io.spring.initializr.generator.language.java.JavaSourceCode;
 import io.spring.initializr.generator.project.ProjectDescription;
 import io.spring.initializr.generator.project.contributor.ProjectContributor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.util.StringUtils;
 
-import javax.persistence.GenerationType;
 import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.nio.file.Path;
-import java.time.Instant;
-import java.util.Objects;
 import java.util.function.Supplier;
 
 /**
  * {@link ProjectContributor} for the entity model source code
  */
 @RequiredArgsConstructor
-public class EntityModelSourceCodeProjectContributor implements ProjectContributor {
+public class RepositoriesSourceCodeProjectContributor implements ProjectContributor {
 
 	private final ProjectDescription description;
 
@@ -53,7 +50,7 @@ public class EntityModelSourceCodeProjectContributor implements ProjectContribut
 		JavaSourceCode sourceCode = this.sourceFactory.get();
 
 		this.entityModel.entities().forEachOrdered(entity -> {
-			contributeEntity(sourceCode, entity);
+			contributeJpaRepository(sourceCode, entity);
 		});
 
 
@@ -62,47 +59,19 @@ public class EntityModelSourceCodeProjectContributor implements ProjectContribut
 				sourceCode);
 	}
 
-	private void contributeEntity(JavaSourceCode sourceCode, Entity entity) {
-		var name = this.generateEntityClassName(entity.getName());
-		var classFile = sourceCode.createCompilationUnit(this.description.getPackageName() + ".model", name);
-		var entityType = classFile.createTypeDeclaration(name);
-		entityType.modifiers(Modifier.PUBLIC);
+	private void contributeJpaRepository(JavaSourceCode sourceCode, Entity entity) {
+		var entityName = this.generateEntityClassName(entity.getName());
+		var fullEntityName = this.description.getPackageName() + ".model." + entityName;
 
-		entityType.annotate(Annotation.name("javax.persistence.Entity"));
+		var repositoryName = entityName + "Repository";
 
-		entityType.annotate(Annotation.name("lombok.Getter"));
-		entityType.annotate(Annotation.name("lombok.Setter"));
-		entityType.annotate(Annotation.name("lombok.NoArgsConstructor"));
+		var classFile = sourceCode.createCompilationUnit(this.description.getPackageName() + ".repository", repositoryName);
 
+		var repositoryClass = classFile.createTypeDeclaration(repositoryName);
+		repositoryClass.modifiers(Modifier.INTERFACE | Modifier.PUBLIC);
+		repositoryClass.extend("org.springframework.data.jpa.repository.JpaRepository<" + fullEntityName + ", java.util.UUID>");
 
-		var idField = JavaFieldDeclaration.field("_id")
-				.modifiers(Modifier.PRIVATE)
-				.returning("java.util.UUID");
-		idField.annotate(Annotation.name("javax.persistence.Id"));
-		idField.annotate(Annotation.name("javax.persistence.GeneratedValue",
-				an -> an.attribute("strategy", GenerationType.class, "javax.persistence.GenerationType.AUTO" )));
-		entityType.addFieldDeclaration(idField);
-
-		entity.getAttributes().forEach(attribute -> {
-			var resolvedAttributeType = this.resolveAttributeType(attribute.getType());
-			var field = JavaFieldDeclaration.field(attribute.getName())
-					.modifiers(Modifier.PRIVATE)
-					.returning(resolvedAttributeType);
-			entityType.addFieldDeclaration(field);
-			// add fields
-		});
-	}
-
-	private String resolveAttributeType(String type) {
-		if (Objects.equals(type, "String") || Objects.equals(type, "STRING")) {
-			return String.class.getName();
-		}
-
-		if (Objects.equals(type, "DATETIME")) {
-			return Instant.class.getName();
-		}
-
-		throw new IllegalArgumentException("cannot resolve data type: "+type);
+		repositoryClass.annotate(Annotation.name("org.springframework.data.rest.core.annotation.RepositoryRestResource"));
 	}
 
 	private String generateEntityClassName(String name) {
