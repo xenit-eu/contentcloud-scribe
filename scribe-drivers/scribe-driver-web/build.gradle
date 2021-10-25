@@ -15,7 +15,6 @@ repositories {
 dependencies {
     implementation platform(project(":scribe-dependencies"))
 
-
     implementation project(':scribe-generator')
 
     api 'io.spring.initializr:initializr-web'
