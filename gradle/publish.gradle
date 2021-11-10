@@ -1,0 +1,53 @@
+apply plugin: 'maven-publish'
+apply plugin: 'signing'
+
+publishing {
+    publications {
+        all {
+            pom {
+                url = 'https://github.com/xenit-eu/contentcloud-scribe'
+                name = project.name
+                description = 'Content Cloud Scribe'
+
+                scm {
+                    connection = 'scm:git:git@github.com:xenit-eu/contentcloud-scribe.git'
+                    developerConnection = 'scm:git:git@github.com:xenit-eu/contentcloud-scribe.git'
+                    url = 'https://github.com/xenit-eu/contentcloud-scribe.git'
+                }
+
+                developers {
+                    developer {
+                        name = "XeniT"
+                        organization = "XeniT Solutions NV"
+                    }
+                }
+
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+            }
+        }
+    }
+
+
+    repositories {
+        if (version.version.isSignificant()) {
+            sonatypeMavenCentral {
+                credentials {
+                    username = project.findProperty('sonatype_username')
+                    password = project.findProperty('sonatype_password')
+                }
+            }
+        } else {
+            sonatypeSnapshots {
+                credentials {
+                    username = project.findProperty('sonatype_username')
+                    password = project.findProperty('sonatype_password')
+                }
+            }
+        }
+    }
+}

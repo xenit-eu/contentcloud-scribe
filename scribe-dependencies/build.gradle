@@ -2,6 +2,16 @@ plugins {
     id 'java-platform'
 }
 
+apply from: "${rootDir}/gradle/publish.gradle"
+
+publishing {
+    publications {
+        scribePlatform(MavenPublication) {
+            from components.javaPlatform
+        }
+    }
+}
+
 javaPlatform {
     allowDependencies()
 }

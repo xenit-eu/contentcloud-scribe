@@ -7,8 +7,18 @@ reckon {
     snapshotFromProp()
 }
 
-allprojects {
+subprojects {
     pluginManager.withPlugin('java', {
+        apply from: "${rootDir}/gradle/publish.gradle"
+
+        publishing {
+            publications {
+                library(MavenPublication) {
+                    from components.java
+                }
+            }
+        }
+
         project.java {
             sourceCompatibility = 11
 
