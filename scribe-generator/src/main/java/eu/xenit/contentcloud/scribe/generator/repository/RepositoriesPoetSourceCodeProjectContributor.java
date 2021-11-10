@@ -16,10 +16,10 @@
 
 package eu.xenit.contentcloud.scribe.generator.repository;
 
-import eu.xenit.contentcloud.scribe.poet.ClassName;
-import eu.xenit.contentcloud.scribe.poet.JavaFile;
-import eu.xenit.contentcloud.scribe.poet.ParameterizedTypeName;
-import eu.xenit.contentcloud.scribe.poet.TypeSpec;
+import eu.xenit.contentcloud.bard.ClassName;
+import eu.xenit.contentcloud.bard.JavaFile;
+import eu.xenit.contentcloud.bard.ParameterizedTypeName;
+import eu.xenit.contentcloud.bard.TypeSpec;
 import eu.xenit.contentcloud.scribe.changeset.Entity;
 import eu.xenit.contentcloud.scribe.generator.entitymodel.EntityModel;
 import io.spring.initializr.generator.language.Annotation;

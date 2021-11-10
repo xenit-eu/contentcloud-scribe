@@ -16,5 +16,3 @@ include 'scribe-generator'
 include 'scribe-drivers:scribe-driver-web'
 include 'scribe-configurations:scribe-app'
 include 'scribe-infrastructure'
-
-//includeBuild '../scribe-poet/'

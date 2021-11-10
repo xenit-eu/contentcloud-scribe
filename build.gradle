@@ -30,7 +30,7 @@ subprojects {
             mavenCentral()
             sonatypeSnapshots {
                 content {
-                    includeGroup 'eu.xenit.contentcloud.scribe'
+                    includeGroup 'eu.xenit.contentcloud.bard'
                 }
             }
         }
