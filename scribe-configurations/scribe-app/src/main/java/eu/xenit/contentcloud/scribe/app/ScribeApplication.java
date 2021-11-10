@@ -4,10 +4,13 @@ import eu.xenit.contentcloud.scribe.changeset.ChangeSetResolver;
 import eu.xenit.contentcloud.scribe.drivers.rest.ScribeProjectRequestToDescriptionConverter;
 import eu.xenit.contentcloud.scribe.drivers.rest.ScribeRestController;
 import eu.xenit.contentcloud.scribe.infrastructure.changeset.ChangeSetRepository;
+import io.spring.initializr.generator.io.IndentingWriterFactory;
+import io.spring.initializr.generator.io.SimpleIndentStrategy;
 import io.spring.initializr.metadata.InitializrMetadataProvider;
 import io.spring.initializr.web.project.ProjectGenerationInvoker;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.ApplicationContext;
@@ -19,21 +22,29 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @EnableAsync
 public class ScribeApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(ScribeApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(ScribeApplication.class, args);
+    }
 
-	@Bean
-	ChangeSetResolver changeSetResolver(RestTemplateBuilder restTemplateBuilder) {
-		return new ChangeSetRepository(restTemplateBuilder.build());
-	}
+    @Bean
+    ChangeSetResolver changeSetResolver(RestTemplateBuilder restTemplateBuilder) {
+        return new ChangeSetRepository(restTemplateBuilder.build());
+    }
 
-	@Bean
-	public ScribeRestController projectGenerationController(
-			InitializrMetadataProvider metadataProvider, ApplicationContext applicationContext,
-			ChangeSetResolver changeSetResolver) {
-		var converter = new ScribeProjectRequestToDescriptionConverter(changeSetResolver);
-		var invoker = new ProjectGenerationInvoker<>(applicationContext, converter);
-		return new ScribeRestController(metadataProvider, invoker);
-	}
+    @Bean
+    public ScribeRestController projectGenerationController(
+            InitializrMetadataProvider metadataProvider, ApplicationContext applicationContext,
+            ChangeSetResolver changeSetResolver) {
+        var converter = new ScribeProjectRequestToDescriptionConverter(changeSetResolver);
+        var invoker = new ProjectGenerationInvoker<>(applicationContext, converter);
+        return new ScribeRestController(metadataProvider, invoker);
+    }
+
+    @Bean
+    public IndentingWriterFactory indentingWriterFactory() {
+        return IndentingWriterFactory.create(new SimpleIndentStrategy("\t"), factory -> {
+            // yml indentation is 2 or 4 spaces
+            factory.indentingStrategy("yml", new SimpleIndentStrategy("  "));
+        });
+    }
 }

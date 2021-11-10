@@ -5,6 +5,7 @@ import io.spring.initializr.generator.buildsystem.gradle.GradleBuild;
 import io.spring.initializr.generator.buildsystem.gradle.GradleBuildSystem;
 import io.spring.initializr.generator.condition.ConditionalOnBuildSystem;
 import io.spring.initializr.generator.project.ProjectGenerationConfiguration;
+import io.spring.initializr.generator.spring.build.BuildCustomizer;
 import io.spring.initializr.metadata.InitializrMetadata;
 import org.springframework.context.annotation.Bean;
 
@@ -22,4 +23,5 @@ public class ContentCloudBuildProjectGenerationConfiguration {
             InitializrMetadata metadata) {
         return new ContentCloudAnnotationsStarterGradleBuildCustomizer(metadata);
     }
+
 }

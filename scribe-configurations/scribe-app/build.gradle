@@ -5,14 +5,6 @@ plugins {
     id 'io.freefair.lombok'
 }
 
-repositories {
-    mavenCentral()
-
-    maven {
-        url "https://repo.spring.io/snapshot"
-    }
-}
-
 dependencies {
     implementation platform(project(":scribe-dependencies"))
 

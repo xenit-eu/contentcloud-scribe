@@ -2,6 +2,8 @@ package eu.xenit.contentcloud.scribe.generator.repository;
 
 import eu.xenit.contentcloud.scribe.generator.ScribeProjectDescription;
 import eu.xenit.contentcloud.scribe.generator.entitymodel.EntityModel;
+import eu.xenit.contentcloud.scribe.generator.properties.ApplicationProperties;
+import eu.xenit.contentcloud.scribe.generator.properties.ApplicationPropertiesCustomizer;
 import io.spring.initializr.generator.io.IndentingWriterFactory;
 import io.spring.initializr.generator.language.java.JavaSourceCode;
 import io.spring.initializr.generator.language.java.JavaSourceCodeWriter;
@@ -19,9 +21,14 @@ public class RepositoriesGenerationConfiguration {
     private final IndentingWriterFactory indentingWriterFactory;
 
     @Bean
-    public RepositoriesSourceCodeProjectContributor repositoriesSourceCodeProjectContributor(EntityModel entityModel) {
-        return new RepositoriesSourceCodeProjectContributor(this.description, entityModel, JavaSourceCode::new,
-                new ScribeJavaSourceCodeWriter(this.indentingWriterFactory));
+    RepositoriesPoetSourceCodeProjectContributor repositoriesSourceCodeProjectContributor(EntityModel entityModel) {
+        return new RepositoriesPoetSourceCodeProjectContributor(this.description, entityModel);
+    }
+
+    @Bean
+    ApplicationPropertiesCustomizer hibernateProperties() {
+        return properties -> properties
+                .put("spring.jpa.properties.hibernate.globally_quoted_identifiers", "true");
     }
 
 }

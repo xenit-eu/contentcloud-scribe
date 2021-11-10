@@ -3,10 +3,6 @@ plugins {
     id 'io.freefair.lombok'
 }
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
     implementation platform(project(":scribe-dependencies"))
 
@@ -18,9 +14,6 @@ dependencies {
 
     testImplementation 'org.junit.jupiter:junit-jupiter-engine'
     testImplementation 'org.assertj:assertj-core'
-
-
-
 }
 
 test {

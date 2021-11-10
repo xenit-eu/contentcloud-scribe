@@ -1,38 +1,25 @@
-/*
- * Copyright 2012-2019 the original author or authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package eu.xenit.contentcloud.scribe.generator.entitymodel;
 
+import eu.xenit.contentcloud.scribe.poet.AnnotationSpec;
+import eu.xenit.contentcloud.scribe.poet.ClassName;
+import eu.xenit.contentcloud.scribe.poet.FieldSpec;
+import eu.xenit.contentcloud.scribe.poet.JavaFile;
+import eu.xenit.contentcloud.scribe.poet.TypeSpec;
 import eu.xenit.contentcloud.scribe.changeset.Entity;
-import io.spring.initializr.generator.language.Annotation;
-import io.spring.initializr.generator.language.SourceCodeWriter;
-import io.spring.initializr.generator.language.java.JavaFieldDeclaration;
-import io.spring.initializr.generator.language.java.JavaSourceCode;
+import eu.xenit.contentcloud.scribe.generator.repository.RepositoryPackageStructure;
+import io.spring.initializr.generator.language.SourceStructure;
 import io.spring.initializr.generator.project.ProjectDescription;
 import io.spring.initializr.generator.project.contributor.ProjectContributor;
 import lombok.RequiredArgsConstructor;
-import org.springframework.util.StringUtils;
 
-import javax.persistence.GenerationType;
+import javax.lang.model.element.Modifier;
 import java.io.IOException;
-import java.lang.reflect.Modifier;
+import java.lang.reflect.Type;
 import java.nio.file.Path;
 import java.time.Instant;
+import java.util.Locale;
 import java.util.Objects;
-import java.util.function.Supplier;
+import java.util.UUID;
 
 /**
  * {@link ProjectContributor} for the entity model source code
@@ -40,91 +27,65 @@ import java.util.function.Supplier;
 @RequiredArgsConstructor
 public class EntityModelSourceCodeProjectContributor implements ProjectContributor {
 
-	private final ProjectDescription description;
+    private final ProjectDescription description;
 
-	private final EntityModel entityModel;
-
-	private final Supplier<JavaSourceCode> sourceFactory;
-
-	private final SourceCodeWriter<JavaSourceCode> sourceWriter;
-
-	@Override
-	public void contribute(Path projectRoot) throws IOException {
-		JavaSourceCode sourceCode = this.sourceFactory.get();
-
-		this.entityModel.entities().forEachOrdered(entity -> {
-			contributeEntity(sourceCode, entity);
-		});
+    private final EntityModel entityModel;
 
 
-		this.sourceWriter.writeTo(
-				this.description.getBuildSystem().getMainSource(projectRoot, this.description.getLanguage()),
-				sourceCode);
-	}
+    @Override
+    public void contribute(Path projectRoot) throws IOException {
+        SourceStructure mainSource = this.description.getBuildSystem().getMainSource(projectRoot, this.description.getLanguage());
+        RepositoryPackageStructure packages = new RepositoryPackageStructure(this.description);
 
-	private void contributeEntity(JavaSourceCode sourceCode, Entity entity) {
-		var name = this.generateEntityClassName(entity.getName());
-		var classFile = sourceCode.createCompilationUnit(this.description.getPackageName() + ".model", name);
-		var entityType = classFile.createTypeDeclaration(name);
-		entityType.modifiers(Modifier.PUBLIC);
+        for (Entity entity : this.entityModel.entities()) {
+            contributeEntity(mainSource, packages, entity);
+        }
+    }
 
-		entityType.annotate(Annotation.name("javax.persistence.Entity"));
+    private void contributeEntity(SourceStructure mainSource, RepositoryPackageStructure packages, Entity entity) throws IOException {
+        var type = TypeSpec.classBuilder(entity.getClassName())
+                .addModifiers(Modifier.PUBLIC)
+                .addAnnotation(ClassName.get("javax.persistence", "Entity"))
+                .addAnnotation(AnnotationSpec
+                        .builder(ClassName.get("javax.persistence", "Table"))
+                        .addMember("name", "$S", entity.getTableName()).build())
+                .addAnnotation(ClassName.get("lombok", "Getter"))
+                .addAnnotation(ClassName.get("lombok", "Setter"))
+                .addAnnotation(ClassName.get("lombok", "NoArgsConstructor"))
 
-		entityType.annotate(Annotation.name("lombok.Getter"));
-		entityType.annotate(Annotation.name("lombok.Setter"));
-		entityType.annotate(Annotation.name("lombok.NoArgsConstructor"));
+                .addField(this.getIdField());
 
+        entity.getAttributes().forEach(attribute -> {
+            var resolvedAttributeType = this.resolveAttributeType(attribute.getType());
+            type.addField(resolvedAttributeType, attribute.getName(), Modifier.PRIVATE);
+        });
 
-		var idField = JavaFieldDeclaration.field("_id")
-				.modifiers(Modifier.PRIVATE)
-				.returning("java.util.UUID");
-		idField.annotate(Annotation.name("javax.persistence.Id"));
-		idField.annotate(Annotation.name("javax.persistence.GeneratedValue",
-				an -> an.attribute("strategy", GenerationType.class, "javax.persistence.GenerationType.AUTO" )));
-		entityType.addFieldDeclaration(idField);
+        JavaFile.builder(packages.getModelPackageName(), type.build())
+                .indent("\t")
+                .build()
+                .writeTo(mainSource.getSourcesDirectory());
+    }
 
-		entity.getAttributes().forEach(attribute -> {
-			var resolvedAttributeType = this.resolveAttributeType(attribute.getType());
-			var field = JavaFieldDeclaration.field(attribute.getName())
-					.modifiers(Modifier.PRIVATE)
-					.returning(resolvedAttributeType);
-			entityType.addFieldDeclaration(field);
-			// add fields
-		});
-	}
+    private FieldSpec getIdField() {
+        return FieldSpec.builder(UUID.class, "_id", Modifier.PRIVATE)
+                .addAnnotation(AnnotationSpec.builder(ClassName.get("javax.persistence", "Id")).build())
+                .addAnnotation(AnnotationSpec.builder(ClassName.get("javax.persistence", "GeneratedValue"))
+                        .addMember("strategy", "$T.$L",
+                                ClassName.get("javax.persistence", "GenerationType"), "AUTO")
+                        .build())
+                .build();
+    }
 
-	private String resolveAttributeType(String type) {
-		if (Objects.equals(type, "String") || Objects.equals(type, "STRING")) {
-			return String.class.getName();
-		}
+    private Type resolveAttributeType(String type) {
+        if (Objects.equals(type, "String") || Objects.equals(type, "STRING")) {
+            return String.class;
+        }
 
-		if (Objects.equals(type, "DATETIME")) {
-			return Instant.class.getName();
-		}
+        if (Objects.equals(type, "DATETIME")) {
+            return Instant.class;
+        }
 
-		throw new IllegalArgumentException("cannot resolve data type: "+type);
-	}
+        throw new IllegalArgumentException("cannot resolve data type: " + type);
+    }
 
-	private String generateEntityClassName(String name) {
-		String candidate = StringUtils.capitalize(name);
-		if (hasInvalidChar(candidate) /* || check blacklist ? */) {
-			throw new IllegalArgumentException("Invalid class name: "+name);
-		}
-
-		return candidate;
-	}
-
-	private static boolean hasInvalidChar(String text) {
-		if (!Character.isJavaIdentifierStart(text.charAt(0))) {
-			return true;
-		}
-		if (text.length() > 1) {
-			for (int i = 1; i < text.length(); i++) {
-				if (!Character.isJavaIdentifierPart(text.charAt(i))) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
 }

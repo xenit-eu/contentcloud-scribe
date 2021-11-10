@@ -1,0 +1,32 @@
+plugins {
+    id 'org.ajoberstar.reckon' version '0.13.0'
+}
+
+reckon {
+    scopeFromProp()
+    snapshotFromProp()
+}
+
+allprojects {
+    pluginManager.withPlugin('java', {
+        project.java {
+            sourceCompatibility = 11
+
+            withSourcesJar()
+            withJavadocJar()
+        }
+
+        repositories {
+            mavenCentral()
+            sonatypeSnapshots {
+                content {
+                    includeGroup 'eu.xenit.contentcloud.scribe'
+                }
+            }
+        }
+    })
+
+    tasks.withType(JavaCompile).configureEach {
+        options.encoding = 'UTF-8'
+    }
+}

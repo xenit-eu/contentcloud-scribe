@@ -4,6 +4,8 @@ import eu.xenit.contentcloud.scribe.changeset.Entity;
 import lombok.Getter;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -15,7 +17,7 @@ public class EntityModel {
         this.entities.addAll(entities);
     }
 
-    public Stream<Entity> entities() {
-        return this.entities.stream();
+    public Collection<Entity> entities() {
+        return Collections.unmodifiableCollection(this.entities);
     }
 }
