@@ -12,6 +12,11 @@ dependencies {
 
     constraints {
         api "eu.xenit.contentcloud.scribe:scribe-poet:${scribePoetVersion}"
+
+        api project(':scribe-generator')
+        api project(':scribe-drivers:scribe-driver-web')
+        api project(':scribe-configurations:scribe-app')
+        api project(':scribe-infrastructure')
     }
 }
 

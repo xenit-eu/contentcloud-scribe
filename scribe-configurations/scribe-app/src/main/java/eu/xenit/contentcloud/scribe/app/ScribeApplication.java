@@ -32,7 +32,7 @@ public class ScribeApplication {
     }
 
     @Bean
-    public ScribeRestController projectGenerationController(
+    ScribeRestController projectGenerationController(
             InitializrMetadataProvider metadataProvider, ApplicationContext applicationContext,
             ChangeSetResolver changeSetResolver) {
         var converter = new ScribeProjectRequestToDescriptionConverter(changeSetResolver);
@@ -41,7 +41,7 @@ public class ScribeApplication {
     }
 
     @Bean
-    public IndentingWriterFactory indentingWriterFactory() {
+    IndentingWriterFactory indentingWriterFactory() {
         return IndentingWriterFactory.create(new SimpleIndentStrategy("\t"), factory -> {
             // yml indentation is 2 or 4 spaces
             factory.indentingStrategy("yml", new SimpleIndentStrategy("  "));
