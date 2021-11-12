@@ -7,6 +7,8 @@ import eu.xenit.contentcloud.bard.JavaFile;
 import eu.xenit.contentcloud.bard.TypeSpec;
 import eu.xenit.contentcloud.scribe.changeset.Entity;
 import eu.xenit.contentcloud.scribe.generator.repository.RepositoryPackageStructure;
+import eu.xenit.contentcloud.scribe.generator.source.java.JavaSourceGenerator;
+import eu.xenit.contentcloud.scribe.generator.source.SourceGenerator;
 import io.spring.initializr.generator.language.SourceStructure;
 import io.spring.initializr.generator.project.ProjectDescription;
 import io.spring.initializr.generator.project.contributor.ProjectContributor;
@@ -17,7 +19,6 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.file.Path;
 import java.time.Instant;
-import java.util.Locale;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -37,12 +38,34 @@ public class EntityModelSourceCodeProjectContributor implements ProjectContribut
         SourceStructure mainSource = this.description.getBuildSystem().getMainSource(projectRoot, this.description.getLanguage());
         RepositoryPackageStructure packages = new RepositoryPackageStructure(this.description);
 
+        SourceGenerator sourceGen = new JavaSourceGenerator(packages);
+
         for (Entity entity : this.entityModel.entities()) {
-            contributeEntity(mainSource, packages, entity);
+            contributeEntity(mainSource, sourceGen, entity);
         }
     }
 
-    private void contributeEntity(SourceStructure mainSource, RepositoryPackageStructure packages, Entity entity) throws IOException {
+    private void contributeEntity(SourceStructure mainSource,
+                                  SourceGenerator sourceGenerator,
+                                  Entity entity)
+            throws IOException {
+
+        var jpaEntity = sourceGenerator.createJpaEntity(entity.getClassName());
+
+        entity.getAttributes().forEach(attribute -> {
+            Type resolvedAttributeType = this.resolveAttributeType(attribute.getType());
+            jpaEntity.addProperty(resolvedAttributeType, attribute.getName());
+        });
+
+        jpaEntity.generate().writeTo(mainSource.getSourcesDirectory());
+//        var source = Types.jpaEntity(entity.getClassName());
+//        source.generate(sourceGen)
+//                .writeTo(mainSource.getSourcesDirectory());
+
+
+    }
+
+    private void contributeEntity2(SourceStructure mainSource, RepositoryPackageStructure packages, Entity entity) throws IOException {
         var type = TypeSpec.classBuilder(entity.getClassName())
                 .addModifiers(Modifier.PUBLIC)
                 .addAnnotation(ClassName.get("javax.persistence", "Entity"))
