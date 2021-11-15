@@ -6,7 +6,10 @@ import eu.xenit.contentcloud.bard.FieldSpec;
 import eu.xenit.contentcloud.bard.JavaFile;
 import eu.xenit.contentcloud.bard.TypeSpec;
 import eu.xenit.contentcloud.scribe.changeset.Entity;
+import eu.xenit.contentcloud.scribe.generator.ScribeProjectDescription;
 import eu.xenit.contentcloud.scribe.generator.repository.RepositoryPackageStructure;
+import eu.xenit.contentcloud.scribe.generator.source.java.JavaSourceGenerator;
+import eu.xenit.contentcloud.scribe.generator.source.SourceGenerator;
 import io.spring.initializr.generator.language.SourceStructure;
 import io.spring.initializr.generator.project.ProjectDescription;
 import io.spring.initializr.generator.project.contributor.ProjectContributor;
@@ -17,7 +20,6 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.file.Path;
 import java.time.Instant;
-import java.util.Locale;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -27,7 +29,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class EntityModelSourceCodeProjectContributor implements ProjectContributor {
 
-    private final ProjectDescription description;
+    private final ScribeProjectDescription description;
 
     private final EntityModel entityModel;
 
@@ -37,43 +39,26 @@ public class EntityModelSourceCodeProjectContributor implements ProjectContribut
         SourceStructure mainSource = this.description.getBuildSystem().getMainSource(projectRoot, this.description.getLanguage());
         RepositoryPackageStructure packages = new RepositoryPackageStructure(this.description);
 
+        SourceGenerator sourceGen = new JavaSourceGenerator(packages, this.description.useLombok());
+
         for (Entity entity : this.entityModel.entities()) {
-            contributeEntity(mainSource, packages, entity);
+            contributeEntity(mainSource, sourceGen, entity);
         }
     }
 
-    private void contributeEntity(SourceStructure mainSource, RepositoryPackageStructure packages, Entity entity) throws IOException {
-        var type = TypeSpec.classBuilder(entity.getClassName())
-                .addModifiers(Modifier.PUBLIC)
-                .addAnnotation(ClassName.get("javax.persistence", "Entity"))
-                .addAnnotation(AnnotationSpec
-                        .builder(ClassName.get("javax.persistence", "Table"))
-                        .addMember("name", "$S", entity.getTableName()).build())
-                .addAnnotation(ClassName.get("lombok", "Getter"))
-                .addAnnotation(ClassName.get("lombok", "Setter"))
-                .addAnnotation(ClassName.get("lombok", "NoArgsConstructor"))
+    private void contributeEntity(SourceStructure mainSource,
+                                  SourceGenerator sourceGenerator,
+                                  Entity entity)
+            throws IOException {
 
-                .addField(this.getIdField());
+        var jpaEntity = sourceGenerator.createJpaEntity(entity.getClassName());
 
         entity.getAttributes().forEach(attribute -> {
-            var resolvedAttributeType = this.resolveAttributeType(attribute.getType());
-            type.addField(resolvedAttributeType, attribute.getName(), Modifier.PRIVATE);
+            Type resolvedAttributeType = this.resolveAttributeType(attribute.getType());
+            jpaEntity.addProperty(resolvedAttributeType, attribute.getName());
         });
 
-        JavaFile.builder(packages.getModelPackageName(), type.build())
-                .indent("\t")
-                .build()
-                .writeTo(mainSource.getSourcesDirectory());
-    }
-
-    private FieldSpec getIdField() {
-        return FieldSpec.builder(UUID.class, "_id", Modifier.PRIVATE)
-                .addAnnotation(AnnotationSpec.builder(ClassName.get("javax.persistence", "Id")).build())
-                .addAnnotation(AnnotationSpec.builder(ClassName.get("javax.persistence", "GeneratedValue"))
-                        .addMember("strategy", "$T.$L",
-                                ClassName.get("javax.persistence", "GenerationType"), "AUTO")
-                        .build())
-                .build();
+        jpaEntity.generate().writeTo(mainSource.getSourcesDirectory());
     }
 
     private Type resolveAttributeType(String type) {
