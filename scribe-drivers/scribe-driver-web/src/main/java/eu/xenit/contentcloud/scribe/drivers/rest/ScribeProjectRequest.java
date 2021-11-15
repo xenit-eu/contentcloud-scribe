@@ -9,4 +9,7 @@ public class ScribeProjectRequest extends WebProjectRequest {
     @Getter @Setter
     private String changeset;
 
+    @Getter @Setter
+    private boolean lombok = true;
+
 }

@@ -3,7 +3,6 @@ package eu.xenit.contentcloud.scribe.generator.source.jpa;
 import eu.xenit.contentcloud.bard.TypeName;
 import eu.xenit.contentcloud.scribe.generator.source.JavaBean;
 import eu.xenit.contentcloud.scribe.generator.source.SourceFile;
-import eu.xenit.contentcloud.scribe.generator.source.lombok.LombokUsage;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;

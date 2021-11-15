@@ -6,6 +6,7 @@ import eu.xenit.contentcloud.bard.FieldSpec;
 import eu.xenit.contentcloud.bard.JavaFile;
 import eu.xenit.contentcloud.bard.TypeSpec;
 import eu.xenit.contentcloud.scribe.changeset.Entity;
+import eu.xenit.contentcloud.scribe.generator.ScribeProjectDescription;
 import eu.xenit.contentcloud.scribe.generator.repository.RepositoryPackageStructure;
 import eu.xenit.contentcloud.scribe.generator.source.java.JavaSourceGenerator;
 import eu.xenit.contentcloud.scribe.generator.source.SourceGenerator;
@@ -28,7 +29,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class EntityModelSourceCodeProjectContributor implements ProjectContributor {
 
-    private final ProjectDescription description;
+    private final ScribeProjectDescription description;
 
     private final EntityModel entityModel;
 
@@ -38,7 +39,7 @@ public class EntityModelSourceCodeProjectContributor implements ProjectContribut
         SourceStructure mainSource = this.description.getBuildSystem().getMainSource(projectRoot, this.description.getLanguage());
         RepositoryPackageStructure packages = new RepositoryPackageStructure(this.description);
 
-        SourceGenerator sourceGen = new JavaSourceGenerator(packages);
+        SourceGenerator sourceGen = new JavaSourceGenerator(packages, this.description.useLombok());
 
         for (Entity entity : this.entityModel.entities()) {
             contributeEntity(mainSource, sourceGen, entity);

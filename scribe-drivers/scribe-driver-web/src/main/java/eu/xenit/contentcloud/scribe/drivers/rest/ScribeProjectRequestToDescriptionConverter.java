@@ -4,7 +4,9 @@ import eu.xenit.contentcloud.scribe.changeset.ChangeSetResolver;
 import eu.xenit.contentcloud.scribe.generator.ScribeProjectDescription;
 import eu.xenit.contentcloud.scribe.changeset.ChangeSet;
 import io.spring.initializr.generator.project.ProjectDescription;
+import io.spring.initializr.metadata.Dependency;
 import io.spring.initializr.metadata.InitializrMetadata;
+import io.spring.initializr.metadata.support.MetadataBuildItemMapper;
 import io.spring.initializr.web.project.DefaultProjectRequestToDescriptionConverter;
 import io.spring.initializr.web.project.ProjectRequestToDescriptionConverter;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +28,13 @@ public class ScribeProjectRequestToDescriptionConverter
 
         this.resolveChangeSet(request, this.changeSetResolver)
                 .ifPresent(description::setChangeSet);
+
+        if (request.isLombok()) {
+            Dependency lombok = Optional.ofNullable(metadata.getDependencies().get("lombok")).orElseThrow();
+            description.addDependency(lombok.getId(), MetadataBuildItemMapper.toDependency(lombok));
+
+            description.useLombok(true);
+        }
 
         return description;
     }

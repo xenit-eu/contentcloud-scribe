@@ -21,7 +21,7 @@ initializr:
           scope: annotationProcessor
           description: Java annotation library which helps to reduce boilerplate code.
           facets:
-            - native
+            - lombok
           starter: false
     - name: Web
       content:

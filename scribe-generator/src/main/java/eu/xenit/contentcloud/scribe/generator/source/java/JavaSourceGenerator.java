@@ -14,10 +14,12 @@ public class JavaSourceGenerator implements SourceGenerator {
     @NonNull
     private final RepositoryPackageStructure packageStructure;
 
+    private final boolean useLombok;
+
     @Override
     public JpaEntity createJpaEntity(String name) {
         return JpaEntity.withClassName(name)
-                .withGenerator(jpaEntity -> generateJavaSource(new JpaEntityTypeSpec(jpaEntity).build())
+                .withGenerator(jpaEntity -> generateJavaSource(new JpaEntityTypeSpec(jpaEntity, useLombok).build())
         );
     }
 
