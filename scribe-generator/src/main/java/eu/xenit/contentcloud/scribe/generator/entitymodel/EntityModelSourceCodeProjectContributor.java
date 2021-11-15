@@ -59,45 +59,6 @@ public class EntityModelSourceCodeProjectContributor implements ProjectContribut
         });
 
         jpaEntity.generate().writeTo(mainSource.getSourcesDirectory());
-//        var source = Types.jpaEntity(entity.getClassName());
-//        source.generate(sourceGen)
-//                .writeTo(mainSource.getSourcesDirectory());
-
-
-    }
-
-    private void contributeEntity2(SourceStructure mainSource, RepositoryPackageStructure packages, Entity entity) throws IOException {
-        var type = TypeSpec.classBuilder(entity.getClassName())
-                .addModifiers(Modifier.PUBLIC)
-                .addAnnotation(ClassName.get("javax.persistence", "Entity"))
-                .addAnnotation(AnnotationSpec
-                        .builder(ClassName.get("javax.persistence", "Table"))
-                        .addMember("name", "$S", entity.getTableName()).build())
-                .addAnnotation(ClassName.get("lombok", "Getter"))
-                .addAnnotation(ClassName.get("lombok", "Setter"))
-                .addAnnotation(ClassName.get("lombok", "NoArgsConstructor"))
-
-                .addField(this.getIdField());
-
-        entity.getAttributes().forEach(attribute -> {
-            var resolvedAttributeType = this.resolveAttributeType(attribute.getType());
-            type.addField(resolvedAttributeType, attribute.getName(), Modifier.PRIVATE);
-        });
-
-        JavaFile.builder(packages.getModelPackageName(), type.build())
-                .indent("\t")
-                .build()
-                .writeTo(mainSource.getSourcesDirectory());
-    }
-
-    private FieldSpec getIdField() {
-        return FieldSpec.builder(UUID.class, "_id", Modifier.PRIVATE)
-                .addAnnotation(AnnotationSpec.builder(ClassName.get("javax.persistence", "Id")).build())
-                .addAnnotation(AnnotationSpec.builder(ClassName.get("javax.persistence", "GeneratedValue"))
-                        .addMember("strategy", "$T.$L",
-                                ClassName.get("javax.persistence", "GenerationType"), "AUTO")
-                        .build())
-                .build();
     }
 
     private Type resolveAttributeType(String type) {
