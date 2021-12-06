@@ -21,24 +21,17 @@ import eu.xenit.contentcloud.bard.JavaFile;
 import eu.xenit.contentcloud.bard.ParameterizedTypeName;
 import eu.xenit.contentcloud.bard.TypeSpec;
 import eu.xenit.contentcloud.scribe.changeset.Entity;
+import eu.xenit.contentcloud.scribe.generator.service.DefaultPackageStructure;
+import eu.xenit.contentcloud.scribe.generator.service.PackageStructure;
 import eu.xenit.contentcloud.scribe.generator.entitymodel.EntityModel;
-import io.spring.initializr.generator.language.Annotation;
-import io.spring.initializr.generator.language.SourceCodeWriter;
 import io.spring.initializr.generator.language.SourceStructure;
-import io.spring.initializr.generator.language.java.JavaSourceCode;
 import io.spring.initializr.generator.project.ProjectDescription;
 import io.spring.initializr.generator.project.contributor.ProjectContributor;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
-import org.springframework.util.StringUtils;
 
 import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.lang.reflect.Modifier;
 import java.nio.file.Path;
 import java.util.UUID;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 /**
  * {@link ProjectContributor} for the entity model source code
@@ -53,14 +46,14 @@ public class RepositoriesPoetSourceCodeProjectContributor implements ProjectCont
     @Override
     public void contribute(Path projectRoot) throws IOException {
         SourceStructure mainSource = this.description.getBuildSystem().getMainSource(projectRoot, this.description.getLanguage());
-        RepositoryPackageStructure packages = new RepositoryPackageStructure(this.description);
+        PackageStructure packages = new DefaultPackageStructure(this.description);
 
         for (Entity entity : this.entityModel.entities()) {
             contributeJpaRepository(mainSource, packages, entity);
         }
     }
 
-    private void contributeJpaRepository(SourceStructure structure, RepositoryPackageStructure packages, Entity entity) throws IOException {
+    private void contributeJpaRepository(SourceStructure structure, PackageStructure packages, Entity entity) throws IOException {
 
         var typeBuilder = TypeSpec.interfaceBuilder(entity.getClassName() + "Repository");
         var jpaRepoType = ParameterizedTypeName.get(
