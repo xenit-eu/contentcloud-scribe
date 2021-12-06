@@ -10,7 +10,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Data
-public class ChangeSetRepositoryProperties {
+public class ChangesetRepositoryProperties {
 
     private final List<String> allowList = new ArrayList<>(List.of("http://localhost:8080/orgs/*/projects/*/changesets/*"));
 

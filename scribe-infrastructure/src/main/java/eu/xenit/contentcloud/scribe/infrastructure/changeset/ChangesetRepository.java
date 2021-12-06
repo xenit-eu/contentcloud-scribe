@@ -1,7 +1,7 @@
 package eu.xenit.contentcloud.scribe.infrastructure.changeset;
 
-import eu.xenit.contentcloud.scribe.changeset.ChangeSetResolver;
-import eu.xenit.contentcloud.scribe.changeset.ChangeSet;
+import eu.xenit.contentcloud.scribe.changeset.ChangesetResolver;
+import eu.xenit.contentcloud.scribe.changeset.Changeset;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.hateoas.EntityModel;
@@ -17,23 +17,23 @@ import java.net.URI;
 import java.util.Set;
 
 @Slf4j
-public class ChangeSetRepository implements ChangeSetResolver {
+public class ChangesetRepository implements ChangesetResolver {
 
     private final RestTemplate restTemplate;
     private final Set<PathPattern> allowedPaths;
 
-    public ChangeSetRepository(ChangeSetRepositoryProperties properties, RestTemplate restTemplate) {
+    public ChangesetRepository(ChangesetRepositoryProperties properties, RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
         this.allowedPaths = properties.getAllowedPaths();
     }
 
     @Override
-    public ChangeSet get(URI changesetURI) {
+    public Changeset get(URI changesetURI) {
         this.checkAllowedPaths(changesetURI);
 
         var changeset = this.restTemplate.exchange(
                         RequestEntity.get(changesetURI).accept(MediaTypes.HAL_FORMS_JSON).build(),
-                        new ParameterizedTypeReference<EntityModel<ChangeSetModel>>() {})
+                        new ParameterizedTypeReference<EntityModel<ChangesetModel>>() {})
                 .getBody();
 
         var project = changeset.getLink("project")
@@ -45,7 +45,7 @@ public class ChangeSetRepository implements ChangeSetResolver {
                 .map(HttpEntity::getBody)
                 .orElseThrow();
 
-        return new ChangeSet(
+        return new Changeset(
                 project.getName(),
                 project.getOrganization(),
                 changeset.getContent().getEntities(),
@@ -53,11 +53,11 @@ public class ChangeSetRepository implements ChangeSetResolver {
         );
     }
 
-    private void checkAllowedPaths(URI changeSet) {
-        var path = PathContainer.parsePath(changeSet.toString());
+    private void checkAllowedPaths(URI changeset) {
+        var path = PathContainer.parsePath(changeset.toString());
         if (this.allowedPaths.stream().noneMatch(pathPattern -> pathPattern.matches(path))) {
-            log.warn("ChangeSet URI denied: " + changeSet);
-            throw new IllegalArgumentException("URI is not allowed: " + changeSet);
+            log.warn("Changeset URI denied: " + changeset);
+            throw new IllegalArgumentException("URI is not allowed: " + changeset);
         }
     }
 }

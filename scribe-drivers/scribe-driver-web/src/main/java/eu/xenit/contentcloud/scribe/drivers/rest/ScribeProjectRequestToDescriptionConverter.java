@@ -1,8 +1,8 @@
 package eu.xenit.contentcloud.scribe.drivers.rest;
 
-import eu.xenit.contentcloud.scribe.changeset.ChangeSetResolver;
+import eu.xenit.contentcloud.scribe.changeset.ChangesetResolver;
 import eu.xenit.contentcloud.scribe.generator.ScribeProjectDescription;
-import eu.xenit.contentcloud.scribe.changeset.ChangeSet;
+import eu.xenit.contentcloud.scribe.changeset.Changeset;
 import io.spring.initializr.generator.project.ProjectDescription;
 import io.spring.initializr.metadata.Dependency;
 import io.spring.initializr.metadata.InitializrMetadata;
@@ -19,7 +19,7 @@ import java.util.Optional;
 public class ScribeProjectRequestToDescriptionConverter
         implements ProjectRequestToDescriptionConverter<ScribeProjectRequest> {
 
-    private final ChangeSetResolver changeSetResolver;
+    private final ChangesetResolver changesetResolver;
 
     DefaultProjectRequestToDescriptionConverter inner = new DefaultProjectRequestToDescriptionConverter();
 
@@ -28,15 +28,15 @@ public class ScribeProjectRequestToDescriptionConverter
         var description = new ScribeProjectDescription();
         this.inner.convert(request, description, metadata);
 
-        this.resolveChangeSet(request, this.changeSetResolver)
-                .ifPresent(changeSet -> {
-                    description.setChangeSet(changeSet);
-                    description.setName(changeSet.getProject() + "-api");
+        this.resolveChangeset(request, this.changesetResolver)
+                .ifPresent(changeset -> {
+                    description.setChangeset(changeset);
+                    description.setName(changeset.getProject() + "-api");
                     // description.setApplicationName();
                     description.setGroupId(String.format("eu.xenit.contentcloud.userapps.%s",
-                            asValidComponent(changeSet.getOrganization())));
-                    description.setArtifactId(changeSet.getProject() + "-api");
-                    description.setPackageName(description.getGroupId() + "." + asValidComponent(changeSet.getProject()));
+                            asValidComponent(changeset.getOrganization())));
+                    description.setArtifactId(changeset.getProject() + "-api");
+                    description.setPackageName(description.getGroupId() + "." + asValidComponent(changeset.getProject()));
                 });
 
         if (request.isLombok()) {
@@ -53,7 +53,7 @@ public class ScribeProjectRequestToDescriptionConverter
         return organization.replaceAll("-", "");
     }
 
-    private Optional<ChangeSet> resolveChangeSet(ScribeProjectRequest request, ChangeSetResolver changeSetRepository) {
+    private Optional<Changeset> resolveChangeset(ScribeProjectRequest request, ChangesetResolver changeSetRepository) {
         try {
             return Optional.ofNullable(request.getChangeset())
                     .map(URI::create)

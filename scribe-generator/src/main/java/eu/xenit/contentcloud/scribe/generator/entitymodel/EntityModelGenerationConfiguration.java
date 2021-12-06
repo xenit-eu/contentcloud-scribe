@@ -13,7 +13,7 @@ public class EntityModelGenerationConfiguration {
 
     @Bean
     EntityModel entityModel() {
-        return new EntityModel(this.description.getChangeSet().getEntities());
+        return new EntityModel(this.description.getChangeset().getEntities());
     }
 
     @Bean

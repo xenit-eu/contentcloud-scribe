@@ -1,10 +1,10 @@
 package eu.xenit.contentcloud.scribe.app;
 
-import eu.xenit.contentcloud.scribe.changeset.ChangeSetResolver;
+import eu.xenit.contentcloud.scribe.changeset.ChangesetResolver;
 import eu.xenit.contentcloud.scribe.drivers.rest.ScribeProjectRequestToDescriptionConverter;
 import eu.xenit.contentcloud.scribe.drivers.rest.ScribeRestController;
-import eu.xenit.contentcloud.scribe.infrastructure.changeset.ChangeSetRepository;
-import eu.xenit.contentcloud.scribe.infrastructure.changeset.ChangeSetRepositoryProperties;
+import eu.xenit.contentcloud.scribe.infrastructure.changeset.ChangesetRepository;
+import eu.xenit.contentcloud.scribe.infrastructure.changeset.ChangesetRepositoryProperties;
 import io.spring.initializr.generator.io.IndentingWriterFactory;
 import io.spring.initializr.generator.io.SimpleIndentStrategy;
 import io.spring.initializr.metadata.InitializrMetadataProvider;
@@ -33,13 +33,13 @@ public class ScribeApplication {
 
     @Bean
     @ConfigurationProperties(prefix = "scribe")
-    ChangeSetRepositoryProperties changeSetRepositoryProperties() {
-        return new ChangeSetRepositoryProperties();
+    ChangesetRepositoryProperties changeSetRepositoryProperties() {
+        return new ChangesetRepositoryProperties();
     }
 
     @Bean
-    ChangeSetResolver changeSetResolver(ChangeSetRepositoryProperties properties, RestTemplateBuilder restTemplateBuilder) {
-        return new ChangeSetRepository(properties, restTemplateBuilder.build());
+    ChangesetResolver changeSetResolver(ChangesetRepositoryProperties properties, RestTemplateBuilder restTemplateBuilder) {
+        return new ChangesetRepository(properties, restTemplateBuilder.build());
     }
 
     @Bean
@@ -50,7 +50,7 @@ public class ScribeApplication {
     @Bean
     ScribeRestController projectGenerationController(
             InitializrMetadataProvider metadataProvider, ApplicationContext applicationContext,
-            ChangeSetResolver changeSetResolver) {
+            ChangesetResolver changeSetResolver) {
         var converter = new ScribeProjectRequestToDescriptionConverter(changeSetResolver);
         var invoker = new ProjectGenerationInvoker<>(applicationContext, converter);
         return new ScribeRestController(metadataProvider, invoker);

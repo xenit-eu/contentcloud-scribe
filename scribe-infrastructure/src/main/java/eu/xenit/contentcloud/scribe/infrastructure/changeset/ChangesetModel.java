@@ -7,7 +7,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class ChangeSetModel {
+public class ChangesetModel {
 
     private List<Entity> entities;
     private List<Operation> operations;
