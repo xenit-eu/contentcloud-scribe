@@ -8,9 +8,11 @@ import io.spring.initializr.metadata.Dependency;
 import io.spring.initializr.metadata.InitializrMetadata;
 import io.spring.initializr.metadata.support.MetadataBuildItemMapper;
 import io.spring.initializr.web.project.DefaultProjectRequestToDescriptionConverter;
+import io.spring.initializr.web.project.InvalidProjectRequestException;
 import io.spring.initializr.web.project.ProjectRequestToDescriptionConverter;
 import lombok.RequiredArgsConstructor;
 
+import java.net.URI;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -27,22 +29,38 @@ public class ScribeProjectRequestToDescriptionConverter
         this.inner.convert(request, description, metadata);
 
         this.resolveChangeSet(request, this.changeSetResolver)
-                .ifPresent(description::setChangeSet);
+                .ifPresent(changeSet -> {
+                    description.setChangeSet(changeSet);
+                    description.setName(changeSet.getProject() + "-api");
+                    // description.setApplicationName();
+                    description.setGroupId(String.format("eu.xenit.contentcloud.userapps.%s",
+                            asValidComponent(changeSet.getOrganization())));
+                    description.setArtifactId(changeSet.getProject() + "-api");
+                    description.setPackageName(description.getGroupId() + "." + asValidComponent(changeSet.getProject()));
+                });
 
         if (request.isLombok()) {
             Dependency lombok = Optional.ofNullable(metadata.getDependencies().get("lombok")).orElseThrow();
             description.addDependency(lombok.getId(), MetadataBuildItemMapper.toDependency(lombok));
-
             description.useLombok(true);
         }
+
 
         return description;
     }
 
-    private Optional<ChangeSet> resolveChangeSet(ScribeProjectRequest request, ChangeSetResolver changeSetRepository) {
-        return Optional.ofNullable(request.getChangeset())
-                .map(changeSetRepository::get);
+    static String asValidComponent(String organization) {
+        return organization.replaceAll("-", "");
     }
 
+    private Optional<ChangeSet> resolveChangeSet(ScribeProjectRequest request, ChangeSetResolver changeSetRepository) {
+        try {
+            return Optional.ofNullable(request.getChangeset())
+                    .map(URI::create)
+                    .map(changeSetRepository::get);
+        } catch (IllegalArgumentException iae) {
+            throw new InvalidProjectRequestException(iae.getMessage());
+        }
+    }
 
 }

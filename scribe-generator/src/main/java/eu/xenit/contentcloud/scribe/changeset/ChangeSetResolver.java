@@ -1,5 +1,7 @@
 package eu.xenit.contentcloud.scribe.changeset;
 
+import java.net.URI;
+
 public interface ChangeSetResolver {
-    ChangeSet get(String changeSet);
+    ChangeSet get(URI changeSet);
 }
