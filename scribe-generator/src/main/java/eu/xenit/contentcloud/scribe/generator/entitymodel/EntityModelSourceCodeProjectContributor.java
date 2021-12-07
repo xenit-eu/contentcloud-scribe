@@ -1,27 +1,19 @@
 package eu.xenit.contentcloud.scribe.generator.entitymodel;
 
-import eu.xenit.contentcloud.bard.AnnotationSpec;
-import eu.xenit.contentcloud.bard.ClassName;
-import eu.xenit.contentcloud.bard.FieldSpec;
-import eu.xenit.contentcloud.bard.JavaFile;
-import eu.xenit.contentcloud.bard.TypeSpec;
 import eu.xenit.contentcloud.scribe.changeset.Entity;
 import eu.xenit.contentcloud.scribe.generator.ScribeProjectDescription;
-import eu.xenit.contentcloud.scribe.generator.repository.RepositoryPackageStructure;
+import eu.xenit.contentcloud.scribe.generator.service.DefaultPackageStructure;
 import eu.xenit.contentcloud.scribe.generator.source.java.JavaSourceGenerator;
 import eu.xenit.contentcloud.scribe.generator.source.SourceGenerator;
 import io.spring.initializr.generator.language.SourceStructure;
-import io.spring.initializr.generator.project.ProjectDescription;
 import io.spring.initializr.generator.project.contributor.ProjectContributor;
 import lombok.RequiredArgsConstructor;
 
-import javax.lang.model.element.Modifier;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.util.Objects;
-import java.util.UUID;
 
 /**
  * {@link ProjectContributor} for the entity model source code
@@ -37,7 +29,7 @@ public class EntityModelSourceCodeProjectContributor implements ProjectContribut
     @Override
     public void contribute(Path projectRoot) throws IOException {
         SourceStructure mainSource = this.description.getBuildSystem().getMainSource(projectRoot, this.description.getLanguage());
-        RepositoryPackageStructure packages = new RepositoryPackageStructure(this.description);
+        DefaultPackageStructure packages = new DefaultPackageStructure(this.description);
 
         SourceGenerator sourceGen = new JavaSourceGenerator(packages, this.description.useLombok());
 
