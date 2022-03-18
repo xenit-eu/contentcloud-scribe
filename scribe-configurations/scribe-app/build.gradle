@@ -18,6 +18,10 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
+bootRun {
+    args = ["--spring.profiles.active=bootRun"]
+}
+
 test {
     useJUnitPlatform()
 }

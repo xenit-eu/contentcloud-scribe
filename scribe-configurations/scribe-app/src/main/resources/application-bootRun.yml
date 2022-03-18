@@ -1,0 +1,4 @@
+scribe:
+  allow-list:
+    - http://localhost:8080/orgs/*/projects/*/changesets/*
+    - https://api.content-cloud.eu/orgs/*/projects/*/changesets/*
