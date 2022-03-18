@@ -1,5 +1,6 @@
-server:
-  port: 8081
+scribe:
+  allow-list:
+    - https://api.content-cloud.eu/orgs/*/projects/*/changesets/*
 
 initializr:
   group-id:
