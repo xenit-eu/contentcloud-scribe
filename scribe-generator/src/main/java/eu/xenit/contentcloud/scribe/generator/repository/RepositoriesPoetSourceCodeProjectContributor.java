@@ -56,13 +56,16 @@ public class RepositoriesPoetSourceCodeProjectContributor implements ProjectCont
     private void contributeJpaRepository(SourceStructure structure, PackageStructure packages, Entity entity) throws IOException {
 
         var typeBuilder = TypeSpec.interfaceBuilder(entity.getClassName() + "Repository");
-        var jpaRepoType = ParameterizedTypeName.get(
+        typeBuilder.addSuperinterface(ParameterizedTypeName.get(
                 ClassName.get("org.springframework.data.jpa.repository", "JpaRepository"),
                 ClassName.get(packages.getModelPackageName(), entity.getClassName()),
                 ClassName.get(UUID.class)
-        );
+        ));
+        typeBuilder.addSuperinterface(ParameterizedTypeName.get(
+                ClassName.get("org.springframework.data.querydsl", "QuerydslPredicateExecutor"),
+                ClassName.get(packages.getModelPackageName(), entity.getClassName())
+        ));
 
-        typeBuilder.addSuperinterface(jpaRepoType);
         typeBuilder.addAnnotation(ClassName.get("org.springframework.data.rest.core.annotation", "RepositoryRestResource"));
 
         // customize repositories here
