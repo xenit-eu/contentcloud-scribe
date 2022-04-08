@@ -18,7 +18,17 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.hateoas.config.HypermediaRestTemplateConfigurer;
+import org.springframework.http.HttpRequest;
+import org.springframework.http.client.ClientHttpRequestExecution;
+import org.springframework.http.client.ClientHttpRequestInterceptor;
+import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.core.AbstractOAuth2Token;
+import org.springframework.web.client.RestTemplate;
+
+import java.io.IOException;
 
 @SpringBootApplication
 @EnableCaching
@@ -43,6 +53,32 @@ public class ScribeApplication {
     @Bean
     RestTemplateCustomizer hypermediaRestTemplateCustomizer(HypermediaRestTemplateConfigurer configurer) {
         return restTemplate -> configurer.registerHypermediaTypes(restTemplate);
+    }
+
+    /**
+     * If the current {@link Authentication} contains {@link AbstractOAuth2Token} credentials, propagate the
+     * request's bearer token with a {@link RestTemplate} {@link AbstractOAuth2Token}
+     *
+     * @return the {@link RestTemplateCustomizer} that propagates the bearer token from the current request
+     *
+     * @see <a href="https://docs.spring.io/spring-security/reference/servlet/oauth2/resource-server/bearer-tokens.html#_resttemplate_support">Spring Security - OAuth 2.0 Bearer Tokens</a>
+     */
+    @Bean
+    RestTemplateCustomizer bearerTokenPropagationRestTemplateCustomizer() {
+        return restTemplate -> restTemplate.getInterceptors().add((request, body, execution) -> {
+
+                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+                if (authentication == null) {
+                    return execution.execute(request, body);
+                }
+
+                if ((authentication.getCredentials() instanceof AbstractOAuth2Token)) {
+                    AbstractOAuth2Token token = (AbstractOAuth2Token) authentication.getCredentials();
+                    request.getHeaders().setBearerAuth(token.getTokenValue());
+                }
+
+                return execution.execute(request, body);
+        });
     }
 
     @Bean

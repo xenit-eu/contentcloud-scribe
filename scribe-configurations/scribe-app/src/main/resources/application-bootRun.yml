@@ -1,4 +1,21 @@
+server:
+  port: 9084
+  error.include-message: always
+  servlet:
+    context-path: /codegen/
+
+management:
+  server:
+    port: 9184
+
 scribe:
   allow-list:
     - http://localhost:8080/orgs/*/projects/*/changesets/*
     - https://api.content-cloud.eu/orgs/*/projects/*/changesets/*
+
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://${DOCKER_HOST_IP:172.17.0.1}:8082/auth/realms/contentcloud-api
