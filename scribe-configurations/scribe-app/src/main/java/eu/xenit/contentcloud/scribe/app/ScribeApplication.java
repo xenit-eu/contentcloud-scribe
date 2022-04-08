@@ -47,38 +47,30 @@ public class ScribeApplication {
 
     @Bean
     ChangesetResolver changeSetResolver(ChangesetRepositoryProperties properties, RestTemplateBuilder restTemplateBuilder) {
-        return new ChangesetRepository(properties, restTemplateBuilder.build());
+        var restTemplate = restTemplateBuilder.build();
+
+        // Propagate the access token from the request, when fetching the changeset
+        // Note that `scribe.allow-list` should ensure we don't leak the access token to a third party
+        restTemplate.getInterceptors().add((request, body, execution) -> {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication == null) {
+                return execution.execute(request, body);
+            }
+
+            if ((authentication.getCredentials() instanceof AbstractOAuth2Token)) {
+                AbstractOAuth2Token token = (AbstractOAuth2Token) authentication.getCredentials();
+                request.getHeaders().setBearerAuth(token.getTokenValue());
+            }
+
+            return execution.execute(request, body);
+        });
+
+        return new ChangesetRepository(properties, restTemplate);
     }
 
     @Bean
     RestTemplateCustomizer hypermediaRestTemplateCustomizer(HypermediaRestTemplateConfigurer configurer) {
         return restTemplate -> configurer.registerHypermediaTypes(restTemplate);
-    }
-
-    /**
-     * If the current {@link Authentication} contains {@link AbstractOAuth2Token} credentials, propagate the
-     * request's bearer token with a {@link RestTemplate} {@link AbstractOAuth2Token}
-     *
-     * @return the {@link RestTemplateCustomizer} that propagates the bearer token from the current request
-     *
-     * @see <a href="https://docs.spring.io/spring-security/reference/servlet/oauth2/resource-server/bearer-tokens.html#_resttemplate_support">Spring Security - OAuth 2.0 Bearer Tokens</a>
-     */
-    @Bean
-    RestTemplateCustomizer bearerTokenPropagationRestTemplateCustomizer() {
-        return restTemplate -> restTemplate.getInterceptors().add((request, body, execution) -> {
-
-                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-                if (authentication == null) {
-                    return execution.execute(request, body);
-                }
-
-                if ((authentication.getCredentials() instanceof AbstractOAuth2Token)) {
-                    AbstractOAuth2Token token = (AbstractOAuth2Token) authentication.getCredentials();
-                    request.getHeaders().setBearerAuth(token.getTokenValue());
-                }
-
-                return execution.execute(request, body);
-        });
     }
 
     @Bean
