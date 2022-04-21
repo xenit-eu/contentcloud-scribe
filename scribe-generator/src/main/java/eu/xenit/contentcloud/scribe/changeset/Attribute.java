@@ -22,8 +22,22 @@ public class Attribute {
     boolean required;
     boolean unique;
 
-    public static Builder withName(String name) {
-        return new Builder(name);
+    public static AttributeTypeBuilder builder(String name) {
+        return new AttributeTypeBuilder(name);
+    }
+
+    @Accessors(fluent = true, chain = true)
+    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class AttributeTypeBuilder {
+        private final String name;
+
+        public Builder string() {
+            return this.type("STRING");
+        }
+
+        private Builder type(String type) {
+            return new Builder(this.name, "STRING");
+        }
     }
 
     @Accessors(fluent = true, chain = true)
@@ -31,6 +45,7 @@ public class Attribute {
     public static class Builder {
 
         private final String name;
+        private final String type;
 
         @Setter
         private boolean indexed;
@@ -41,12 +56,8 @@ public class Attribute {
         @Setter
         private boolean unique;
 
-        public Attribute type(@NonNull String type) {
-            return new Attribute(name, type, this.indexed, this.naturalId, this.required, this.unique);
-        }
-
-        public Attribute typeString() {
-            return this.type("STRING");
+        public Attribute build() {
+            return new Attribute(this.name, this.type, this.indexed, this.naturalId, this.required, this.unique);
         }
 
     }

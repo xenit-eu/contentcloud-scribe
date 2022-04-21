@@ -6,7 +6,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import eu.xenit.contentcloud.scribe.changeset.Attribute;
 import eu.xenit.contentcloud.scribe.changeset.Changeset;
 import eu.xenit.contentcloud.scribe.changeset.Entity;
-import eu.xenit.contentcloud.scribe.changeset.Relation;
 import eu.xenit.contentcloud.scribe.generator.ScribeProjectDescription;
 import io.spring.initializr.generator.buildsystem.gradle.GradleBuildSystem;
 import io.spring.initializr.generator.language.java.JavaLanguage;
@@ -49,11 +48,11 @@ class EntityModelSourceCodeProjectContributorTest {
         description.setChangeset(Changeset.builder()
                 .entities(List.of(
                         Entity.builder().name("Party")
-                                .attribute(Attribute.withName("VAT").naturalId(true).typeString())
-                                .attribute(Attribute.withName("name").typeString())
+                                .attribute(Attribute.builder("VAT").string().naturalId(true).build())
+                                .attribute(Attribute.builder("name").string().build())
                                 .build(),
                         Entity.builder().name("Invoice")
-                                .attribute(Attribute.withName("number").naturalId(true).typeString())
+                                .attribute(Attribute.builder("number").string().naturalId(true).build())
                                 .build()
                 ))
                 .operations(List.of())
