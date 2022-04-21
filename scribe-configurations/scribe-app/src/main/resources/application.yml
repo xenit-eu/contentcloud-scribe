@@ -84,6 +84,6 @@ initializr:
       default: true
       action: /starter.zip
   bootVersions:
-    - name: 2.6.3
-      id: 2.6.3
+    - name: 2.6.6
+      id: 2.6.6
       default: true
