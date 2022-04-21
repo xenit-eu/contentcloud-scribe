@@ -2,6 +2,9 @@ package eu.xenit.contentcloud.scribe.generator.source.jpa;
 
 import eu.xenit.contentcloud.bard.TypeName;
 import eu.xenit.contentcloud.scribe.generator.source.JavaBean;
+import eu.xenit.contentcloud.scribe.generator.source.LombokTypeAnnotations;
+import eu.xenit.contentcloud.scribe.generator.source.LombokTypeAnnotationsConfig;
+import eu.xenit.contentcloud.scribe.generator.source.LombokTypeAnnotationsCustomizer;
 import eu.xenit.contentcloud.scribe.generator.source.SourceFile;
 import java.util.HashMap;
 import java.util.Map;
@@ -70,6 +73,8 @@ class JpaEntityImpl implements JpaEntity {
 
     private final List<JpaEntityField> fields = new ArrayList<>();
 
+    private final LombokTypeAnnotations lombok = new LombokTypeAnnotations();
+
     @Override
     public SourceFile generate() {
         return this.generator.createSourceFile(this);
@@ -91,4 +96,17 @@ class JpaEntityImpl implements JpaEntity {
     public Stream<JpaEntityField> fields() {
         return this.fields.stream();
     }
+
+    @Override
+    public JavaBean lombokTypeAnnotations(Consumer<LombokTypeAnnotationsCustomizer> customizer) {
+        customizer.accept(this.lombok);
+        return this;
+    }
+
+    @Override
+    public LombokTypeAnnotationsConfig lombok() {
+        return this.lombok;
+    }
+
+
 }

@@ -9,21 +9,17 @@ import eu.xenit.contentcloud.bard.TypeSpec;
 import eu.xenit.contentcloud.scribe.generator.source.jpa.JpaEntity;
 import eu.xenit.contentcloud.scribe.generator.source.jpa.JpaEntityField;
 import eu.xenit.contentcloud.scribe.generator.source.jpa.JpaEntityIdField;
-import lombok.NoArgsConstructor;
+import java.beans.Introspector;
+import javax.lang.model.element.Modifier;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.util.StringUtils;
-
-import javax.lang.model.element.Modifier;
-import java.beans.Introspector;
 
 @RequiredArgsConstructor
 class JpaEntityTypeSpec {
 
     @NonNull
     private final JpaEntity jpaEntity;
-
-    private final boolean useLombok;
 
     public TypeSpec build() {
         var type = TypeSpec.classBuilder(jpaEntity.className())
@@ -32,8 +28,11 @@ class JpaEntityTypeSpec {
 
         this.addConstructor(type);
 
-        if (this.useLombok) {
+        if (this.jpaEntity.lombok().useGetter()) {
             type.addAnnotation(ClassName.get("lombok", "Getter"));
+        }
+
+        if (this.jpaEntity.lombok().useSetter()) {
             type.addAnnotation(ClassName.get("lombok", "Setter"));
         }
 
@@ -44,7 +43,7 @@ class JpaEntityTypeSpec {
     }
 
     private void addConstructor(TypeSpec.Builder type) {
-        if (this.useLombok) {
+        if (this.jpaEntity.lombok().useNoArgsConstructor()) {
             type.addAnnotation(ClassName.get("lombok", "NoArgsConstructor"));
         } else {
             type.addMethod(MethodSpec.constructorBuilder().addModifiers(Modifier.PUBLIC).build());
@@ -64,8 +63,8 @@ class JpaEntityTypeSpec {
     }
 
     private void addSetter(JpaEntityField field, TypeSpec.Builder type, FieldSpec.Builder fieldSpec) {
-        if (this.useLombok) {
-            // is there a @Getter on class-level ?
+        if (this.jpaEntity.lombok().useSetter()) {
+            // there is a @Setter class annotation
         } else {
             MethodSpec setter = MethodSpec.methodBuilder("set" + StringUtils.capitalize(field.name()))
                     .addModifiers(Modifier.PUBLIC)
@@ -80,8 +79,8 @@ class JpaEntityTypeSpec {
     private void addGetter(JpaEntityField field, TypeSpec.Builder type, FieldSpec.Builder fieldSpec) {
         // using lombok ?
         boolean useLombok = false;
-        if (this.useLombok) {
-            // is there a @Getter on class-level ?
+        if (this.jpaEntity.lombok().useGetter()) {
+            // there is a @Getter class annotation
         } else {
             MethodSpec getter = MethodSpec.methodBuilder("get" + StringUtils.capitalize(field.name()))
                     .addModifiers(Modifier.PUBLIC)

@@ -5,6 +5,7 @@ import eu.xenit.contentcloud.bard.TypeSpec;
 import eu.xenit.contentcloud.scribe.generator.service.PackageStructure;
 import eu.xenit.contentcloud.scribe.generator.source.jpa.JpaEntity;
 import eu.xenit.contentcloud.scribe.generator.source.SourceGenerator;
+import io.spring.initializr.generator.language.java.JavaLanguage;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
@@ -12,14 +13,15 @@ import lombok.RequiredArgsConstructor;
 public class JavaSourceGenerator implements SourceGenerator {
 
     @NonNull
-    private final PackageStructure packageStructure;
+    private final JavaLanguage language;
 
-    private final boolean useLombok;
+    @NonNull
+    private final PackageStructure packageStructure;
 
     @Override
     public JpaEntity createJpaEntity(String name) {
         return JpaEntity.withClassName(name)
-                .withGenerator(jpaEntity -> generateJavaSource(new JpaEntityTypeSpec(jpaEntity, useLombok).build())
+                .withGenerator(jpaEntity -> generateJavaSource(new JpaEntityTypeSpec(jpaEntity).build())
         );
     }
 

@@ -3,6 +3,7 @@ package eu.xenit.contentcloud.scribe.generator.source;
 import eu.xenit.contentcloud.bard.TypeName;
 
 import java.lang.reflect.Type;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 public interface JavaBean extends TypeBuilder {
@@ -14,5 +15,9 @@ public interface JavaBean extends TypeBuilder {
     }
 
     Stream<? extends JavaBeanProperty> fields();
+
+    JavaBean lombokTypeAnnotations(Consumer<LombokTypeAnnotationsCustomizer> lombok);
+
+    LombokTypeAnnotationsConfig lombok();
 }
 
