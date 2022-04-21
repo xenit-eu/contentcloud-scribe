@@ -39,12 +39,7 @@ public class ScribeProjectRequestToDescriptionConverter
                     description.setPackageName(description.getGroupId() + "." + asValidComponent(changeset.getProject()));
                 });
 
-        if (request.isLombok()) {
-            Dependency lombok = Optional.ofNullable(metadata.getDependencies().get("lombok")).orElseThrow();
-            description.addDependency(lombok.getId(), MetadataBuildItemMapper.toDependency(lombok));
-            description.useLombok(true);
-        }
-
+        description.useLombok(request.isLombok());
 
         return description;
     }
