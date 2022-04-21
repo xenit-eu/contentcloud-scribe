@@ -11,8 +11,8 @@ public interface JavaBeanProperty {
     String name();
     JavaBeanProperty name(String name);
 
-    Type type();
-    JavaBeanProperty type(Type type);
+    TypeName type();
+    JavaBeanProperty type(TypeName type);
 
     JavaBeanProperty addAnnotation(Type annotationType);
     Collection<Type> annotations();

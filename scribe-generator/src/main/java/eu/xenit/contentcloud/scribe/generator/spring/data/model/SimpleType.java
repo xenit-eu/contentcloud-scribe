@@ -23,5 +23,4 @@ public class SimpleType implements Type {
     public String getTypeName() {
         return packageName + "." + typeName;
     }
-
 }

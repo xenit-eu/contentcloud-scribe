@@ -47,8 +47,8 @@ public class SpringDataProjectGenerationConfiguration {
 
     @Bean
     public SpringDataEntityModelSourceCodeProjectContributor entityModelSourceCodeProjectContributor(EntityModel entityModel,
-            SpringDataSourceCodeGenerator sourceGenerator) {
-        return new SpringDataEntityModelSourceCodeProjectContributor(this.description, entityModel, sourceGenerator);
+            SpringDataSourceCodeGenerator sourceGenerator, SpringDataPackageStructure packageStructure) {
+        return new SpringDataEntityModelSourceCodeProjectContributor(this.description, entityModel, sourceGenerator, packageStructure);
     }
 
     @Bean

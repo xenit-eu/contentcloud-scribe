@@ -2,10 +2,14 @@ package eu.xenit.contentcloud.scribe.generator.spring.data.model;
 
 import eu.xenit.contentcloud.scribe.changeset.Entity;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
+import lombok.NonNull;
 
 public class EntityModel {
 
@@ -17,5 +21,11 @@ public class EntityModel {
 
     public Collection<Entity> entities() {
         return Collections.unmodifiableCollection(this.entities);
+    }
+
+    public Optional<Entity> lookupEntity(@NonNull String type) {
+        return this.entities.stream()
+                .filter(entity -> type.equalsIgnoreCase(entity.getName()))
+                .findFirst();
     }
 }

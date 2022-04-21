@@ -1,9 +1,12 @@
 package eu.xenit.contentcloud.scribe.generator.spring.data;
 
+import eu.xenit.contentcloud.bard.ClassName;
+import eu.xenit.contentcloud.bard.TypeName;
 import eu.xenit.contentcloud.scribe.changeset.Entity;
 import eu.xenit.contentcloud.scribe.generator.ScribeProjectDescription;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.EntityModel;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.SimpleType;
+import eu.xenit.contentcloud.scribe.generator.spring.data.model.SpringDataPackageStructure;
 import eu.xenit.contentcloud.scribe.generator.spring.data.source.SpringDataSourceCodeGenerator;
 import eu.xenit.contentcloud.scribe.generator.source.SourceFile;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.JpaEntity;
@@ -16,6 +19,7 @@ import java.nio.file.Path;
 import java.time.Instant;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * {@link ProjectContributor} for the entity model source code
@@ -28,6 +32,8 @@ public class SpringDataEntityModelSourceCodeProjectContributor implements Projec
     private final EntityModel entityModel;
 
     private final SpringDataSourceCodeGenerator sourceGenerator;
+
+    private final SpringDataPackageStructure packageStructure;
 
     @Override
     public void contribute(Path projectRoot) throws IOException {
@@ -66,21 +72,45 @@ public class SpringDataEntityModelSourceCodeProjectContributor implements Projec
                     property.addAnnotation(mimetype);
                 });
             } else {
-                Type resolvedAttributeType = this.resolveAttributeType(attribute.getType());
+                TypeName resolvedAttributeType = this.resolveAttributeType(attribute.getType());
                 jpaEntity.addProperty(resolvedAttributeType, attribute.getName());
             }
+        });
+
+        entity.getRelations().forEach(relation -> {
+            var linkedEntity = entityModel.lookupEntity(relation.getTarget()).orElseThrow();
+            var targetClass = ClassName.get(this.packageStructure.getModelPackageName(), linkedEntity.getClassName());
+
+            if (relation.isManySourcePerTarget()) {
+                if (relation.isManyTargetPerSource()) {
+                    // many-to-many
+
+                } else {
+                    // many-to-one
+                }
+            } else {
+                if (relation.isManyTargetPerSource()) {
+                    // one-to-many
+                } else {
+                    // one-to-one
+                    jpaEntity.addOneToOneRelation(relation.getName(), targetClass, oneToOne -> {
+                        // edit @OneToOne attributes here
+                    });
+                }
+            }
+
         });
 
         return this.sourceGenerator.createSourceFile(jpaEntity);
     }
 
-    private Type resolveAttributeType(String type) {
+    private TypeName resolveAttributeType(String type) {
         if (Objects.equals(type, "String") || Objects.equals(type, "STRING")) {
-            return String.class;
+            return TypeName.get(String.class);
         }
 
         if (Objects.equals(type, "DATETIME")) {
-            return Instant.class;
+            return ClassName.get(Instant.class);
         }
 
         throw new IllegalArgumentException("cannot resolve data type: " + type);

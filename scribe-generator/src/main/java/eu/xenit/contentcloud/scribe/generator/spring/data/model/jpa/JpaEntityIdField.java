@@ -1,5 +1,6 @@
 package eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa;
 
+import eu.xenit.contentcloud.bard.ClassName;
 import eu.xenit.contentcloud.bard.TypeName;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.JavaBeanProperty;
 import java.lang.reflect.Type;
@@ -23,7 +24,7 @@ public interface JpaEntityIdField extends JpaEntityProperty {
     }
 
     JpaEntityIdField name(String name);
-    JpaEntityIdField type(Type type);
+    JpaEntityIdField type(TypeName type);
 
     GenerationStrategy generationStrategy();
     JpaEntityIdField generationStrategy(GenerationStrategy strategy);
@@ -38,7 +39,7 @@ class JpaEntityIdFieldImpl implements JpaEntityIdField {
 
     @NonNull
     @Getter @Setter
-    private Type type = UUID.class;
+    private TypeName type = ClassName.get(UUID.class);
 
     @NonNull
     @Getter @Setter
