@@ -11,6 +11,7 @@ dependencies {
     implementation 'eu.xenit.contentcloud.bard:bard:0.1.0-SNAPSHOT'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'io.spring.initializr:initializr-generator-test'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-engine'
     testImplementation 'org.assertj:assertj-core'

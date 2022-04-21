@@ -1,17 +1,26 @@
 package eu.xenit.contentcloud.scribe.changeset;
 
-import lombok.Data;
-import org.springframework.util.StringUtils;
-
 import java.util.List;
 import java.util.Locale;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
+import lombok.Singular;
+import org.springframework.util.StringUtils;
 
 @Data
+@Builder
+@AllArgsConstructor
+@RequiredArgsConstructor
 public class Entity {
 
     private String name;
 
+    @Singular
     private List<Attribute> attributes;
+
+    @Singular
     private List<Relation> relations;
 
     public String getClassName() {
@@ -21,10 +30,6 @@ public class Entity {
         }
 
         return candidate;
-    }
-
-    public String getTableName() {
-        return camelToSnake(this.getName());
     }
 
     private static boolean hasInvalidChar(String text) {

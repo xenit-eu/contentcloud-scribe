@@ -45,12 +45,12 @@ public class ChangesetRepository implements ChangesetResolver {
                 .map(HttpEntity::getBody)
                 .orElseThrow();
 
-        return new Changeset(
-                project.getName(),
-                project.getOrganization(),
-                changeset.getContent().getEntities(),
-                changeset.getContent().getOperations()
-        );
+        return Changeset.builder()
+                .project(project.getName())
+                .organization(project.getOrganization())
+                .entities(changeset.getContent().getEntities())
+                .operations(changeset.getContent().getOperations())
+                .build();
     }
 
     private void checkAllowedPaths(URI changeset) {

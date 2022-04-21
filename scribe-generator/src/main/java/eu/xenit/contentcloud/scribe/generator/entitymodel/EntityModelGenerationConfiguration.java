@@ -2,6 +2,7 @@ package eu.xenit.contentcloud.scribe.generator.entitymodel;
 
 import eu.xenit.contentcloud.scribe.generator.ScribeProjectDescription;
 import io.spring.initializr.generator.project.ProjectGenerationConfiguration;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 
@@ -13,7 +14,12 @@ public class EntityModelGenerationConfiguration {
 
     @Bean
     EntityModel entityModel() {
-        return new EntityModel(this.description.getChangeset().getEntities());
+        var changeSet = this.description.getChangeset();
+        if (changeSet == null) {
+            return new EntityModel(List.of());
+        }
+
+        return new EntityModel(changeSet.getEntities());
     }
 
     @Bean

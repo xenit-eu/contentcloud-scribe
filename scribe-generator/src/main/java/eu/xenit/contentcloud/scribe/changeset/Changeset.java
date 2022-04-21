@@ -1,17 +1,22 @@
 package eu.xenit.contentcloud.scribe.changeset;
 
+import java.util.List;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NonNull;
 import lombok.Value;
 
-import java.util.List;
-
 @Value
+@Builder
 @AllArgsConstructor
 public class Changeset {
 
     String project;
     String organization;
 
-    private List<Entity> entities;
-    private List<Operation> operations;
+    @NonNull
+    List<Entity> entities;
+
+    @NonNull
+    List<Operation> operations;
 }
