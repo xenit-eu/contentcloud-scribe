@@ -1,4 +1,4 @@
-package eu.xenit.contentcloud.scribe.generator.source;
+package eu.xenit.contentcloud.scribe.generator.source.model;
 
 import eu.xenit.contentcloud.bard.TypeName;
 

@@ -1,7 +1,7 @@
-package eu.xenit.contentcloud.scribe.generator.source.java;
+package eu.xenit.contentcloud.scribe.generator.source.code.java;
 
 import eu.xenit.contentcloud.bard.JavaFile;
-import eu.xenit.contentcloud.scribe.generator.source.SourceFile;
+import eu.xenit.contentcloud.scribe.generator.source.model.SourceFile;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;

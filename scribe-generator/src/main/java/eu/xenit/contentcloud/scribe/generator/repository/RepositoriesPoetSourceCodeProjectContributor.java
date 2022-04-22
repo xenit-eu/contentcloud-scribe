@@ -16,14 +16,11 @@
 
 package eu.xenit.contentcloud.scribe.generator.repository;
 
-import eu.xenit.contentcloud.bard.ClassName;
-import eu.xenit.contentcloud.bard.JavaFile;
-import eu.xenit.contentcloud.bard.ParameterizedTypeName;
-import eu.xenit.contentcloud.bard.TypeSpec;
 import eu.xenit.contentcloud.scribe.changeset.Entity;
-import eu.xenit.contentcloud.scribe.generator.service.DefaultPackageStructure;
 import eu.xenit.contentcloud.scribe.generator.service.PackageStructure;
 import eu.xenit.contentcloud.scribe.generator.entitymodel.EntityModel;
+import eu.xenit.contentcloud.scribe.generator.source.SourceGenerator;
+import eu.xenit.contentcloud.scribe.generator.source.model.SourceFile;
 import io.spring.initializr.generator.language.SourceStructure;
 import io.spring.initializr.generator.project.ProjectDescription;
 import io.spring.initializr.generator.project.contributor.ProjectContributor;
@@ -31,7 +28,6 @@ import lombok.RequiredArgsConstructor;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.UUID;
 
 /**
  * {@link ProjectContributor} for the entity model source code
@@ -43,37 +39,21 @@ public class RepositoriesPoetSourceCodeProjectContributor implements ProjectCont
 
     private final EntityModel entityModel;
 
+    private final SourceGenerator sourceGenerator;
+
     @Override
     public void contribute(Path projectRoot) throws IOException {
         SourceStructure mainSource = this.description.getBuildSystem().getMainSource(projectRoot, this.description.getLanguage());
-        PackageStructure packages = new DefaultPackageStructure(this.description);
 
         for (Entity entity : this.entityModel.entities()) {
-            contributeJpaRepository(mainSource, packages, entity);
+            var sourceFile = contributeJpaRepository(entity);
+            sourceFile.writeTo(mainSource.getSourcesDirectory());
         }
     }
 
-    private void contributeJpaRepository(SourceStructure structure, PackageStructure packages, Entity entity) throws IOException {
+    private SourceFile contributeJpaRepository(Entity entity) {
 
-        var typeBuilder = TypeSpec.interfaceBuilder(entity.getClassName() + "Repository");
-        typeBuilder.addSuperinterface(ParameterizedTypeName.get(
-                ClassName.get("org.springframework.data.jpa.repository", "JpaRepository"),
-                ClassName.get(packages.getModelPackageName(), entity.getClassName()),
-                ClassName.get(UUID.class)
-        ));
-        typeBuilder.addSuperinterface(ParameterizedTypeName.get(
-                ClassName.get("org.springframework.data.querydsl", "QuerydslPredicateExecutor"),
-                ClassName.get(packages.getModelPackageName(), entity.getClassName())
-        ));
-
-        typeBuilder.addAnnotation(ClassName.get("org.springframework.data.rest.core.annotation", "RepositoryRestResource"));
-
-        // customize repositories here
-
-        var javaFile = JavaFile.builder(packages.getRepositoriesPackageName(), typeBuilder.build())
-                .indent("\t")
-                .build();
-
-        javaFile.writeTo(structure.getSourcesDirectory());
+        var repo = this.sourceGenerator.createJpaRepository(entity.getClassName());
+        return repo.generate();
     }
 }

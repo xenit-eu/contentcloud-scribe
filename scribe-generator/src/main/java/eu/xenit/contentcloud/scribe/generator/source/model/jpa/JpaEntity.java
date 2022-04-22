@@ -1,13 +1,15 @@
-package eu.xenit.contentcloud.scribe.generator.source.jpa;
+package eu.xenit.contentcloud.scribe.generator.source.model.jpa;
 
 import eu.xenit.contentcloud.bard.TypeName;
-import eu.xenit.contentcloud.scribe.generator.source.JavaBean;
-import eu.xenit.contentcloud.scribe.generator.source.LombokTypeAnnotations;
-import eu.xenit.contentcloud.scribe.generator.source.LombokTypeAnnotationsConfig;
-import eu.xenit.contentcloud.scribe.generator.source.LombokTypeAnnotationsCustomizer;
-import eu.xenit.contentcloud.scribe.generator.source.SourceFile;
-import java.util.HashMap;
-import java.util.Map;
+import eu.xenit.contentcloud.scribe.generator.source.model.JavaBean;
+import eu.xenit.contentcloud.scribe.generator.source.model.lombok.LombokTypeAnnotations;
+import eu.xenit.contentcloud.scribe.generator.source.model.lombok.LombokTypeAnnotationsConfig;
+import eu.xenit.contentcloud.scribe.generator.source.model.lombok.LombokTypeAnnotationsCustomizer;
+import eu.xenit.contentcloud.scribe.generator.source.model.SourceFile;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
@@ -15,11 +17,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.lang.Nullable;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Consumer;
-import java.util.stream.Stream;
 
 public interface JpaEntity extends JavaBean {
     
@@ -44,7 +41,7 @@ public interface JpaEntity extends JavaBean {
         @NonNull
         private String className;
 
-        public JpaEntity withGenerator(JpaEntitySourceCodeGenerator generator) {
+        public JpaEntity withGenerator(TypeModelSourceCodeGenerator<JpaEntity> generator) {
             return new JpaEntityImpl(generator, className);
         }
     }
@@ -55,7 +52,7 @@ public interface JpaEntity extends JavaBean {
 @RequiredArgsConstructor
 class JpaEntityImpl implements JpaEntity {
 
-    private final JpaEntitySourceCodeGenerator generator;
+    private final TypeModelSourceCodeGenerator<JpaEntity> generator;
 
     @Getter
     private final String className;

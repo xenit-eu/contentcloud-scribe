@@ -1,12 +1,12 @@
-package eu.xenit.contentcloud.scribe.generator.entitymodel;
+package eu.xenit.contentcloud.scribe.generator.repository;
 
-import static io.spring.initializr.metadata.Dependency.SCOPE_ANNOTATION_PROCESSOR;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import eu.xenit.contentcloud.scribe.changeset.Attribute;
 import eu.xenit.contentcloud.scribe.changeset.Changeset;
 import eu.xenit.contentcloud.scribe.changeset.Entity;
 import eu.xenit.contentcloud.scribe.generator.ScribeProjectDescription;
+import eu.xenit.contentcloud.scribe.generator.entitymodel.EntityModelGenerationConfiguration;
 import eu.xenit.contentcloud.scribe.generator.source.SourceCodeProjectGenerationConfiguration;
 import io.spring.initializr.generator.buildsystem.gradle.GradleBuildSystem;
 import io.spring.initializr.generator.language.java.JavaLanguage;
@@ -14,15 +14,13 @@ import io.spring.initializr.generator.spring.code.java.JavaProjectGenerationConf
 import io.spring.initializr.generator.test.project.ProjectAssetTester;
 import io.spring.initializr.generator.test.project.ProjectStructure;
 import io.spring.initializr.generator.version.Version;
-import io.spring.initializr.metadata.Dependency;
-import io.spring.initializr.metadata.support.MetadataBuildItemMapper;
 import java.nio.file.Path;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-class EntityModelSourceCodeProjectContributorTest {
+class RepositoriesPoetSourceCodeProjectContributorTest {
 
     private ProjectAssetTester projectTester;
 
@@ -32,6 +30,7 @@ class EntityModelSourceCodeProjectContributorTest {
                 .withConfiguration(
                         SourceCodeProjectGenerationConfiguration.class,
                         EntityModelGenerationConfiguration.class,
+                        RepositoryProjectGenerationConfiguration.class,
                         JavaProjectGenerationConfiguration.class)
                 .withDirectory(directory)
                 .withDescriptionCustomizer((description) -> {
@@ -43,10 +42,10 @@ class EntityModelSourceCodeProjectContributorTest {
                 });
     }
 
-
     @Test
-    void entityClassIsContributed() {
-        var description = createProjectDescription();
+    void repositoryClassIsContributed() {
+
+        var description = new ScribeProjectDescription();
         description.setChangeset(Changeset.builder()
                 .entities(List.of(
                         Entity.builder().name("Party")
@@ -61,42 +60,21 @@ class EntityModelSourceCodeProjectContributorTest {
                 .build());
         ProjectStructure project = this.projectTester.generate(description);
 
-        String path = "src/main/java/com/example/demo/model/Invoice.java";
+        String path = "src/main/java/com/example/demo/repository/InvoiceRepository.java";
         assertThat(project).containsFiles(path);
         assertThat(project).textFile(path).containsExactly(
-                "package com.example.demo.model;",
+                "package com.example.demo.repository;",
                 "",
-                "import java.lang.String;",
+                "import com.example.demo.model.Invoice;",
                 "import java.util.UUID;",
-                "import javax.persistence.Entity;",
-                "import javax.persistence.GeneratedValue;",
-                "import javax.persistence.GenerationType;",
-                "import javax.persistence.Id;",
-                "import lombok.Getter;",
-                "import lombok.NoArgsConstructor;",
-                "import lombok.Setter;",
+                "import org.springframework.data.jpa.repository.JpaRepository;",
+                "import org.springframework.data.querydsl.QuerydslPredicateExecutor;",
+                "import org.springframework.data.rest.core.annotation.RepositoryRestResource;",
                 "",
-                "@Entity",
-                "@NoArgsConstructor",
-                "@Getter",
-                "@Setter",
-                "public class Invoice {",
-                "\t@Id",
-                "\t@GeneratedValue(strategy = GenerationType.AUTO)",
-                "\tprivate UUID id;",
-                "",
-                "\tprivate String number;",
+                "@RepositoryRestResource",
+                "interface InvoiceRepository extends JpaRepository<Invoice, UUID>, QuerydslPredicateExecutor<Invoice> {",
                 "}"
         );
     }
 
-    private static ScribeProjectDescription createProjectDescription() {
-        var description = new ScribeProjectDescription();
-
-        var lombok = Dependency.withId("lombok", "org.projectlombok", "lombok", null, SCOPE_ANNOTATION_PROCESSOR);
-        description.addDependency(lombok.getId(), MetadataBuildItemMapper.toDependency(lombok));
-        description.useLombok(true);
-
-        return description;
-    }
 }

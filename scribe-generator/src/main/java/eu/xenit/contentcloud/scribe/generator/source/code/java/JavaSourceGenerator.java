@@ -1,10 +1,9 @@
-package eu.xenit.contentcloud.scribe.generator.source.java;
+package eu.xenit.contentcloud.scribe.generator.source.code.java;
 
-import eu.xenit.contentcloud.bard.JavaFile;
-import eu.xenit.contentcloud.bard.TypeSpec;
 import eu.xenit.contentcloud.scribe.generator.service.PackageStructure;
-import eu.xenit.contentcloud.scribe.generator.source.jpa.JpaEntity;
 import eu.xenit.contentcloud.scribe.generator.source.SourceGenerator;
+import eu.xenit.contentcloud.scribe.generator.source.model.jpa.JpaEntity;
+import eu.xenit.contentcloud.scribe.generator.source.model.jpa.JpaRepository;
 import io.spring.initializr.generator.language.java.JavaLanguage;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -21,17 +20,14 @@ public class JavaSourceGenerator implements SourceGenerator {
     @Override
     public JpaEntity createJpaEntity(String name) {
         return JpaEntity.withClassName(name)
-                .withGenerator(jpaEntity -> generateJavaSource(new JpaEntityTypeSpec(jpaEntity).build())
-        );
+                .withGenerator(new JpaEntityJavaSourceCodeGenerator(language, packageStructure));
+
     }
 
-    private JavaSourceFile generateJavaSource(TypeSpec typeSpec) {
-        var java = JavaFile.builder(packageStructure.getModelPackageName(), typeSpec)
-                .indent("\t")
-                .build();
-
-        return new JavaSourceFile(java);
+    @Override
+    public JpaRepository createJpaRepository(String entityClassName) {
+        return JpaRepository.forEntity(entityClassName)
+                .withGenerator(new JpaRepositoryJavaSourceCodeGenerator(packageStructure));
     }
-
 
 }
