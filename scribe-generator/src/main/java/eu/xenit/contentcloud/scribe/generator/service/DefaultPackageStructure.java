@@ -1,18 +1,19 @@
 package eu.xenit.contentcloud.scribe.generator.service;
 
-import io.spring.initializr.generator.project.ProjectDescription;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class DefaultPackageStructure implements PackageStructure {
 
-    private final ProjectDescription description;
+    @NonNull
+    private final String packageName;
 
     public String getRepositoriesPackageName() {
-        return this.description.getPackageName() + ".repository";
+        return this.packageName + ".repository";
     }
 
     public String getModelPackageName() {
-        return this.description.getPackageName() + ".model";
+        return this.packageName + ".model";
     }
 }

@@ -1,4 +1,4 @@
-package eu.xenit.contentcloud.scribe.generator.source.jpa;
+package eu.xenit.contentcloud.scribe.generator.source.model.jpa;
 
 import eu.xenit.contentcloud.bard.TypeName;
 import lombok.Getter;

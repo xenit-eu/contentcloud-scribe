@@ -1,7 +1,7 @@
-package eu.xenit.contentcloud.scribe.generator.source.jpa;
+package eu.xenit.contentcloud.scribe.generator.source.model.jpa;
 
 import eu.xenit.contentcloud.bard.TypeName;
-import eu.xenit.contentcloud.scribe.generator.source.JavaBeanProperty;
+import eu.xenit.contentcloud.scribe.generator.source.model.JavaBeanProperty;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
