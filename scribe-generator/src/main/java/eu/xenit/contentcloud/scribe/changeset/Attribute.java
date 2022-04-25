@@ -1,5 +1,6 @@
 package eu.xenit.contentcloud.scribe.changeset;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,6 +22,22 @@ public class Attribute {
     boolean naturalId;
     boolean required;
     boolean unique;
+
+    public Attribute(
+            @JsonProperty("name") @NonNull String name,
+            @JsonProperty("type") @NonNull String type,
+            @JsonProperty("indexed") boolean indexed,
+            @JsonProperty("naturalId") boolean naturalId,
+            @JsonProperty("required") boolean required,
+            @JsonProperty("unique") boolean unique
+    ) {
+        this.name = name;
+        this.type = type;
+        this.indexed = indexed;
+        this.naturalId = naturalId;
+        this.required = required;
+        this.unique = unique;
+    }
 
     public static AttributeTypeBuilder builder(String name) {
         return new AttributeTypeBuilder(name);
