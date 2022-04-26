@@ -1,0 +1,139 @@
+{
+  "operations":
+  [
+    {
+      "type": "add-entity",
+      "description": "Add entity case",
+      "properties":
+      {
+        "entity-name": "case"
+      }
+    },
+    {
+      "type": "add-attribute",
+      "description": "Add attribute name to entity case",
+      "properties":
+      {
+        "required": true,
+        "type": "STRING",
+        "naturalId": false,
+        "indexed": true,
+        "attribute-name": "name",
+        "entity-name": "case",
+        "unique": true
+      }
+    },
+    {
+      "type": "add-attribute",
+      "description": "Add attribute description to entity case",
+      "properties":
+      {
+        "required": false,
+        "type": "STRING",
+        "naturalId": false,
+        "indexed": true,
+        "attribute-name": "description",
+        "entity-name": "case",
+        "unique": false
+      }
+    },
+    {
+      "type": "add-entity",
+      "description": "Add entity person",
+      "properties":
+      {
+        "entity-name": "person"
+      }
+    },
+    {
+      "type": "add-attribute",
+      "description": "Add attribute name to entity person",
+      "properties":
+      {
+        "required": false,
+        "type": "STRING",
+        "naturalId": false,
+        "indexed": false,
+        "attribute-name": "name",
+        "entity-name": "person",
+        "unique": false
+      }
+    },
+    {
+      "type": "add-attribute",
+      "description": "Add attribute notes to entity person",
+      "properties":
+      {
+        "required": false,
+        "type": "STRING",
+        "naturalId": false,
+        "indexed": false,
+        "attribute-name": "notes",
+        "entity-name": "person",
+        "unique": false
+      }
+    }
+  ],
+  "entities":
+  [
+    {
+      "name": "case",
+      "attributes":
+      [
+        {
+          "name": "name",
+          "type": "STRING",
+          "required": true,
+          "unique": true,
+          "indexed": true,
+          "naturalId": false
+        },
+        {
+          "name": "description",
+          "type": "STRING",
+          "required": false,
+          "unique": false,
+          "indexed": true,
+          "naturalId": false
+        }
+      ],
+      "relations":
+      []
+    },
+    {
+      "name": "person",
+      "attributes":
+      [
+        {
+          "name": "name",
+          "type": "STRING",
+          "required": false,
+          "unique": false,
+          "indexed": false,
+          "naturalId": false
+        },
+        {
+          "name": "notes",
+          "type": "STRING",
+          "required": false,
+          "unique": false,
+          "indexed": false,
+          "naturalId": false
+        }
+      ],
+      "relations":
+      []
+    }
+  ],
+  "_links":
+  {
+    "self":
+    {
+      "href": "http://172.17.0.1:8080/orgs/holmes/projects/dcm/changesets/a470d440-3519-4802-8576-650237c9151f"
+    },
+    "project":
+    {
+      "href": "http://172.17.0.1:8080/projects/holmes/dcm"
+    }
+  }
+}
