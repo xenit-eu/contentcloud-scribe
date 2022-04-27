@@ -1,5 +1,5 @@
 io.spring.initializr.generator.project.ProjectGenerationConfiguration=\
 eu.xenit.contentcloud.scribe.generator.service.ApiServiceGenerationConfiguration,\
 eu.xenit.contentcloud.scribe.generator.build.ContentCloudBuildProjectGenerationConfiguration,\
-eu.xenit.contentcloud.scribe.generator.data.SpringDataProjectGenerationConfiguration,\
+eu.xenit.contentcloud.scribe.generator.spring.data.SpringDataProjectGenerationConfiguration,\
 eu.xenit.contentcloud.scribe.generator.properties.ApplicationPropertiesProjectGenerationConfiguration
