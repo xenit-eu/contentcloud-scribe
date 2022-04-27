@@ -9,7 +9,6 @@ import eu.xenit.contentcloud.bard.TypeName;
 import eu.xenit.contentcloud.bard.TypeSpec;
 import eu.xenit.contentcloud.bard.TypeSpec.Builder;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.PackageStructure;
-import eu.xenit.contentcloud.scribe.generator.spring.data.source.TypeModelSourceCodeGenerator;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.JpaEntity;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.JpaEntityField;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.JpaEntityIdField;
@@ -22,8 +21,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.util.StringUtils;
 
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
-class JpaEntityJavaSourceCodeGenerator implements TypeModelSourceCodeGenerator<JpaEntity>,
-        JpaEntitySourceCodeGenerator {
+class JpaEntityJavaSourceCodeGenerator implements JpaEntitySourceCodeGenerator {
 
     @NonNull
     protected final PackageStructure packageStructure;

@@ -6,7 +6,6 @@ import eu.xenit.contentcloud.bard.ParameterizedTypeName;
 import eu.xenit.contentcloud.bard.TypeSpec;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.PackageStructure;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.JpaRepository;
-import eu.xenit.contentcloud.scribe.generator.spring.data.source.TypeModelSourceCodeGenerator;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.JpaRepositorySourceCodeGenerator;
 import java.util.UUID;
 import lombok.AccessLevel;
@@ -14,8 +13,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
-class JpaRepositoryJavaSourceCodeGenerator implements TypeModelSourceCodeGenerator<JpaRepository>,
-        JpaRepositorySourceCodeGenerator {
+class JpaRepositoryJavaSourceCodeGenerator implements JpaRepositorySourceCodeGenerator {
 
     @NonNull
     private final PackageStructure packages;
