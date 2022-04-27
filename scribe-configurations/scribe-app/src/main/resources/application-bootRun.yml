@@ -10,7 +10,7 @@ management:
 
 scribe:
   allow-list:
-    - http://localhost:8080/orgs/*/projects/*/changesets/*
+    - http://172.17.0.1:8080/orgs/*/projects/*/changesets/*
     - https://api.content-cloud.eu/orgs/*/projects/*/changesets/*
 
 spring:
