@@ -19,7 +19,12 @@ public class SpringContentProjectionGenerationConfiguration {
 
     @Bean
     ApplicationPropertiesCustomizer springContentDefaultStorage() {
-        return properties -> properties.put("spring.content.storage.type.default", "fs");
+        return properties -> {
+            properties.put("spring.content.storage.type.default", "fs");
+
+            properties.put("spring.servlet.multipart.max-file-size", "-1");
+            properties.put("spring.servlet.multipart.max-request-size", "-1");
+        };
     }
 
     @Bean
