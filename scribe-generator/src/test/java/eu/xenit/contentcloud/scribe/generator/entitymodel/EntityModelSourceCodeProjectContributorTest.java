@@ -8,6 +8,7 @@ import eu.xenit.contentcloud.scribe.changeset.Changeset;
 import eu.xenit.contentcloud.scribe.changeset.Entity;
 import eu.xenit.contentcloud.scribe.changeset.Relation;
 import eu.xenit.contentcloud.scribe.generator.ScribeProjectDescription;
+import eu.xenit.contentcloud.scribe.generator.spring.data.SpringDataProjectGenerationConfiguration;
 import io.spring.initializr.generator.buildsystem.gradle.GradleBuildSystem;
 import io.spring.initializr.generator.language.java.JavaLanguage;
 import io.spring.initializr.generator.spring.code.java.JavaProjectGenerationConfiguration;
@@ -30,7 +31,7 @@ class EntityModelSourceCodeProjectContributorTest {
     void setup(@TempDir Path directory) {
         this.projectTester = new ProjectAssetTester().withIndentingWriterFactory()
                 .withConfiguration(
-                        EntityModelGenerationConfiguration.class,
+                        SpringDataProjectGenerationConfiguration.class,
                         JavaProjectGenerationConfiguration.class)
                 .withDirectory(directory)
                 .withDescriptionCustomizer((description) -> {
@@ -49,11 +50,11 @@ class EntityModelSourceCodeProjectContributorTest {
         description.setChangeset(Changeset.builder()
                 .entities(List.of(
                         Entity.builder().name("Party")
-                                .attribute(Attribute.withName("VAT").naturalId(true).typeString())
-                                .attribute(Attribute.withName("name").typeString())
+                                .attribute(Attribute.builder("VAT").string().naturalId(true).build())
+                                .attribute(Attribute.builder("name").string().build())
                                 .build(),
                         Entity.builder().name("Invoice")
-                                .attribute(Attribute.withName("number").naturalId(true).typeString())
+                                .attribute(Attribute.builder("number").string().naturalId(true).build())
                                 .relation(Relation.builder().name("party").source("Invoice").target("Party").required(true).build())
                                 .build()
                 ))
@@ -72,6 +73,7 @@ class EntityModelSourceCodeProjectContributorTest {
                 "import javax.persistence.GeneratedValue;",
                 "import javax.persistence.GenerationType;",
                 "import javax.persistence.Id;",
+                "import javax.persistence.OneToOne;",
                 "import lombok.Getter;",
                 "import lombok.NoArgsConstructor;",
                 "import lombok.Setter;",
