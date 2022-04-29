@@ -4,7 +4,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class DefaultPackageStructure implements PackageStructure {
+public class DefaultSpringDataPackageStructure implements SpringDataPackageStructure {
 
     @NonNull
     private final String packageName;

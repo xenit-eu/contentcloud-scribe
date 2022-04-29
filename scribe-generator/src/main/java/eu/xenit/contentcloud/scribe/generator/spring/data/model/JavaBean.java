@@ -1,7 +1,5 @@
 package eu.xenit.contentcloud.scribe.generator.spring.data.model;
 
-import eu.xenit.contentcloud.bard.TypeName;
-
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.lombok.LombokTypeAnnotationsConfig;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.lombok.LombokTypeAnnotationsCustomizer;
 import java.lang.reflect.Type;
@@ -10,10 +8,10 @@ import java.util.stream.Stream;
 
 public interface JavaBean extends TypeModel {
 
-    JavaBean addProperty(TypeName fieldType, String name);
+    JavaBean addProperty(Type fieldType, String name, Consumer<JavaBeanProperty> callback);
 
     default JavaBean addProperty(Type type, String name) {
-        return this.addProperty(TypeName.get(type), name);
+        return this.addProperty(type, name, property -> {});
     }
 
     Stream<? extends JavaBeanProperty> fields();

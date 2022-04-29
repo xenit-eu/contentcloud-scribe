@@ -1,4 +1,4 @@
-package eu.xenit.contentcloud.scribe.generator.spring.data;
+package eu.xenit.contentcloud.scribe.generator.spring.data.model;
 
 import eu.xenit.contentcloud.scribe.changeset.Entity;
 
