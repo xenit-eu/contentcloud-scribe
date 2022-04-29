@@ -33,7 +33,8 @@ public class ChangesetRepository implements ChangesetResolver {
 
         var changeset = this.restTemplate.exchange(
                         RequestEntity.get(changesetURI).accept(MediaTypes.HAL_FORMS_JSON).build(),
-                        new ParameterizedTypeReference<EntityModel<ChangesetModel>>() {})
+                        new ParameterizedTypeReference<EntityModel<ChangesetModel>>() {
+                        })
                 .getBody();
 
         var project = changeset.getLink("project")
