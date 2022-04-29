@@ -2,9 +2,11 @@ package eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa;
 
 import eu.xenit.contentcloud.bard.TypeName;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.JavaBean;
+import eu.xenit.contentcloud.scribe.generator.spring.data.model.JavaBeanProperty;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.lombok.LombokTypeAnnotations;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.lombok.LombokTypeAnnotationsConfig;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.lombok.LombokTypeAnnotationsCustomizer;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -31,7 +33,7 @@ public interface JpaEntity extends JavaBean {
     JpaEntity id(Consumer<JpaEntityIdField> customizer);
 
     @Override
-    Stream<JpaEntityField> fields();
+    Stream<JpaEntityProperty> fields();
 }
 
 
@@ -53,7 +55,7 @@ class JpaEntityImpl implements JpaEntity {
     @Getter
     private final JpaEntityIdField id = JpaEntityIdField.named("id");
 
-    private final List<JpaEntityField> fields = new ArrayList<>();
+    private final List<JpaEntityProperty> fields = new ArrayList<>();
 
     private final LombokTypeAnnotations lombok = new LombokTypeAnnotations();
 
@@ -64,13 +66,15 @@ class JpaEntityImpl implements JpaEntity {
     }
 
     @Override
-    public JpaEntity addProperty(TypeName fieldType, String name) {
-        this.fields.add(JpaEntityField.create(fieldType, name));
+    public JpaEntity addProperty(Type fieldType, String name, Consumer<JavaBeanProperty> customizer) {
+        var property = JpaEntityProperty.create(fieldType, name);
+        customizer.accept(property);
+        this.fields.add(property);
         return this;
     }
 
     @Override
-    public Stream<JpaEntityField> fields() {
+    public Stream<JpaEntityProperty> fields() {
         return this.fields.stream();
     }
 

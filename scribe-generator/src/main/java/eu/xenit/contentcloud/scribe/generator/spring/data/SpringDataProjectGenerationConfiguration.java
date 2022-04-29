@@ -1,10 +1,11 @@
 package eu.xenit.contentcloud.scribe.generator.spring.data;
 
 import eu.xenit.contentcloud.scribe.generator.ScribeProjectDescription;
-import eu.xenit.contentcloud.scribe.generator.spring.data.source.SourceCodeGenerator;
-import eu.xenit.contentcloud.scribe.generator.spring.data.source.java.JavaSourceCodeGenerator;
-import eu.xenit.contentcloud.scribe.generator.spring.data.model.DefaultPackageStructure;
-import eu.xenit.contentcloud.scribe.generator.spring.data.model.PackageStructure;
+import eu.xenit.contentcloud.scribe.generator.spring.data.model.EntityModel;
+import eu.xenit.contentcloud.scribe.generator.spring.data.source.SpringDataSourceCodeGenerator;
+import eu.xenit.contentcloud.scribe.generator.spring.data.source.java.SpringDataJavaSourceCodeGenerator;
+import eu.xenit.contentcloud.scribe.generator.spring.data.model.DefaultSpringDataPackageStructure;
+import eu.xenit.contentcloud.scribe.generator.spring.data.model.SpringDataPackageStructure;
 import eu.xenit.contentcloud.scribe.generator.properties.ApplicationPropertiesCustomizer;
 import io.spring.initializr.generator.language.Language;
 import io.spring.initializr.generator.language.java.JavaLanguage;
@@ -20,15 +21,15 @@ public class SpringDataProjectGenerationConfiguration {
     private final ScribeProjectDescription description;
 
     @Bean
-    PackageStructure packageStructure() {
-        return new DefaultPackageStructure(this.description.getPackageName());
+    SpringDataPackageStructure packageStructure() {
+        return new DefaultSpringDataPackageStructure(this.description.getPackageName());
     }
 
     @Bean
-    SourceCodeGenerator sourceGenerator(PackageStructure packages) {
+    SpringDataSourceCodeGenerator sourceGenerator(SpringDataPackageStructure packages) {
         Language language = this.description.getLanguage();
         if (language instanceof JavaLanguage) {
-            return new JavaSourceCodeGenerator((JavaLanguage) language, packages);
+            return new SpringDataJavaSourceCodeGenerator((JavaLanguage) language, packages);
         }
 
         throw new UnsupportedOperationException(String.format("Language '%s' is not supported", language));
@@ -46,13 +47,13 @@ public class SpringDataProjectGenerationConfiguration {
 
     @Bean
     public SpringDataEntityModelSourceCodeProjectContributor entityModelSourceCodeProjectContributor(EntityModel entityModel,
-            SourceCodeGenerator sourceGenerator) {
+            SpringDataSourceCodeGenerator sourceGenerator) {
         return new SpringDataEntityModelSourceCodeProjectContributor(this.description, entityModel, sourceGenerator);
     }
 
     @Bean
     SpringDataRepositorySourceCodeProjectContributor repositoriesSourceCodeProjectContributor(EntityModel entityModel,
-            SourceCodeGenerator sourceGenerator) {
+            SpringDataSourceCodeGenerator sourceGenerator) {
         return new SpringDataRepositorySourceCodeProjectContributor(this.description, entityModel, sourceGenerator);
     }
 

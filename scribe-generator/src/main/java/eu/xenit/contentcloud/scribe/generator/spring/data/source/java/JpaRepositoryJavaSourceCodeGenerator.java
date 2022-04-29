@@ -4,7 +4,8 @@ import eu.xenit.contentcloud.bard.ClassName;
 import eu.xenit.contentcloud.bard.JavaFile;
 import eu.xenit.contentcloud.bard.ParameterizedTypeName;
 import eu.xenit.contentcloud.bard.TypeSpec;
-import eu.xenit.contentcloud.scribe.generator.spring.data.model.PackageStructure;
+import eu.xenit.contentcloud.scribe.generator.source.SourceFile;
+import eu.xenit.contentcloud.scribe.generator.spring.data.model.SpringDataPackageStructure;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.JpaRepository;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.JpaRepositorySourceCodeGenerator;
 import java.util.UUID;
@@ -16,11 +17,11 @@ import lombok.RequiredArgsConstructor;
 class JpaRepositoryJavaSourceCodeGenerator implements JpaRepositorySourceCodeGenerator {
 
     @NonNull
-    private final PackageStructure packages;
+    private final SpringDataPackageStructure packages;
 
     @Override
-    public JavaSourceFile createSourceFile(JpaRepository repository) {
-        var typeBuilder = TypeSpec.interfaceBuilder(repository.repositoryName());
+    public SourceFile createSourceFile(JpaRepository repository) {
+        var typeBuilder = TypeSpec.interfaceBuilder(repository.className());
         typeBuilder.addSuperinterface(ParameterizedTypeName.get(
                 ClassName.get("org.springframework.data.jpa.repository", "JpaRepository"),
                 ClassName.get(this.packages.getModelPackageName(), repository.entityClassName()),
@@ -38,6 +39,6 @@ class JpaRepositoryJavaSourceCodeGenerator implements JpaRepositorySourceCodeGen
                 .indent("\t")
                 .build();
 
-        return new JavaSourceFile(java);
+        return java::writeToPath;
     }
 }

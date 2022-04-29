@@ -1,6 +1,6 @@
 package eu.xenit.contentcloud.scribe.generator.spring.data.model;
 
-public interface PackageStructure {
+public interface SpringDataPackageStructure {
 
     String getModelPackageName();
 

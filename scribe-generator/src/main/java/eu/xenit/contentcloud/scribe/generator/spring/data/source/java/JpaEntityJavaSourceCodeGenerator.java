@@ -8,9 +8,10 @@ import eu.xenit.contentcloud.bard.MethodSpec;
 import eu.xenit.contentcloud.bard.TypeName;
 import eu.xenit.contentcloud.bard.TypeSpec;
 import eu.xenit.contentcloud.bard.TypeSpec.Builder;
-import eu.xenit.contentcloud.scribe.generator.spring.data.model.PackageStructure;
+import eu.xenit.contentcloud.scribe.generator.source.SourceFile;
+import eu.xenit.contentcloud.scribe.generator.spring.data.model.SpringDataPackageStructure;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.JpaEntity;
-import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.JpaEntityField;
+import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.JpaEntityProperty;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.JpaEntityIdField;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.JpaEntitySourceCodeGenerator;
 import java.beans.Introspector;
@@ -24,10 +25,10 @@ import org.springframework.util.StringUtils;
 class JpaEntityJavaSourceCodeGenerator implements JpaEntitySourceCodeGenerator {
 
     @NonNull
-    protected final PackageStructure packageStructure;
+    protected final SpringDataPackageStructure packageStructure;
 
     @Override
-    public JavaSourceFile createSourceFile(JpaEntity jpaEntity) {
+    public SourceFile createSourceFile(JpaEntity jpaEntity) {
         var type = TypeSpec.classBuilder(jpaEntity.className())
                 .addModifiers(Modifier.PUBLIC)
                 .addAnnotation(ClassName.get("javax.persistence", "Entity"));
@@ -49,7 +50,7 @@ class JpaEntityJavaSourceCodeGenerator implements JpaEntitySourceCodeGenerator {
                 .indent("\t")
                 .build();
 
-        return new JavaSourceFile(java);
+        return java::writeToPath;
     }
 
     void addConstructor(JpaEntity jpaEntity, Builder type) {
@@ -61,7 +62,7 @@ class JpaEntityJavaSourceCodeGenerator implements JpaEntitySourceCodeGenerator {
     }
 
     void addProperty(JpaEntity jpaEntity,
-            Builder type, JpaEntityField field) {
+            Builder type, JpaEntityProperty field) {
         var fieldSpec = FieldSpec.builder(
                 field.type(),
                 Introspector.decapitalize(field.name()),
@@ -70,10 +71,14 @@ class JpaEntityJavaSourceCodeGenerator implements JpaEntitySourceCodeGenerator {
         this.addGetter(jpaEntity, field, type, fieldSpec);
         this.addSetter(jpaEntity, field, type, fieldSpec);
 
+        field.annotations().forEach(annotationType -> {
+            fieldSpec.addAnnotation(ClassName.bestGuess(annotationType.getTypeName()));
+        });
+
         type.addField(fieldSpec.build());
     }
 
-    void addSetter(JpaEntity jpaEntity, JpaEntityField field, Builder type, FieldSpec.Builder fieldSpec) {
+    void addSetter(JpaEntity jpaEntity, JpaEntityProperty field, Builder type, FieldSpec.Builder fieldSpec) {
         if (jpaEntity.lombok().useSetter()) {
             // there is a @Setter class annotation
             return;
@@ -89,7 +94,7 @@ class JpaEntityJavaSourceCodeGenerator implements JpaEntitySourceCodeGenerator {
 
     }
 
-    void addGetter(JpaEntity jpaEntity, JpaEntityField field, Builder type, FieldSpec.Builder fieldSpec) {
+    void addGetter(JpaEntity jpaEntity, JpaEntityProperty field, Builder type, FieldSpec.Builder fieldSpec) {
         if (jpaEntity.lombok().useGetter()) {
             // there is a @Getter class annotation
             return;

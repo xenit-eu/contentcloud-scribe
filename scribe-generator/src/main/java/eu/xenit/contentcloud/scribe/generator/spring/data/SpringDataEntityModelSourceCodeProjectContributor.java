@@ -2,8 +2,10 @@ package eu.xenit.contentcloud.scribe.generator.spring.data;
 
 import eu.xenit.contentcloud.scribe.changeset.Entity;
 import eu.xenit.contentcloud.scribe.generator.ScribeProjectDescription;
-import eu.xenit.contentcloud.scribe.generator.spring.data.source.SourceCodeGenerator;
-import eu.xenit.contentcloud.scribe.generator.spring.data.source.SourceFile;
+import eu.xenit.contentcloud.scribe.generator.spring.data.model.EntityModel;
+import eu.xenit.contentcloud.scribe.generator.spring.data.model.SimpleType;
+import eu.xenit.contentcloud.scribe.generator.spring.data.source.SpringDataSourceCodeGenerator;
+import eu.xenit.contentcloud.scribe.generator.source.SourceFile;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.JpaEntity;
 import io.spring.initializr.generator.language.Language;
 import io.spring.initializr.generator.language.SourceStructure;
@@ -25,7 +27,7 @@ public class SpringDataEntityModelSourceCodeProjectContributor implements Projec
 
     private final EntityModel entityModel;
 
-    private final SourceCodeGenerator sourceGenerator;
+    private final SpringDataSourceCodeGenerator sourceGenerator;
 
     @Override
     public void contribute(Path projectRoot) throws IOException {
@@ -47,8 +49,26 @@ public class SpringDataEntityModelSourceCodeProjectContributor implements Projec
                 .useNoArgsConstructor(this.description.useLombok()));
 
         entity.getAttributes().forEach(attribute -> {
-            Type resolvedAttributeType = this.resolveAttributeType(attribute.getType());
-            jpaEntity.addProperty(resolvedAttributeType, attribute.getName());
+            if ("CONTENT".equals(attribute.getType())) {
+                jpaEntity.addProperty(String.class, attribute.getName() + "Id", property -> {
+                    var contentId= SimpleType.get("org.springframework.content.commons.annotations", "ContentId");
+                    property.addAnnotation(contentId);
+                });
+
+                jpaEntity.addProperty(long.class, attribute.getName() + "Length", property -> {
+                    var contentLength = SimpleType.get("org.springframework.content.commons.annotations",
+                            "ContentLength");
+                    property.addAnnotation(contentLength);
+                });
+
+                jpaEntity.addProperty(String.class, attribute.getName() + "Mimetype", property -> {
+                    var mimetype = SimpleType.get("org.springframework.content.commons.annotations", "MimeType");
+                    property.addAnnotation(mimetype);
+                });
+            } else {
+                Type resolvedAttributeType = this.resolveAttributeType(attribute.getType());
+                jpaEntity.addProperty(resolvedAttributeType, attribute.getName());
+            }
         });
 
         return this.sourceGenerator.createSourceFile(jpaEntity);
@@ -65,5 +85,6 @@ public class SpringDataEntityModelSourceCodeProjectContributor implements Projec
 
         throw new IllegalArgumentException("cannot resolve data type: " + type);
     }
+
 
 }

@@ -1,4 +1,4 @@
-package eu.xenit.contentcloud.scribe.generator.spring.data.source;
+package eu.xenit.contentcloud.scribe.generator.source;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -6,6 +6,7 @@ import java.nio.file.Path;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+@FunctionalInterface
 public interface SourceFile {
 
     /**

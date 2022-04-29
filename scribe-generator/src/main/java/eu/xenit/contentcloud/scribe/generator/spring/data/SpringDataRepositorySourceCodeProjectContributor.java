@@ -17,8 +17,9 @@
 package eu.xenit.contentcloud.scribe.generator.spring.data;
 
 import eu.xenit.contentcloud.scribe.changeset.Entity;
-import eu.xenit.contentcloud.scribe.generator.spring.data.source.SourceCodeGenerator;
-import eu.xenit.contentcloud.scribe.generator.spring.data.source.SourceFile;
+import eu.xenit.contentcloud.scribe.generator.spring.data.model.EntityModel;
+import eu.xenit.contentcloud.scribe.generator.spring.data.source.SpringDataSourceCodeGenerator;
+import eu.xenit.contentcloud.scribe.generator.source.SourceFile;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.JpaRepository;
 import io.spring.initializr.generator.language.SourceStructure;
 import io.spring.initializr.generator.project.ProjectDescription;
@@ -38,7 +39,7 @@ public class SpringDataRepositorySourceCodeProjectContributor implements Project
 
     private final EntityModel entityModel;
 
-    private final SourceCodeGenerator sourceGenerator;
+    private final SpringDataSourceCodeGenerator sourceGenerator;
 
     @Override
     public void contribute(Path projectRoot) throws IOException {
