@@ -1,7 +1,6 @@
 package eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa;
 
-import eu.xenit.contentcloud.bard.ClassName;
-import eu.xenit.contentcloud.bard.TypeName;
+import eu.xenit.contentcloud.scribe.generator.source.types.SemanticType;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.JavaBeanProperty;
 import java.lang.reflect.Type;
 import java.util.Collection;
@@ -10,8 +9,6 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-
-import java.util.UUID;
 
 public interface JpaEntityIdField extends JpaEntityProperty {
 
@@ -24,7 +21,7 @@ public interface JpaEntityIdField extends JpaEntityProperty {
     }
 
     JpaEntityIdField name(String name);
-    JpaEntityIdField type(TypeName type);
+    JpaEntityIdField type(SemanticType type);
 
     GenerationStrategy generationStrategy();
     JpaEntityIdField generationStrategy(GenerationStrategy strategy);
@@ -39,7 +36,7 @@ class JpaEntityIdFieldImpl implements JpaEntityIdField {
 
     @NonNull
     @Getter @Setter
-    private TypeName type = ClassName.get(UUID.class);
+    private SemanticType type = SemanticType.UUID;
 
     @NonNull
     @Getter @Setter

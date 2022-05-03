@@ -1,25 +1,21 @@
 package eu.xenit.contentcloud.scribe.generator.spring.data;
 
-import eu.xenit.contentcloud.bard.ClassName;
-import eu.xenit.contentcloud.bard.TypeName;
 import eu.xenit.contentcloud.scribe.changeset.Entity;
 import eu.xenit.contentcloud.scribe.generator.ScribeProjectDescription;
+import eu.xenit.contentcloud.scribe.generator.source.SourceFile;
+import eu.xenit.contentcloud.scribe.generator.source.types.DataTypeResolver;
+import eu.xenit.contentcloud.scribe.generator.source.types.SemanticType;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.EntityModel;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.SimpleType;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.SpringDataPackageStructure;
-import eu.xenit.contentcloud.scribe.generator.spring.data.source.SpringDataSourceCodeGenerator;
-import eu.xenit.contentcloud.scribe.generator.source.SourceFile;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.JpaEntity;
+import eu.xenit.contentcloud.scribe.generator.spring.data.source.SpringDataSourceCodeGenerator;
 import io.spring.initializr.generator.language.Language;
 import io.spring.initializr.generator.language.SourceStructure;
 import io.spring.initializr.generator.project.contributor.ProjectContributor;
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.nio.file.Path;
-import java.time.Instant;
-import java.util.Objects;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * {@link ProjectContributor} for the entity model source code
@@ -34,6 +30,8 @@ public class SpringDataEntityModelSourceCodeProjectContributor implements Projec
     private final SpringDataSourceCodeGenerator sourceGenerator;
 
     private final SpringDataPackageStructure packageStructure;
+
+    private final DataTypeResolver dataTypeResolver;
 
     @Override
     public void contribute(Path projectRoot) throws IOException {
@@ -56,30 +54,32 @@ public class SpringDataEntityModelSourceCodeProjectContributor implements Projec
 
         entity.getAttributes().forEach(attribute -> {
             if ("CONTENT".equals(attribute.getType())) {
-                jpaEntity.addProperty(String.class, attribute.getName() + "Id", property -> {
-                    var contentId= SimpleType.get("org.springframework.content.commons.annotations", "ContentId");
+                jpaEntity.addProperty(SemanticType.STRING, attribute.getName() + "Id", property -> {
+                    var contentId = SimpleType.get("org.springframework.content.commons.annotations", "ContentId");
                     property.addAnnotation(contentId);
                 });
 
-                jpaEntity.addProperty(long.class, attribute.getName() + "Length", property -> {
+                jpaEntity.addProperty(SemanticType.NUMBER, attribute.getName() + "Length", property -> {
                     var contentLength = SimpleType.get("org.springframework.content.commons.annotations",
                             "ContentLength");
                     property.addAnnotation(contentLength);
                 });
 
-                jpaEntity.addProperty(String.class, attribute.getName() + "Mimetype", property -> {
+                jpaEntity.addProperty(SemanticType.STRING, attribute.getName() + "Mimetype", property -> {
                     var mimetype = SimpleType.get("org.springframework.content.commons.annotations", "MimeType");
                     property.addAnnotation(mimetype);
                 });
             } else {
-                TypeName resolvedAttributeType = this.resolveAttributeType(attribute.getType());
-                jpaEntity.addProperty(resolvedAttributeType, attribute.getName());
+                var type = this.dataTypeResolver.resolve(attribute.getType())
+                        .orElseThrow(() -> new RuntimeException("Could not resolve attribute type '"+attribute.getName()+"'"));
+                jpaEntity.addProperty(type, attribute.getName());
             }
         });
 
         entity.getRelations().forEach(relation -> {
             var linkedEntity = entityModel.lookupEntity(relation.getTarget()).orElseThrow();
-            var targetClass = ClassName.get(this.packageStructure.getModelPackageName(), linkedEntity.getClassName());
+            var targetType = this.dataTypeResolver.resolve(linkedEntity.getName())
+                    .orElseThrow(() -> new RuntimeException("Could not resolve relation type '"+linkedEntity.getName()+"'"));
 
             if (relation.isManySourcePerTarget()) {
                 if (relation.isManyTargetPerSource()) {
@@ -93,28 +93,13 @@ public class SpringDataEntityModelSourceCodeProjectContributor implements Projec
                     // one-to-many
                 } else {
                     // one-to-one
-                    jpaEntity.addOneToOneRelation(relation.getName(), targetClass, oneToOne -> {
+                    jpaEntity.addOneToOneRelation(relation.getName(), targetType, oneToOne -> {
                         // edit @OneToOne attributes here
                     });
                 }
             }
-
         });
 
         return this.sourceGenerator.createSourceFile(jpaEntity);
     }
-
-    private TypeName resolveAttributeType(String type) {
-        if (Objects.equals(type, "String") || Objects.equals(type, "STRING")) {
-            return TypeName.get(String.class);
-        }
-
-        if (Objects.equals(type, "DATETIME")) {
-            return ClassName.get(Instant.class);
-        }
-
-        throw new IllegalArgumentException("cannot resolve data type: " + type);
-    }
-
-
 }

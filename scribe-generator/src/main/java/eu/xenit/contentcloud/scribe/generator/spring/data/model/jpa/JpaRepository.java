@@ -1,13 +1,12 @@
 package eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa;
 
-import eu.xenit.contentcloud.scribe.generator.spring.data.model.TypeModel;
-import lombok.AllArgsConstructor;
+import eu.xenit.contentcloud.scribe.generator.spring.data.model.TypeDeclaration;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
-public interface JpaRepository extends TypeModel {
+public interface JpaRepository extends TypeDeclaration {
 
     String entityClassName();
 

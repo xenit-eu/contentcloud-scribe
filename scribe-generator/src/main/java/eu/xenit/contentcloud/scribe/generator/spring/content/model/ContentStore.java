@@ -1,13 +1,13 @@
 package eu.xenit.contentcloud.scribe.generator.spring.content.model;
 
-import eu.xenit.contentcloud.scribe.generator.spring.data.model.TypeModel;
+import eu.xenit.contentcloud.scribe.generator.spring.data.model.TypeDeclaration;
 import java.util.function.Consumer;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
-public interface ContentStore extends TypeModel {
+public interface ContentStore extends TypeDeclaration {
 
     String entityClassName();
 
