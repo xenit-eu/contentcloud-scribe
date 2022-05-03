@@ -1,8 +1,7 @@
-package eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa;
+package eu.xenit.contentcloud.scribe.generator.spring.data.model;
 
 import eu.xenit.contentcloud.scribe.generator.source.types.DataTypeResolver;
 import eu.xenit.contentcloud.scribe.generator.source.types.SemanticType;
-import eu.xenit.contentcloud.scribe.generator.spring.data.model.EntityModel;
 import java.util.Optional;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;

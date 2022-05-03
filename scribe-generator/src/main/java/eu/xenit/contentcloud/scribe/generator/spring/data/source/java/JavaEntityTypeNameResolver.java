@@ -5,7 +5,7 @@ import eu.xenit.contentcloud.scribe.generator.language.SemanticTypeResolver;
 import eu.xenit.contentcloud.scribe.generator.language.java.JavaTypeName;
 import eu.xenit.contentcloud.scribe.generator.source.types.SemanticType;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.SpringDataPackageStructure;
-import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.EntityTypeName;
+import eu.xenit.contentcloud.scribe.generator.spring.data.model.EntityTypeName;
 import lombok.RequiredArgsConstructor;
 import org.springframework.util.StringUtils;
 

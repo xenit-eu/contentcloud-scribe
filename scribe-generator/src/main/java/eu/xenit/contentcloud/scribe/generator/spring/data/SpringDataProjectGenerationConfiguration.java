@@ -12,7 +12,7 @@ import eu.xenit.contentcloud.scribe.generator.source.types.DefaultDataTypeResolv
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.DefaultSpringDataPackageStructure;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.EntityModel;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.SpringDataPackageStructure;
-import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.EntityDataTypeResolver;
+import eu.xenit.contentcloud.scribe.generator.spring.data.model.EntityDataTypeResolver;
 import eu.xenit.contentcloud.scribe.generator.spring.data.source.SpringDataSourceCodeGenerator;
 import eu.xenit.contentcloud.scribe.generator.spring.data.source.java.JavaEntityTypeNameResolver;
 import eu.xenit.contentcloud.scribe.generator.spring.data.source.java.SpringDataJavaSourceCodeGenerator;
