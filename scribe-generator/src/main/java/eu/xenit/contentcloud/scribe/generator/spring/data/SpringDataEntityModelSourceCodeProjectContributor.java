@@ -71,7 +71,7 @@ public class SpringDataEntityModelSourceCodeProjectContributor implements Projec
                 });
             } else {
                 var type = this.dataTypeResolver.resolve(attribute.getType())
-                        .orElseThrow(() -> new RuntimeException("Could not resolve attribute type '"+attribute.getName()+"'"));
+                        .orElseThrow(() -> new RuntimeException("Could not resolve attribute type '"+attribute.getType()+"' for attribute "+attribute.getName()));
                 jpaEntity.addProperty(type, attribute.getName());
             }
         });

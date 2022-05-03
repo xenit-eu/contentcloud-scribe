@@ -37,8 +37,6 @@ public class SpringDataProjectGenerationConfiguration {
         return new DefaultSpringDataPackageStructure(this.description.getPackageName());
     }
 
-
-
     @Bean
     EntityModel entityModel() {
         var changeSet = this.description.getChangeset();
@@ -76,8 +74,6 @@ public class SpringDataProjectGenerationConfiguration {
     SemanticTypeResolver<JavaTypeName> javaEntityTypeResolver(SpringDataPackageStructure packageStructure) {
         return new JavaEntityTypeNameResolver(packageStructure);
     }
-
-
 
     @Bean
     @Primary
