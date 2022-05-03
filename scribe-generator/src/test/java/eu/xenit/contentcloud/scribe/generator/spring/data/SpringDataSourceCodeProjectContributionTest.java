@@ -3,12 +3,12 @@ package eu.xenit.contentcloud.scribe.generator.spring.data;
 import static io.spring.initializr.metadata.Dependency.SCOPE_ANNOTATION_PROCESSOR;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import eu.xenit.contentcloud.scribe.changeset.Attribute;
 import eu.xenit.contentcloud.scribe.changeset.Changeset;
 import eu.xenit.contentcloud.scribe.changeset.Entity;
 import eu.xenit.contentcloud.scribe.changeset.Relation;
 import eu.xenit.contentcloud.scribe.generator.ScribeProjectDescription;
-import eu.xenit.contentcloud.scribe.generator.spring.data.SpringDataProjectGenerationConfiguration;
 import io.spring.initializr.generator.buildsystem.gradle.GradleBuildSystem;
 import io.spring.initializr.generator.language.java.JavaLanguage;
 import io.spring.initializr.generator.spring.code.java.JavaProjectGenerationConfiguration;
@@ -17,11 +17,13 @@ import io.spring.initializr.generator.test.project.ProjectStructure;
 import io.spring.initializr.generator.version.Version;
 import io.spring.initializr.metadata.Dependency;
 import io.spring.initializr.metadata.support.MetadataBuildItemMapper;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.springframework.core.io.ClassPathResource;
 
 class SpringDataSourceCodeProjectContributionTest {
 
@@ -42,7 +44,6 @@ class SpringDataSourceCodeProjectContributionTest {
                     description.setBuildSystem(new GradleBuildSystem());
                 });
     }
-
 
     @Test
     void entityClassIsContributed() {
@@ -129,6 +130,7 @@ class SpringDataSourceCodeProjectContributionTest {
                 "}"
         );
     }
+
     private static ScribeProjectDescription createProjectDescription() {
         var description = new ScribeProjectDescription();
 
