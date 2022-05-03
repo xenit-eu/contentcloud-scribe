@@ -5,7 +5,7 @@ import java.util.Optional;
 public interface DataTypeResolver {
 
     /**
-     * Resolves a data type identifier, to an {@link Optional<SemanticType>} or an empty {@link Optional} if
+     * Resolves a data type identifier, to an {@link Optional} of {@link SemanticType} or an empty {@link Optional}, if
      * the data type could not be resolved.
      *
      * @param type is the datatype identifier
