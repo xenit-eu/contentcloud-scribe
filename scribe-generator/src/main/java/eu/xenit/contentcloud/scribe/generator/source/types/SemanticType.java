@@ -7,9 +7,4 @@ public interface SemanticType {
     SemanticType UUID = new BuiltInType("UUID");
     SemanticType POINT_IN_TIME = new BuiltInType("POINT_IN_TIME");
 
-
 }
-
-
-
-
