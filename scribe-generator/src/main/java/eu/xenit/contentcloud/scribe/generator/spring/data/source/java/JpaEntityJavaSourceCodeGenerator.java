@@ -8,11 +8,13 @@ import eu.xenit.contentcloud.bard.MethodSpec;
 import eu.xenit.contentcloud.bard.TypeName;
 import eu.xenit.contentcloud.bard.TypeSpec;
 import eu.xenit.contentcloud.bard.TypeSpec.Builder;
+import eu.xenit.contentcloud.scribe.generator.language.SemanticTypeResolver;
+import eu.xenit.contentcloud.scribe.generator.language.java.JavaBuiltInTypeResolver;
+import eu.xenit.contentcloud.scribe.generator.language.java.JavaTypeName;
 import eu.xenit.contentcloud.scribe.generator.source.SourceFile;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.SpringDataPackageStructure;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.JpaEntity;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.JpaEntityProperty;
-import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.JpaEntityIdField;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.JpaEntitySourceCodeGenerator;
 import java.beans.Introspector;
 import javax.lang.model.element.Modifier;
@@ -26,6 +28,8 @@ class JpaEntityJavaSourceCodeGenerator implements JpaEntitySourceCodeGenerator {
 
     @NonNull
     protected final SpringDataPackageStructure packageStructure;
+
+    protected final SemanticTypeResolver<JavaTypeName> typeResolver;
 
     @Override
     public SourceFile createSourceFile(JpaEntity jpaEntity) {
@@ -61,10 +65,10 @@ class JpaEntityJavaSourceCodeGenerator implements JpaEntitySourceCodeGenerator {
         }
     }
 
-    void addProperty(JpaEntity jpaEntity,
-            Builder type, JpaEntityProperty field) {
+    void addProperty(JpaEntity jpaEntity, Builder type, JpaEntityProperty field) {
+
         var fieldSpec = FieldSpec.builder(
-                field.type(),
+                this.typeResolver.resolve(field.type()).getTypeName(),
                 Introspector.decapitalize(field.name()),
                 Modifier.PRIVATE);
 
@@ -109,8 +113,9 @@ class JpaEntityJavaSourceCodeGenerator implements JpaEntitySourceCodeGenerator {
     }
 
     void addIdProperty(JpaEntity jpaEntity, Builder type) {
-        JpaEntityIdField id = jpaEntity.id();
-        var fieldSpec = FieldSpec.builder(id.type(), id.name(), Modifier.PRIVATE)
+        var idField = jpaEntity.id();
+        var idTypeName = this.typeResolver.resolve(idField.type()).getTypeName();
+        var fieldSpec = FieldSpec.builder(idTypeName, idField.name(), Modifier.PRIVATE)
                 .addAnnotation(AnnotationSpec.builder(ClassName.get("javax.persistence", "Id")).build());
 
         //        switch (id.generationStrategy()) {
@@ -121,8 +126,8 @@ class JpaEntityJavaSourceCodeGenerator implements JpaEntitySourceCodeGenerator {
                 .build());
         //        }
 
-        this.addGetter(jpaEntity, id, type, fieldSpec);
-        this.addSetter(jpaEntity, id, type, fieldSpec);
+        this.addGetter(jpaEntity, idField, type, fieldSpec);
+        this.addSetter(jpaEntity, idField, type, fieldSpec);
 
         type.addField(fieldSpec.build());
     }

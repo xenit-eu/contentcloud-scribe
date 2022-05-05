@@ -1,18 +1,30 @@
 package eu.xenit.contentcloud.scribe.generator.spring.data;
 
 import eu.xenit.contentcloud.scribe.generator.ScribeProjectDescription;
-import eu.xenit.contentcloud.scribe.generator.spring.data.model.EntityModel;
-import eu.xenit.contentcloud.scribe.generator.spring.data.source.SpringDataSourceCodeGenerator;
-import eu.xenit.contentcloud.scribe.generator.spring.data.source.java.SpringDataJavaSourceCodeGenerator;
-import eu.xenit.contentcloud.scribe.generator.spring.data.model.DefaultSpringDataPackageStructure;
-import eu.xenit.contentcloud.scribe.generator.spring.data.model.SpringDataPackageStructure;
+import eu.xenit.contentcloud.scribe.generator.language.SemanticTypeResolver;
+import eu.xenit.contentcloud.scribe.generator.language.SemanticTypeResolverRegistry;
+import eu.xenit.contentcloud.scribe.generator.language.java.JavaTypeName;
+import eu.xenit.contentcloud.scribe.generator.source.types.DataTypeResolverRegistry;
+import eu.xenit.contentcloud.scribe.generator.language.java.JavaBuiltInTypeResolver;
 import eu.xenit.contentcloud.scribe.generator.properties.ApplicationPropertiesCustomizer;
-import io.spring.initializr.generator.language.Language;
+import eu.xenit.contentcloud.scribe.generator.source.types.DataTypeResolver;
+import eu.xenit.contentcloud.scribe.generator.source.types.DefaultDataTypeResolver;
+import eu.xenit.contentcloud.scribe.generator.spring.data.model.DefaultSpringDataPackageStructure;
+import eu.xenit.contentcloud.scribe.generator.spring.data.model.EntityModel;
+import eu.xenit.contentcloud.scribe.generator.spring.data.model.SpringDataPackageStructure;
+import eu.xenit.contentcloud.scribe.generator.spring.data.model.EntityDataTypeResolver;
+import eu.xenit.contentcloud.scribe.generator.spring.data.source.SpringDataSourceCodeGenerator;
+import eu.xenit.contentcloud.scribe.generator.spring.data.source.java.JavaEntityTypeNameResolver;
+import eu.xenit.contentcloud.scribe.generator.spring.data.source.java.SpringDataJavaSourceCodeGenerator;
+import io.spring.initializr.generator.condition.ConditionalOnLanguage;
 import io.spring.initializr.generator.language.java.JavaLanguage;
 import io.spring.initializr.generator.project.ProjectGenerationConfiguration;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
 
 @RequiredArgsConstructor
 @ProjectGenerationConfiguration
@@ -26,16 +38,6 @@ public class SpringDataProjectGenerationConfiguration {
     }
 
     @Bean
-    SpringDataSourceCodeGenerator sourceGenerator(SpringDataPackageStructure packages) {
-        Language language = this.description.getLanguage();
-        if (language instanceof JavaLanguage) {
-            return new SpringDataJavaSourceCodeGenerator((JavaLanguage) language, packages);
-        }
-
-        throw new UnsupportedOperationException(String.format("Language '%s' is not supported", language));
-    }
-
-    @Bean
     EntityModel entityModel() {
         var changeSet = this.description.getChangeset();
         if (changeSet == null) {
@@ -46,9 +48,54 @@ public class SpringDataProjectGenerationConfiguration {
     }
 
     @Bean
-    public SpringDataEntityModelSourceCodeProjectContributor entityModelSourceCodeProjectContributor(EntityModel entityModel,
-            SpringDataSourceCodeGenerator sourceGenerator, SpringDataPackageStructure packageStructure) {
-        return new SpringDataEntityModelSourceCodeProjectContributor(this.description, entityModel, sourceGenerator, packageStructure);
+    DataTypeResolver defaultDataTypeResolver() {
+        return new DefaultDataTypeResolver();
+    }
+
+    @Bean
+    EntityDataTypeResolver entityDataTypeResolver(EntityModel entityModel) {
+        return new EntityDataTypeResolver(entityModel);
+    }
+
+    @Bean
+    @Primary
+    DataTypeResolver dataTypeResolverRegistry(ObjectProvider<DataTypeResolver> resolvers) {
+        return new DataTypeResolverRegistry(resolvers.stream().collect(Collectors.toUnmodifiableList()));
+    }
+
+    @Bean
+    @ConditionalOnLanguage(JavaLanguage.ID)
+    SemanticTypeResolver<JavaTypeName> javaSemanticTypeResolver() {
+        return new JavaBuiltInTypeResolver();
+    }
+
+    @Bean
+    @ConditionalOnLanguage(JavaLanguage.ID)
+    SemanticTypeResolver<JavaTypeName> javaEntityTypeResolver(SpringDataPackageStructure packageStructure) {
+        return new JavaEntityTypeNameResolver(packageStructure);
+    }
+
+    @Bean
+    @Primary
+    @ConditionalOnLanguage(JavaLanguage.ID)
+    SemanticTypeResolver<JavaTypeName> semanticTypeResolverRegistry(ObjectProvider<SemanticTypeResolver<JavaTypeName>> resolvers) {
+        return new SemanticTypeResolverRegistry<>(resolvers.stream().collect(Collectors.toUnmodifiableList()));
+    }
+
+    @Bean
+    @ConditionalOnLanguage(JavaLanguage.ID)
+    SpringDataSourceCodeGenerator sourceGenerator(SpringDataPackageStructure packages,
+            SemanticTypeResolver<JavaTypeName> typeResolver) {
+        return new SpringDataJavaSourceCodeGenerator((JavaLanguage) this.description.getLanguage(),
+                packages, typeResolver);
+    }
+
+    @Bean
+    public SpringDataEntityModelSourceCodeProjectContributor entityModelSourceCodeProjectContributor(
+            EntityModel entityModel, SpringDataSourceCodeGenerator sourceGenerator,
+            SpringDataPackageStructure packageStructure, DataTypeResolver dataTypeResolver) {
+        return new SpringDataEntityModelSourceCodeProjectContributor(this.description, entityModel, sourceGenerator,
+                packageStructure, dataTypeResolver);
     }
 
     @Bean
@@ -61,4 +108,5 @@ public class SpringDataProjectGenerationConfiguration {
     ApplicationPropertiesCustomizer hibernateProperties() {
         return properties -> properties
                 .put("spring.jpa.properties.hibernate.globally_quoted_identifiers", "true");
-    }}
+    }
+}

@@ -1,6 +1,7 @@
 package eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa;
 
 import eu.xenit.contentcloud.bard.TypeName;
+import eu.xenit.contentcloud.scribe.generator.source.types.SemanticType;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.JavaBean;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.JavaBeanProperty;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.lombok.LombokTypeAnnotations;
@@ -35,7 +36,7 @@ public interface JpaEntity extends JavaBean {
     @Override
     Stream<JpaEntityProperty> fields();
 
-    JpaEntity addOneToOneRelation(String fieldName, TypeName targetClass, Consumer<OneToOneRelation> customizer);
+    JpaEntity addOneToOneRelation(String fieldName, SemanticType targetClass, Consumer<OneToOneRelation> customizer);
 }
 
 
@@ -68,7 +69,7 @@ class JpaEntityImpl implements JpaEntity {
     }
 
     @Override
-    public JpaEntity addProperty(TypeName fieldType, String name, Consumer<JavaBeanProperty> customizer) {
+    public JpaEntity addProperty(SemanticType fieldType, String name, Consumer<JavaBeanProperty> customizer) {
         var property = JpaEntityProperty.create(fieldType, name);
         customizer.accept(property);
         this.fields.add(property);
@@ -81,7 +82,7 @@ class JpaEntityImpl implements JpaEntity {
     }
 
     @Override
-    public JpaEntity addOneToOneRelation(String fieldName, TypeName targetClass,
+    public JpaEntity addOneToOneRelation(String fieldName, SemanticType targetClass,
             Consumer<OneToOneRelation> customizer) {
         var relation = new OneToOneRelationImpl(targetClass, fieldName);
         customizer.accept(relation);

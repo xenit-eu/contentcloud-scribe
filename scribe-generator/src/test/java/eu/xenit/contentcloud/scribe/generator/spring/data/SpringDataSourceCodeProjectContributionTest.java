@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import eu.xenit.contentcloud.scribe.changeset.Attribute;
 import eu.xenit.contentcloud.scribe.changeset.Changeset;
 import eu.xenit.contentcloud.scribe.changeset.Entity;
+import eu.xenit.contentcloud.scribe.changeset.Relation;
 import eu.xenit.contentcloud.scribe.generator.ScribeProjectDescription;
 import eu.xenit.contentcloud.scribe.generator.spring.data.SpringDataProjectGenerationConfiguration;
 import io.spring.initializr.generator.buildsystem.gradle.GradleBuildSystem;
@@ -54,6 +55,7 @@ class SpringDataSourceCodeProjectContributionTest {
                                 .build(),
                         Entity.builder().name("Invoice")
                                 .attribute(Attribute.builder("number").string().naturalId(true).build())
+                                .relation(Relation.builder().name("party").source("Invoice").target("Party").required(true).build())
                                 .build()
                 ))
                 .operations(List.of())
@@ -71,6 +73,7 @@ class SpringDataSourceCodeProjectContributionTest {
                 "import javax.persistence.GeneratedValue;",
                 "import javax.persistence.GenerationType;",
                 "import javax.persistence.Id;",
+                "import javax.persistence.OneToOne;",
                 "import lombok.Getter;",
                 "import lombok.NoArgsConstructor;",
                 "import lombok.Setter;",
@@ -85,6 +88,9 @@ class SpringDataSourceCodeProjectContributionTest {
                 "\tprivate UUID id;",
                 "",
                 "\tprivate String number;",
+                "",
+                "\t@OneToOne",
+                "\tprivate Party party;",
                 "}"
         );
     }

@@ -2,6 +2,7 @@ package eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa;
 
 import eu.xenit.contentcloud.bard.AnnotationSpec;
 import eu.xenit.contentcloud.bard.TypeName;
+import eu.xenit.contentcloud.scribe.generator.source.types.SemanticType;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.JavaBeanProperty;
 
 import java.beans.Introspector;
@@ -18,10 +19,10 @@ import org.springframework.lang.Nullable;
 public interface JpaEntityProperty extends JavaBeanProperty {
 
     JpaEntityProperty name(String name);
-    JpaEntityProperty type(TypeName type);
+    JpaEntityProperty type(SemanticType type);
 
 
-    static JpaEntityProperty create(TypeName type, String name) {
+    static JpaEntityProperty create(SemanticType type, String name) {
         return new JpaEntityFieldImpl(type, name);
     }
 }
@@ -31,7 +32,7 @@ public interface JpaEntityProperty extends JavaBeanProperty {
 class JpaEntityFieldImpl implements JpaEntityProperty {
 
     @NonNull
-    private TypeName type;
+    private SemanticType type;
 
     @NonNull
     private String name;
@@ -43,7 +44,7 @@ class JpaEntityFieldImpl implements JpaEntityProperty {
     @Nullable
     private String column;
 
-    JpaEntityFieldImpl(TypeName fieldType, String name) {
+    JpaEntityFieldImpl(SemanticType fieldType, String name) {
         this.type = fieldType;
         this.name = name;
     }
