@@ -1,6 +1,5 @@
 package eu.xenit.contentcloud.scribe.generator.spring.data;
 
-import static io.spring.initializr.metadata.Dependency.SCOPE_ANNOTATION_PROCESSOR;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import eu.xenit.contentcloud.scribe.changeset.Attribute;
@@ -8,15 +7,12 @@ import eu.xenit.contentcloud.scribe.changeset.Changeset;
 import eu.xenit.contentcloud.scribe.changeset.Entity;
 import eu.xenit.contentcloud.scribe.changeset.Relation;
 import eu.xenit.contentcloud.scribe.generator.ScribeProjectDescription;
-import eu.xenit.contentcloud.scribe.generator.spring.data.SpringDataProjectGenerationConfiguration;
 import io.spring.initializr.generator.buildsystem.gradle.GradleBuildSystem;
 import io.spring.initializr.generator.language.java.JavaLanguage;
 import io.spring.initializr.generator.spring.code.java.JavaProjectGenerationConfiguration;
 import io.spring.initializr.generator.test.project.ProjectAssetTester;
 import io.spring.initializr.generator.test.project.ProjectStructure;
 import io.spring.initializr.generator.version.Version;
-import io.spring.initializr.metadata.Dependency;
-import io.spring.initializr.metadata.support.MetadataBuildItemMapper;
 import java.nio.file.Path;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,10 +39,9 @@ class SpringDataSourceCodeProjectContributionTest {
                 });
     }
 
-
     @Test
     void entityClassIsContributed() {
-        var description = createProjectDescription();
+        var description = new ScribeProjectDescription();
         description.setChangeset(Changeset.builder()
                 .entities(List.of(
                         Entity.builder().name("Party")
@@ -129,13 +124,5 @@ class SpringDataSourceCodeProjectContributionTest {
                 "}"
         );
     }
-    private static ScribeProjectDescription createProjectDescription() {
-        var description = new ScribeProjectDescription();
 
-        var lombok = Dependency.withId("lombok", "org.projectlombok", "lombok", null, SCOPE_ANNOTATION_PROCESSOR);
-        description.addDependency(lombok.getId(), MetadataBuildItemMapper.toDependency(lombok));
-        description.useLombok(true);
-
-        return description;
-    }
 }

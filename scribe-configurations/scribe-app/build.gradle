@@ -17,6 +17,9 @@ dependencies {
     implementation 'io.spring.initializr:initializr-metadata'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    testImplementation 'io.spring.initializr:initializr-generator-test'
+    testImplementation 'io.spring.initializr:initializr-generator-spring'
 }
 
 bootRun {
