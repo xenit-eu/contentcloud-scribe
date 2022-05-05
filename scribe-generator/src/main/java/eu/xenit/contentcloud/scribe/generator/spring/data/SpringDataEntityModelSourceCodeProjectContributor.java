@@ -58,33 +58,17 @@ public class SpringDataEntityModelSourceCodeProjectContributor implements Projec
                 .useNoArgsConstructor(this.description.useLombok()));
 
         entity.getAttributes().forEach(attribute -> {
-//            if ("CONTENT".equals(attribute.getType())) {
-//                jpaEntity.addProperty(SemanticType.STRING, attribute.getName() + "Id", property -> {
-//                    var contentId = SimpleType.get("org.springframework.content.commons.annotations", "ContentId");
-//                    property.addAnnotation(contentId);
-//                });
-//
-//                jpaEntity.addProperty(SemanticType.NUMBER, attribute.getName() + "Length", property -> {
-//                    var contentLength = SimpleType.get("org.springframework.content.commons.annotations",
-//                            "ContentLength");
-//                    property.addAnnotation(contentLength);
-//                });
-//
-//                jpaEntity.addProperty(SemanticType.STRING, attribute.getName() + "Mimetype", property -> {
-//                    var mimetype = SimpleType.get("org.springframework.content.commons.annotations", "MimeType");
-//                    property.addAnnotation(mimetype);
-//                });
-//            } else {
-                var type = this.dataTypeResolver.resolve(attribute.getType())
-                        .orElseThrow(() -> new RuntimeException("Could not resolve attribute type '"+attribute.getType()+"' for attribute "+attribute.getName()));
-                jpaEntity.addProperty(type, attribute.getName());
-//            }
+            var type = this.dataTypeResolver.resolve(attribute.getType())
+                    .orElseThrow(() -> new RuntimeException("Could not resolve attribute type '" + attribute.getType()
+                            + "' for attribute "+ attribute.getName()));
+            jpaEntity.addProperty(type, attribute.getName());
         });
 
         entity.getRelations().forEach(relation -> {
             var linkedEntity = entityModel.lookupEntity(relation.getTarget()).orElseThrow();
             var targetType = this.dataTypeResolver.resolve(linkedEntity.getName())
-                    .orElseThrow(() -> new RuntimeException("Could not resolve relation type '"+linkedEntity.getName()+"'"));
+                    .orElseThrow(() -> new RuntimeException(
+                            "Could not resolve relation type '" + linkedEntity.getName() + "'"));
 
             if (relation.isManySourcePerTarget()) {
                 if (relation.isManyTargetPerSource()) {
