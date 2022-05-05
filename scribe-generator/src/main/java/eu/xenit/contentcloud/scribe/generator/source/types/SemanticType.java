@@ -5,6 +5,6 @@ public interface SemanticType {
     SemanticType STRING = new BuiltInType("STRING");
     SemanticType NUMBER = new BuiltInType("NUMBER");
     SemanticType UUID = new BuiltInType("UUID");
-    SemanticType POINT_IN_TIME = new BuiltInType("POINT_IN_TIME");
+    SemanticType TIMESTAMP = new BuiltInType("TIMESTAMP");
 
 }

@@ -33,7 +33,7 @@ public class JavaBuiltInTypeResolver implements SemanticTypeResolver<JavaTypeNam
             return JavaTypeName.UUID;
         }
 
-        if (BuiltInType.POINT_IN_TIME.equals(type)) {
+        if (BuiltInType.TIMESTAMP.equals(type)) {
             return JavaTypeName.INSTANT;
         }
 

@@ -15,7 +15,7 @@ public class DefaultDataTypeResolver implements DataTypeResolver {
         }
 
         if (Objects.equals(type, "DATETIME")) {
-            return Optional.of(SemanticType.POINT_IN_TIME);
+            return Optional.of(SemanticType.TIMESTAMP);
         }
 
         return Optional.empty();
