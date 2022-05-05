@@ -1,5 +1,6 @@
 package eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa;
 
+import eu.xenit.contentcloud.scribe.generator.source.types.Annotation;
 import eu.xenit.contentcloud.scribe.generator.source.types.SemanticType;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.JavaBeanProperty;
 import java.lang.reflect.Type;
@@ -43,15 +44,15 @@ class JpaEntityIdFieldImpl implements JpaEntityIdField {
     private GenerationStrategy generationStrategy = GenerationStrategy.AUTO;
 
     @Getter
-    private Collection<Type> annotations = new HashSet<>();
+    private Collection<Annotation> annotations = new HashSet<>();
 
     JpaEntityIdFieldImpl(String name) {
         this.name = name;
     }
 
     @Override
-    public JavaBeanProperty addAnnotation(Type annotationType) {
-        this.annotations.add(annotationType);
+    public JavaBeanProperty addAnnotation(Annotation annotation) {
+        this.annotations.add(annotation);
         return this;
     }
 }

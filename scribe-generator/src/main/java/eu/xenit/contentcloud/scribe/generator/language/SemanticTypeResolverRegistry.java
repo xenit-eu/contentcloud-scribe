@@ -10,12 +10,12 @@ public class SemanticTypeResolverRegistry<T extends ResolvedTypeName> implements
     private final Collection<SemanticTypeResolver<T>> resolvers;
 
     @Override
-    public T resolve(SemanticType type) {
+    public T resolve(SemanticType type) throws TypeResolutionException {
         return this.resolvers.stream()
                 .filter(resolver -> resolver.supports(type))
                 .map(resolver -> resolver.resolve(type))
                 .findFirst()
-                .orElseThrow();
+                .orElseThrow(() -> new TypeResolutionException(type));
     }
 
     @Override

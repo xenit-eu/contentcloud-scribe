@@ -4,18 +4,21 @@ import eu.xenit.contentcloud.scribe.changeset.Entity;
 import eu.xenit.contentcloud.scribe.generator.ScribeProjectDescription;
 import eu.xenit.contentcloud.scribe.generator.source.SourceFile;
 import eu.xenit.contentcloud.scribe.generator.source.types.DataTypeResolver;
-import eu.xenit.contentcloud.scribe.generator.source.types.SemanticType;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.EntityModel;
-import eu.xenit.contentcloud.scribe.generator.spring.data.model.SimpleType;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.SpringDataPackageStructure;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.JpaEntity;
+import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.JpaEntityCustomizer;
 import eu.xenit.contentcloud.scribe.generator.spring.data.source.SpringDataSourceCodeGenerator;
 import io.spring.initializr.generator.language.Language;
 import io.spring.initializr.generator.language.SourceStructure;
 import io.spring.initializr.generator.project.contributor.ProjectContributor;
+import io.spring.initializr.generator.spring.util.LambdaSafe;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.ObjectProvider;
 
 /**
  * {@link ProjectContributor} for the entity model source code
@@ -33,6 +36,8 @@ public class SpringDataEntityModelSourceCodeProjectContributor implements Projec
 
     private final DataTypeResolver dataTypeResolver;
 
+    private final ObjectProvider<JpaEntityCustomizer> jpaEntityCustomizers;
+
     @Override
     public void contribute(Path projectRoot) throws IOException {
         Language language = this.description.getLanguage();
@@ -46,34 +51,34 @@ public class SpringDataEntityModelSourceCodeProjectContributor implements Projec
     }
 
     private SourceFile generate(Entity entity) {
-        var jpaEntity = JpaEntity.withClassName(entity.getClassName());
+        var jpaEntity = JpaEntity.withName(entity.getClassName());
         jpaEntity.lombokTypeAnnotations(lombok -> lombok
                 .useGetter(this.description.useLombok())
                 .useSetter(this.description.useLombok())
                 .useNoArgsConstructor(this.description.useLombok()));
 
         entity.getAttributes().forEach(attribute -> {
-            if ("CONTENT".equals(attribute.getType())) {
-                jpaEntity.addProperty(SemanticType.STRING, attribute.getName() + "Id", property -> {
-                    var contentId = SimpleType.get("org.springframework.content.commons.annotations", "ContentId");
-                    property.addAnnotation(contentId);
-                });
-
-                jpaEntity.addProperty(SemanticType.NUMBER, attribute.getName() + "Length", property -> {
-                    var contentLength = SimpleType.get("org.springframework.content.commons.annotations",
-                            "ContentLength");
-                    property.addAnnotation(contentLength);
-                });
-
-                jpaEntity.addProperty(SemanticType.STRING, attribute.getName() + "Mimetype", property -> {
-                    var mimetype = SimpleType.get("org.springframework.content.commons.annotations", "MimeType");
-                    property.addAnnotation(mimetype);
-                });
-            } else {
+//            if ("CONTENT".equals(attribute.getType())) {
+//                jpaEntity.addProperty(SemanticType.STRING, attribute.getName() + "Id", property -> {
+//                    var contentId = SimpleType.get("org.springframework.content.commons.annotations", "ContentId");
+//                    property.addAnnotation(contentId);
+//                });
+//
+//                jpaEntity.addProperty(SemanticType.NUMBER, attribute.getName() + "Length", property -> {
+//                    var contentLength = SimpleType.get("org.springframework.content.commons.annotations",
+//                            "ContentLength");
+//                    property.addAnnotation(contentLength);
+//                });
+//
+//                jpaEntity.addProperty(SemanticType.STRING, attribute.getName() + "Mimetype", property -> {
+//                    var mimetype = SimpleType.get("org.springframework.content.commons.annotations", "MimeType");
+//                    property.addAnnotation(mimetype);
+//                });
+//            } else {
                 var type = this.dataTypeResolver.resolve(attribute.getType())
                         .orElseThrow(() -> new RuntimeException("Could not resolve attribute type '"+attribute.getType()+"' for attribute "+attribute.getName()));
                 jpaEntity.addProperty(type, attribute.getName());
-            }
+//            }
         });
 
         entity.getRelations().forEach(relation -> {
@@ -100,6 +105,15 @@ public class SpringDataEntityModelSourceCodeProjectContributor implements Projec
             }
         });
 
+        // call out to all JpaEntityCustomizers
+        this.customizeJpaEntity(jpaEntity);
+
         return this.sourceGenerator.createSourceFile(jpaEntity);
+    }
+
+    private void customizeJpaEntity(JpaEntity jpaEntity) {
+        List<JpaEntityCustomizer> customizers = this.jpaEntityCustomizers.orderedStream().collect(Collectors.toList());
+        LambdaSafe.callbacks(JpaEntityCustomizer.class, customizers, jpaEntity)
+                .invoke((customizer) -> customizer.customize(jpaEntity));
     }
 }

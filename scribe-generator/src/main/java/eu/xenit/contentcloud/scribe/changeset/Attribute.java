@@ -1,8 +1,9 @@
 package eu.xenit.contentcloud.scribe.changeset;
 
+import eu.xenit.contentcloud.scribe.generator.source.types.Annotation;
+import eu.xenit.contentcloud.scribe.generator.source.types.Annotation.Builder;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -29,14 +30,23 @@ public class Attribute {
     @Accessors(fluent = true, chain = true)
     @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
     public static class AttributeTypeBuilder {
+
         private final String name;
 
         public Builder string() {
             return this.type("STRING");
         }
 
+        public Builder content() {
+            return this.type("CONTENT");
+        }
+
+        public Builder number() {
+            return this.type("NUMBER");
+        }
+
         private Builder type(String type) {
-            return new Builder(this.name, "STRING");
+            return new Builder(this.name, type);
         }
     }
 

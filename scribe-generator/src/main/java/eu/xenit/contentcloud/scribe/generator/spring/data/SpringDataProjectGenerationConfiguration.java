@@ -13,8 +13,10 @@ import eu.xenit.contentcloud.scribe.generator.spring.data.model.DefaultSpringDat
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.EntityModel;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.SpringDataPackageStructure;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.EntityDataTypeResolver;
+import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.JpaEntityCustomizer;
 import eu.xenit.contentcloud.scribe.generator.spring.data.source.SpringDataSourceCodeGenerator;
 import eu.xenit.contentcloud.scribe.generator.spring.data.source.java.JavaEntityTypeNameResolver;
+import eu.xenit.contentcloud.scribe.generator.spring.data.source.java.JpaAnnotationTypeResolver;
 import eu.xenit.contentcloud.scribe.generator.spring.data.source.java.SpringDataJavaSourceCodeGenerator;
 import io.spring.initializr.generator.condition.ConditionalOnLanguage;
 import io.spring.initializr.generator.language.java.JavaLanguage;
@@ -76,6 +78,12 @@ public class SpringDataProjectGenerationConfiguration {
     }
 
     @Bean
+    @ConditionalOnLanguage(JavaLanguage.ID)
+    SemanticTypeResolver<JavaTypeName> jpaAnnotationTypeResolver() {
+        return new JpaAnnotationTypeResolver();
+    }
+
+    @Bean
     @Primary
     @ConditionalOnLanguage(JavaLanguage.ID)
     SemanticTypeResolver<JavaTypeName> semanticTypeResolverRegistry(ObjectProvider<SemanticTypeResolver<JavaTypeName>> resolvers) {
@@ -93,9 +101,10 @@ public class SpringDataProjectGenerationConfiguration {
     @Bean
     public SpringDataEntityModelSourceCodeProjectContributor entityModelSourceCodeProjectContributor(
             EntityModel entityModel, SpringDataSourceCodeGenerator sourceGenerator,
-            SpringDataPackageStructure packageStructure, DataTypeResolver dataTypeResolver) {
+            SpringDataPackageStructure packageStructure, DataTypeResolver dataTypeResolver,
+            ObjectProvider<JpaEntityCustomizer> jpaEntityCustomizers) {
         return new SpringDataEntityModelSourceCodeProjectContributor(this.description, entityModel, sourceGenerator,
-                packageStructure, dataTypeResolver);
+                packageStructure, dataTypeResolver, jpaEntityCustomizers);
     }
 
     @Bean
