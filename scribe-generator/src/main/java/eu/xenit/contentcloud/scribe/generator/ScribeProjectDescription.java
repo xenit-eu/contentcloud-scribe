@@ -12,7 +12,7 @@ public class ScribeProjectDescription extends MutableProjectDescription {
     private Changeset changeset;
 
     @Getter @Setter @Accessors(fluent = true)
-    private boolean useLombok;
+    private boolean useLombok = true;
 
 
 }
