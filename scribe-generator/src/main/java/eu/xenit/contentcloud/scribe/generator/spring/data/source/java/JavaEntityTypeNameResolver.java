@@ -21,13 +21,12 @@ public class JavaEntityTypeNameResolver implements SemanticTypeResolver<JavaType
 
     @Override
     public JavaTypeName resolve(SemanticType type) throws TypeResolutionException {
-        var entity = ((EntityTypeName) type).getEntity();
-
-        String className = StringUtils.capitalize(entity.getName());
-        if (hasInvalidChar(className) /* || check blacklist ? */) {
-            throw new IllegalArgumentException("Entity name '" + className + "' contains invalid characters");
+        var name = ((EntityTypeName) type).getValue();
+        if (hasInvalidChar(name) /* || check blacklist ? */) {
+            throw new IllegalArgumentException("Entity name '" + name + "' contains invalid characters");
         }
 
+        String className = StringUtils.capitalize(name);
         return new JavaTypeName(ClassName.get(packageStructure.getModelPackageName(), className));
     }
 

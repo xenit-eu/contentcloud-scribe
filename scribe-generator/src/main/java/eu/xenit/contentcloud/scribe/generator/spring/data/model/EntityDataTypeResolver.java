@@ -1,5 +1,6 @@
 package eu.xenit.contentcloud.scribe.generator.spring.data.model;
 
+import eu.xenit.contentcloud.scribe.changeset.Entity;
 import eu.xenit.contentcloud.scribe.generator.source.types.DataTypeResolver;
 import eu.xenit.contentcloud.scribe.generator.source.types.SemanticType;
 import java.util.Optional;
@@ -14,6 +15,8 @@ public class EntityDataTypeResolver implements DataTypeResolver {
 
     @Override
     public Optional<SemanticType> resolve(String type) {
-        return this.entityModel.lookupEntity(type).map(EntityTypeName::new);
+        return this.entityModel.lookupEntity(type)
+                .map(Entity::getName)
+                .map(EntityTypeName::new);
     }
 }
