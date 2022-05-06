@@ -1,6 +1,7 @@
 package eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa;
 
 import eu.xenit.contentcloud.bard.TypeName;
+import eu.xenit.contentcloud.scribe.generator.source.types.Annotation;
 import eu.xenit.contentcloud.scribe.generator.source.types.SemanticType;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.SimpleType;
 
@@ -13,6 +14,6 @@ class OneToOneRelationImpl extends JpaEntityFieldImpl implements OneToOneRelatio
     OneToOneRelationImpl(SemanticType fieldType, String name) {
         super(fieldType, name);
 
-        this.addAnnotation(SimpleType.get("javax.persistence", "OneToOne"));
+        this.addAnnotation(Annotation.builder(JpaAnnotations.OneToOne).build());
     }
 }

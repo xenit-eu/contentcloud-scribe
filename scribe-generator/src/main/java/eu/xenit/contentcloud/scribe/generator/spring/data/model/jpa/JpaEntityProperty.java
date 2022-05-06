@@ -1,12 +1,10 @@
 package eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa;
 
-import eu.xenit.contentcloud.bard.AnnotationSpec;
-import eu.xenit.contentcloud.bard.TypeName;
+import eu.xenit.contentcloud.scribe.generator.source.types.Annotation;
 import eu.xenit.contentcloud.scribe.generator.source.types.SemanticType;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.JavaBeanProperty;
 
 import java.beans.Introspector;
-import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.HashSet;
 import javax.lang.model.element.Modifier;
@@ -19,6 +17,7 @@ import org.springframework.lang.Nullable;
 public interface JpaEntityProperty extends JavaBeanProperty {
 
     JpaEntityProperty name(String name);
+
     JpaEntityProperty type(SemanticType type);
 
 
@@ -27,35 +26,33 @@ public interface JpaEntityProperty extends JavaBeanProperty {
     }
 }
 
-@Getter @Setter
+@Getter
+@Setter
 @Accessors(fluent = true, chain = true)
 class JpaEntityFieldImpl implements JpaEntityProperty {
 
     @NonNull
     private SemanticType type;
 
+    @Getter
     @NonNull
     private String name;
 
     private Modifier modifiers = Modifier.DEFAULT;
 
-    private Collection<Type> annotations = new HashSet<>();
+    private Collection<Annotation> annotations = new HashSet<>();
 
     @Nullable
     private String column;
 
     JpaEntityFieldImpl(SemanticType fieldType, String name) {
         this.type = fieldType;
-        this.name = name;
-    }
-
-    public String name() {
-        return Introspector.decapitalize(this.name);
+        this.name = Introspector.decapitalize(name);
     }
 
     @Override
-    public JavaBeanProperty addAnnotation(Type annotationType) {
-        this.annotations.add(annotationType);
+    public JavaBeanProperty addAnnotation(Annotation annotation) {
+        this.annotations.add(annotation);
         return this;
     }
 

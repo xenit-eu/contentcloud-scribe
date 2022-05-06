@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.xenit.contentcloud.scribe.changeset.Changeset;
 import eu.xenit.contentcloud.scribe.generator.ScribeProjectDescription;
+import eu.xenit.contentcloud.scribe.generator.spring.content.SpringContentProjectionGenerationConfiguration;
 import eu.xenit.contentcloud.scribe.generator.spring.data.SpringDataProjectGenerationConfiguration;
 import eu.xenit.contentcloud.scribe.infrastructure.changeset.ChangesetModel;
 import io.spring.initializr.generator.buildsystem.gradle.GradleBuildSystem;
@@ -42,9 +43,11 @@ public class ChangesetFixturesIntegrationTest {
 
     @BeforeEach
     void setup(@TempDir Path directory) {
-        this.projectTester = new ProjectAssetTester().withIndentingWriterFactory()
+        this.projectTester = new ProjectAssetTester()
+                .withIndentingWriterFactory()
                 .withConfiguration(
                         SpringDataProjectGenerationConfiguration.class,
+                        SpringContentProjectionGenerationConfiguration.class,
                         JavaProjectGenerationConfiguration.class)
                 .withDirectory(directory)
                 .withDescriptionCustomizer((description) -> {

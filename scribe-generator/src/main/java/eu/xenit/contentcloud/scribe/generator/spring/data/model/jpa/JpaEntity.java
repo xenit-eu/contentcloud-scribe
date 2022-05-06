@@ -1,34 +1,26 @@
 package eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa;
 
-import eu.xenit.contentcloud.bard.TypeName;
 import eu.xenit.contentcloud.scribe.generator.source.types.SemanticType;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.JavaBean;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.JavaBeanProperty;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.lombok.LombokTypeAnnotations;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.lombok.LombokTypeAnnotationsConfig;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.lombok.LombokTypeAnnotationsCustomizer;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import lombok.experimental.Accessors;
-import org.springframework.lang.Nullable;
 
 public interface JpaEntity extends JavaBean {
     
-    static JpaEntity withClassName(String className) {
-        return new JpaEntityImpl(className);
+    static JpaEntity withName(String entityName) {
+        return new JpaEntityImpl(entityName);
     }
 
     String entityName();
-    JpaEntity entityName(String name);
-
-    String tableName();
-    JpaEntity tableName(String name);
 
     JpaEntityIdField id();
     JpaEntity id(Consumer<JpaEntityIdField> customizer);
@@ -45,22 +37,19 @@ public interface JpaEntity extends JavaBean {
 class JpaEntityImpl implements JpaEntity {
 
     @Getter
-    private final String className;
-
-    @Nullable
-    @Getter @Setter
-    private String entityName;
-
-    @Nullable
-    @Getter @Setter
-    private String tableName;
+    private final String entityName;
 
     @Getter
     private final JpaEntityIdField id = JpaEntityIdField.named("id");
 
-    private final List<JpaEntityProperty> fields = new ArrayList<>();
+    private final Map<String, JpaEntityProperty> fields = new LinkedHashMap<>();
 
     private final LombokTypeAnnotations lombok = new LombokTypeAnnotations();
+
+    @Override
+    public String className() {
+        return this.entityName;
+    }
 
     @Override
     public JpaEntity id(Consumer<JpaEntityIdField> customizer) {
@@ -72,13 +61,26 @@ class JpaEntityImpl implements JpaEntity {
     public JpaEntity addProperty(SemanticType fieldType, String name, Consumer<JavaBeanProperty> customizer) {
         var property = JpaEntityProperty.create(fieldType, name);
         customizer.accept(property);
-        this.fields.add(property);
+        var old = this.fields.putIfAbsent(property.name(), property);
+        if (old != null) {
+            throw new IllegalArgumentException("Entity "+entityName+" already contains field '"+name+"'");
+        }
+
+        return this;
+    }
+
+    @Override
+    public JavaBean removeProperty(String name) {
+        var field = this.fields.remove(name);
+        if (field == null) {
+            throw new IllegalArgumentException("Entity "+entityName+" does not contain a field '"+name+"'");
+        }
         return this;
     }
 
     @Override
     public Stream<JpaEntityProperty> fields() {
-        return this.fields.stream();
+        return this.fields.values().stream();
     }
 
     @Override
@@ -86,7 +88,7 @@ class JpaEntityImpl implements JpaEntity {
             Consumer<OneToOneRelation> customizer) {
         var relation = new OneToOneRelationImpl(targetClass, fieldName);
         customizer.accept(relation);
-        this.fields.add(relation);
+        this.fields.put(fieldName, relation);
         return this;
     }
 
@@ -100,6 +102,7 @@ class JpaEntityImpl implements JpaEntity {
     public LombokTypeAnnotationsConfig lombok() {
         return this.lombok;
     }
+
 
 
 }

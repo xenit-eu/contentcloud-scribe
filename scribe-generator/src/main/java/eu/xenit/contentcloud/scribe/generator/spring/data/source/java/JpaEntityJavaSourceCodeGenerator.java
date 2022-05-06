@@ -76,7 +76,8 @@ class JpaEntityJavaSourceCodeGenerator implements JpaEntitySourceCodeGenerator {
         this.addSetter(jpaEntity, field, type, fieldSpec);
 
         field.annotations().forEach(annotationType -> {
-            fieldSpec.addAnnotation(ClassName.bestGuess(annotationType.getTypeName()));
+            var annotationClassName = typeResolver.resolve(annotationType.getType());
+            fieldSpec.addAnnotation((ClassName) annotationClassName.getTypeName());
         });
 
         type.addField(fieldSpec.build());
