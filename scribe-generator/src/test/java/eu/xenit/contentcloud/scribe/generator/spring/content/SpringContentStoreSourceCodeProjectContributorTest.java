@@ -76,8 +76,8 @@ class SpringContentStoreSourceCodeProjectContributorTest {
                 "import lombok.Setter;",
                 "import org.springframework.content.commons.annotations.ContentId;",
                 "import org.springframework.content.commons.annotations.ContentLength;",
-                "import org.springframework.content.commons.annotations.Mimetype;",
-                "import org.springframework.content.commons.annotations.OriginalFilename;",
+                "import org.springframework.content.commons.annotations.MimeType;",
+                "import org.springframework.content.commons.annotations.OriginalFileName;",
                 "",
                 "@Entity",
                 "@NoArgsConstructor",
@@ -96,10 +96,10 @@ class SpringContentStoreSourceCodeProjectContributorTest {
                 "\t@ContentLength",
                 "\tprivate long contentLength;",
                 "",
-                "\t@Mimetype",
+                "\t@MimeType",
                 "\tprivate String contentMimetype;",
                 "",
-                "\t@OriginalFilename",
+                "\t@OriginalFileName",
                 "\tprivate String contentFilename;",
                 "}"
         );

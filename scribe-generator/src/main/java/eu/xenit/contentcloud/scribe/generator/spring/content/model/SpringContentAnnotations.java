@@ -10,8 +10,8 @@ public interface SpringContentAnnotations {
 
     SpringContentAnnotation ContentId = new SpringContentAnnotation("ContentId");
     SpringContentAnnotation ContentLength = new SpringContentAnnotation("ContentLength");
-    SpringContentAnnotation Mimetype = new SpringContentAnnotation("Mimetype");
-    SpringContentAnnotation OriginalFilename = new SpringContentAnnotation("OriginalFilename");
+    SpringContentAnnotation Mimetype = new SpringContentAnnotation("MimeType");
+    SpringContentAnnotation OriginalFilename = new SpringContentAnnotation("OriginalFileName");
 
     @ToString
     @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
