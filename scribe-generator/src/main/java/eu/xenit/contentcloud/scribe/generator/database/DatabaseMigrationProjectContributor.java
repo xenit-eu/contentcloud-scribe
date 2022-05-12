@@ -1,10 +1,7 @@
 package eu.xenit.contentcloud.scribe.generator.database;
 
 import eu.xenit.contentcloud.scribe.changeset.Changeset;
-import eu.xenit.contentcloud.scribe.changeset.Operation;
 import eu.xenit.contentcloud.scribe.generator.ScribeProjectDescription;
-import io.spring.initializr.generator.io.IndentingWriter;
-import io.spring.initializr.generator.io.IndentingWriterFactory;
 import io.spring.initializr.generator.language.SourceStructure;
 import io.spring.initializr.generator.project.contributor.ProjectContributor;
 import java.io.IOException;
@@ -12,13 +9,12 @@ import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @RequiredArgsConstructor
 public class DatabaseMigrationProjectContributor implements ProjectContributor {
 
     private final ScribeProjectDescription description;
+    private final DatabaseMigrationOperations migrationOperations;
 
     @Override
     public void contribute(Path projectRoot) throws IOException {
@@ -33,7 +29,6 @@ public class DatabaseMigrationProjectContributor implements ProjectContributor {
 
     private void contributeChangesetMigration(Changeset changeset, Path migrationsDir) throws IOException {
 
-
         Path sql = Files.createFile(migrationsDir.resolve("V1.sql"));
         try (var writer = Files.newBufferedWriter(sql)) {
             this.writeMigrationSql(writer, changeset);
@@ -42,17 +37,9 @@ public class DatabaseMigrationProjectContributor implements ProjectContributor {
 
     void writeMigrationSql(Writer out, Changeset changeset) throws IOException {
         for (var operation : changeset.getOperations()) {
-            this.writeMigrationOperation(out, operation);
+            migrationOperations.writeOperation(out, operation);
         }
     }
 
 
-    void writeMigrationOperation(Writer out, Operation operation) {
-        var handler = DatabaseMigrationOperations.OPERATIONS.get(operation.getType());
-        if (handler == null) {
-            log.warn("Unhandled operation type: {}", operation.getType());
-        } else {
-            handler.accept(out, operation);
-        }
-    }
 }
