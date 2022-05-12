@@ -13,4 +13,8 @@ public class Operation {
 
     private String type;
     private Map<String,Object> properties;
+
+    public Object getProperty(String name) {
+        return properties.get(name);
+    }
 }

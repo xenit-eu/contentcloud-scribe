@@ -4,6 +4,8 @@ import static eu.xenit.contentcloud.scribe.generator.database.operations.NamingU
 import static eu.xenit.contentcloud.scribe.generator.database.operations.NamingUtils.convertEntityNameToTableName;
 
 import eu.xenit.contentcloud.scribe.changeset.Operation;
+import eu.xenit.contentcloud.scribe.generator.database.sql.CreateColumnStatement;
+import eu.xenit.contentcloud.scribe.generator.database.sql.CreateIndexStatement;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Map;
@@ -33,9 +35,9 @@ public class AttributeOperationWriter implements OperationWriter {
     }
 
     private boolean addAttribute(Writer writer, Operation operation) throws IOException {
-        var tablename = convertEntityNameToTableName((String) operation.getProperties().get("entity-name"));
-        var columnName = convertAttributeNameToColumnName((String) operation.getProperties().get("attribute-name"));
-        var operationDataType = (String)operation.getProperties().get("type");
+        var tablename = convertEntityNameToTableName((String) operation.getProperty("entity-name"));
+        var columnName = convertAttributeNameToColumnName((String) operation.getProperty("attribute-name"));
+        var operationDataType = (String)operation.getProperty("type");
         var dataType = DATA_TYPES.get(operationDataType);
 
         if(dataType == null) {
@@ -43,24 +45,27 @@ public class AttributeOperationWriter implements OperationWriter {
             writer.write("-- Unsupported data type "+operationDataType+" not written.\n");
             return false ;
         }
+        var createColumn = CreateColumnStatement.builder()
+                .table(tablename)
+                .column(columnName)
+                .dataType(dataType)
+                .nullable(Boolean.FALSE.equals(operation.getProperty("required")))
+                .build();
 
-        writer.write("ALTER TABLE "+tablename+" ADD COLUMN "+columnName+" "+dataType);
-
-        if(Boolean.TRUE.equals(operation.getProperties().get("required"))) {
-            writer.write(" NOT NULL");
-        } else  {
-            writer.write(" NULL");
-        }
-        writer.write(";\n");
+        writer.write(createColumn.toSql()+"\n");
 
         String attributeId = operation.getProperties().get("attribute-id").toString();
 
-        if(Boolean.TRUE.equals(operation.getProperties().get("unique"))) {
-            writer.write("CREATE UNIQUE INDEX CONCURRENTLY \"" +attributeId + "_uniq\" ON " + tablename + "(" + columnName + ");\n");
+
+        if(Boolean.TRUE.equals(operation.getProperty(("unique"))) || Boolean.TRUE.equals(operation.getProperty("indexed"))) {
+            var index = CreateIndexStatement.builder()
+                    .name(attributeId+"_idx")
+                    .forStatement(createColumn)
+                    .unique(Boolean.TRUE.equals(operation.getProperty("unique")))
+                    .build();
+            writer.write(index.toSql()+"\n");
         }
-        if(Boolean.TRUE.equals(operation.getProperties().get("indexed"))) {
-            writer.write("CREATE INDEX CONCURRENTLY \""+attributeId+"_idx\" ON "+tablename+"("+columnName+");\n");
-        }
+
         return true;
     }
 
