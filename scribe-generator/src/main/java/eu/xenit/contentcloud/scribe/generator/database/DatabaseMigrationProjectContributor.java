@@ -14,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 public class DatabaseMigrationProjectContributor implements ProjectContributor {
 
     private final ScribeProjectDescription description;
-    private final DatabaseMigrationOperations migrationOperations;
+    private final DatabaseMigrationWriter migrationOperations;
 
     @Override
     public void contribute(Path projectRoot) throws IOException {

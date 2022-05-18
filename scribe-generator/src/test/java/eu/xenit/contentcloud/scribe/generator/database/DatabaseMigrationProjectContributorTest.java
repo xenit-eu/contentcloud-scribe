@@ -105,9 +105,9 @@ class DatabaseMigrationProjectContributorTest {
                 .containsExactly(
                         "CREATE TABLE \"invoice\" (id UUID PRIMARY KEY);",
                         "ALTER TABLE \"invoice\" ADD COLUMN \"amount\" bigint NULL;",
-                        "CREATE INDEX CONCURRENTLY inv001amo001_idx ON \"invoice\"(\"amount\");",
+                        "CREATE INDEX CONCURRENTLY \"invoice_amount_idx\" ON \"invoice\"(\"amount\");",
                         "ALTER TABLE \"invoice\" ADD COLUMN \"reference\" text NOT NULL;",
-                        "CREATE UNIQUE INDEX CONCURRENTLY inv001ref001_idx ON \"invoice\"(\"reference\");"
+                        "CREATE UNIQUE INDEX CONCURRENTLY \"invoice_reference_idx\" ON \"invoice\"(\"reference\");"
                 );
 
 

@@ -1,8 +1,9 @@
 package eu.xenit.contentcloud.scribe.generator.database;
 
 import eu.xenit.contentcloud.scribe.generator.ScribeProjectDescription;
-import eu.xenit.contentcloud.scribe.generator.database.operations.AttributeOperationWriter;
-import eu.xenit.contentcloud.scribe.generator.database.operations.EntityOperationWriter;
+import eu.xenit.contentcloud.scribe.generator.database.operations.AggregateStatementGenerator;
+import eu.xenit.contentcloud.scribe.generator.database.operations.AttributeOperationStatementGenerator;
+import eu.xenit.contentcloud.scribe.generator.database.operations.EntityOperationStatementGenerator;
 import io.spring.initializr.generator.project.ProjectGenerationConfiguration;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
@@ -15,16 +16,17 @@ public class DatabaseMigrationProjectGenerationConfiguration {
     private final ScribeProjectDescription description;
 
     @Bean
-    DatabaseMigrationProjectContributor databaseMigrationProjectContributor(DatabaseMigrationOperations databaseMigrationOperations) {
+    DatabaseMigrationProjectContributor databaseMigrationProjectContributor(
+            DatabaseMigrationWriter databaseMigrationOperations) {
         return new DatabaseMigrationProjectContributor(description, databaseMigrationOperations);
     }
 
     @Bean
-    DatabaseMigrationOperations databaseMigrationOperations() {
-        return new DatabaseMigrationOperations(Set.of(
-                new AttributeOperationWriter(),
-                new EntityOperationWriter()
-        ));
+    DatabaseMigrationWriter databaseMigrationOperations() {
+        return new DatabaseMigrationWriter(new AggregateStatementGenerator(Set.of(
+                new AttributeOperationStatementGenerator(),
+                new EntityOperationStatementGenerator()
+        )));
     }
 
 }

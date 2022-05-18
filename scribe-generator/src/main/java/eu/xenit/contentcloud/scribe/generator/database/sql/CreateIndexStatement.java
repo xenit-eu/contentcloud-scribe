@@ -3,7 +3,9 @@ package eu.xenit.contentcloud.scribe.generator.database.sql;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.Value;
+import static eu.xenit.contentcloud.scribe.generator.database.sql.SqlUtils.q;
 
+import static eu.xenit.contentcloud.scribe.generator.database.sql.SqlUtils.index;
 @Builder
 @Value
 public class CreateIndexStatement implements Statement {
@@ -11,8 +13,6 @@ public class CreateIndexStatement implements Statement {
     String table;
     @NonNull
     String column;
-    @NonNull
-    String name;
     @NonNull
     boolean unique;
 
@@ -25,6 +25,6 @@ public class CreateIndexStatement implements Statement {
 
     @Override
     public String toSql() {
-        return "CREATE "+(unique?"UNIQUE INDEX":"INDEX")+" CONCURRENTLY "+name+" ON "+table+"("+column+");";
+        return "CREATE "+(unique?"UNIQUE INDEX":"INDEX")+" CONCURRENTLY "+q(index(table, column))+" ON "+q(table)+"("+q(column)+");";
     }
 }

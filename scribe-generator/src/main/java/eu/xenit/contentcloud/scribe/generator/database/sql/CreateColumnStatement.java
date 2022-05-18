@@ -4,6 +4,8 @@ import lombok.Builder;
 import lombok.NonNull;
 import lombok.Value;
 
+import static eu.xenit.contentcloud.scribe.generator.database.sql.SqlUtils.q;
+
 @Value
 @Builder
 public class CreateColumnStatement implements Statement {
@@ -18,6 +20,6 @@ public class CreateColumnStatement implements Statement {
 
     @Override
     public String toSql() {
-        return "ALTER TABLE "+table+" ADD COLUMN "+column+" "+dataType+" "+(nullable?"NULL":"NOT NULL")+";";
+        return "ALTER TABLE "+q(table)+" ADD COLUMN "+q(column)+" "+dataType+" "+(nullable?"NULL":"NOT NULL")+";";
     }
 }
