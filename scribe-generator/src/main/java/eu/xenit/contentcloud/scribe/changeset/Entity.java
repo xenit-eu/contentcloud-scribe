@@ -2,6 +2,8 @@ package eu.xenit.contentcloud.scribe.changeset;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
+import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,6 +24,20 @@ public class Entity {
 
     @Singular
     private List<Relation> relations;
+
+    public Optional<Attribute> getAttribute(String name) {
+        return attributes
+                .stream()
+                .filter(attr -> Objects.equals(name, attr.getName()))
+                .findFirst();
+    }
+
+    public Optional<Relation> getRelation(String name) {
+        return relations
+                .stream()
+                .filter(attr -> Objects.equals(name, attr.getName()))
+                .findFirst();
+    }
 
     public String getClassName() {
         String candidate = StringUtils.capitalize(this.name);
