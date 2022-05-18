@@ -2,17 +2,11 @@ package eu.xenit.contentcloud.scribe.infrastructure.changeset;
 
 import eu.xenit.contentcloud.scribe.changeset.Changeset;
 import eu.xenit.contentcloud.scribe.changeset.ChangesetResolver;
-import eu.xenit.contentcloud.scribe.changeset.Model;
-import eu.xenit.contentcloud.scribe.changeset.Operation;
 import eu.xenit.contentcloud.scribe.infrastructure.changeset.dto.ChangesetDto;
-import eu.xenit.contentcloud.scribe.infrastructure.changeset.dto.OperationWithPatchesDto;
 import eu.xenit.contentcloud.scribe.infrastructure.changeset.dto.ProjectDto;
-import eu.xenit.contentcloud.scribe.infrastructure.changeset.model.ModelFactory;
+import eu.xenit.contentcloud.scribe.infrastructure.changeset.model.RestTemplateModelFactory;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.hateoas.EntityModel;
@@ -29,15 +23,14 @@ public class ChangesetRepository implements ChangesetResolver {
 
     private final RestTemplate restTemplate;
     private final Set<PathPattern> allowedPaths;
-    private final ModelFactory modelFactory;
+    private final ChangesetFactory changesetFactory;
 
     public ChangesetRepository(ChangesetRepositoryProperties properties, RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
         this.allowedPaths = properties.getAllowedPaths();
-        this.modelFactory = new ModelFactory(restTemplate);
+        this.changesetFactory = new ChangesetFactory(new RestTemplateModelFactory(restTemplate));
     }
 
-    @SneakyThrows
     @Override
     public Changeset get(URI changesetURI) {
         this.checkAllowedPaths(changesetURI);
@@ -57,30 +50,7 @@ public class ChangesetRepository implements ChangesetResolver {
                 .map(HttpEntity::getBody)
                 .orElseThrow();
 
-        var baseModel = modelFactory.createBaseModel(changesetResponse);
-        var currentModel = baseModel;
-
-        List<Operation> operations = new ArrayList<>(changeset.getContent().getOperations().size());
-        for(OperationWithPatchesDto operation: changeset.getContent().getOperations()) {
-            var beforeModel = currentModel;
-            currentModel = currentModel.patch(operation.getPatches());
-            var afterModel = currentModel;
-            operations.add(new Operation(
-                    operation.getType(),
-                    operation.getProperties(),
-                    new Model(beforeModel.toDto().getEntities()),
-                    new Model(afterModel.toDto().getEntities())
-            ));
-        }
-
-
-        return Changeset.builder()
-                .baseModel(new Model(baseModel.toDto().getEntities()))
-                .project(project.getName())
-                .organization(project.getOrganization())
-                .entities(changeset.getContent().getEntities())
-                .operations(operations)
-                .build();
+        return changesetFactory.create(changeset.getContent(), project, changesetResponse.getHeaders().getContentType());
     }
 
     private void checkAllowedPaths(URI changeset) {

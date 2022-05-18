@@ -6,7 +6,10 @@ import eu.xenit.contentcloud.scribe.changeset.Changeset;
 import eu.xenit.contentcloud.scribe.generator.ScribeProjectDescription;
 import eu.xenit.contentcloud.scribe.generator.spring.content.SpringContentProjectionGenerationConfiguration;
 import eu.xenit.contentcloud.scribe.generator.spring.data.SpringDataProjectGenerationConfiguration;
+import eu.xenit.contentcloud.scribe.infrastructure.changeset.ChangesetFactory;
 import eu.xenit.contentcloud.scribe.infrastructure.changeset.dto.ChangesetDto;
+import eu.xenit.contentcloud.scribe.infrastructure.changeset.dto.ProjectDto;
+import eu.xenit.contentcloud.scribe.infrastructure.changeset.model.Model;
 import io.spring.initializr.generator.buildsystem.gradle.GradleBuildSystem;
 import io.spring.initializr.generator.language.java.JavaLanguage;
 import io.spring.initializr.generator.spring.code.java.JavaProjectGenerationConfiguration;
@@ -32,6 +35,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.http.MediaType;
 
 @SpringBootTest
 public class ChangesetFixturesIntegrationTest {
@@ -70,13 +74,9 @@ public class ChangesetFixturesIntegrationTest {
     @SneakyThrows
     private Changeset parseChangeset(URL changesetUrl) {
         var model = objectMapper.readValue(changesetUrl, new TypeReference<EntityModel<ChangesetDto>>() {});
-
-        return Changeset.builder()
-                .project("project")
-                .organization("org")
-                .entities(model.getContent().getEntities())
-                .operations(model.getContent().getOperations())
-                .build();
+        var changesetFactory = new ChangesetFactory(
+                (changesetDto, contentType) -> new Model(objectMapper, changesetDto.getBaseModel()));
+        return changesetFactory.create(model.getContent(), new ProjectDto("project", "org", "org/project"), MediaType.APPLICATION_JSON);
     }
 
     static class ChangesetTestFixturesProvider implements ArgumentsProvider {
