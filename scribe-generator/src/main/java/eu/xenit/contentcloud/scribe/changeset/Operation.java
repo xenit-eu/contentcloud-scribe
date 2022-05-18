@@ -14,7 +14,9 @@ public class Operation {
     private String type;
     private Map<String,Object> properties;
 
+    @ToString.Exclude
     private Model beforeModel;
+    @ToString.Exclude
     private Model afterModel;
 
     public Object getProperty(String name) {

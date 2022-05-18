@@ -14,7 +14,7 @@ import java.util.Map;
 import org.junit.jupiter.api.Test;
 
 class EntityOperationStatementGeneratorTest {
-    private final StatementGenerator generator = new EntityOperationStatementGenerator();
+    private final StatementGenerator generator = new CommentFilteringStatementGenerator(new EntityOperationStatementGenerator());
 
     @Test
     void addEntity() {

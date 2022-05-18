@@ -3,6 +3,7 @@ package eu.xenit.contentcloud.scribe.generator.database.operations;
 import static eu.xenit.contentcloud.scribe.generator.database.operations.NamingUtils.convertAttributeNameToColumnName;
 import static eu.xenit.contentcloud.scribe.generator.database.operations.NamingUtils.convertEntityNameToTableName;
 import static eu.xenit.contentcloud.scribe.generator.database.sql.CommentStatement.comment;
+import static eu.xenit.contentcloud.scribe.generator.database.sql.UnsupportedStatement.unsupported;
 
 import eu.xenit.contentcloud.scribe.changeset.Operation;
 import eu.xenit.contentcloud.scribe.generator.database.sql.CreateColumnStatement;
@@ -58,8 +59,7 @@ public class AttributeOperationStatementGenerator implements StatementGenerator 
         var dataType = DATA_TYPES.get(operationDataType);
 
         if(dataType == null) {
-            log.warn("Unsupported data type {}", operationDataType);
-            return Stream.of(comment("Unsupported data type "+operationDataType+" not written."));
+            return Stream.of(unsupported("Operation "+operation+" uses unsupported data type "+operationDataType));
         }
         var streamBuilder = Stream.<Statement>builder();
         var createColumn = CreateColumnStatement.builder()
@@ -86,32 +86,33 @@ public class AttributeOperationStatementGenerator implements StatementGenerator 
         var columnName = convertAttributeNameToColumnName((String) operation.getProperty("attribute-name"));
         var nullable = Boolean.FALSE.equals(operation.getProperty("required"));
 
-        return Stream.of(
-                CreateColumnStatement.builder()
-                        .table(tablename)
-                        .column(columnName+"_id")
-                        .dataType(DataType.TEXT)
-                        .nullable(nullable)
-                        .build(),
-                CreateColumnStatement.builder()
-                        .table(tablename)
-                        .column(columnName+"_length")
-                        .dataType(DataType.BIGINT)
-                        .nullable(nullable)
-                        .build(),
-                CreateColumnStatement.builder()
-                        .table(tablename)
-                        .column(columnName+"_mimetype")
-                        .dataType(DataType.TEXT)
-                        .nullable(nullable)
-                        .build(),
-                CreateColumnStatement.builder()
-                        .table(tablename)
-                        .column(columnName+"_filename")
-                        .dataType(DataType.TEXT)
-                        .nullable(nullable)
-                        .build()
-        );
+        return comment("Create of content property "+tablename+"."+columnName)
+                .wrap(Stream.of(
+                        CreateColumnStatement.builder()
+                                .table(tablename)
+                                .column(columnName+"_id")
+                                .dataType(DataType.TEXT)
+                                .nullable(nullable)
+                                .build(),
+                        CreateColumnStatement.builder()
+                                .table(tablename)
+                                .column(columnName+"_length")
+                                .dataType(DataType.BIGINT)
+                                .nullable(nullable)
+                                .build(),
+                        CreateColumnStatement.builder()
+                                .table(tablename)
+                                .column(columnName+"_mimetype")
+                                .dataType(DataType.TEXT)
+                                .nullable(nullable)
+                                .build(),
+                        CreateColumnStatement.builder()
+                                .table(tablename)
+                                .column(columnName+"_filename")
+                                .dataType(DataType.TEXT)
+                                .nullable(nullable)
+                                .build()
+                ));
 
     }
 
@@ -127,13 +128,14 @@ public class AttributeOperationStatementGenerator implements StatementGenerator 
                 .orElseThrow();
 
         if(attribute.getType().equals("CONTENT")) {
-            return CONTENT_TYPE_FIELD_SUFFIXES.stream()
-                    .map(fieldSuffix -> RenameColumnStatement.builder()
-                            .table(tablename)
-                            .oldColumnName(oldColumnName+fieldSuffix)
-                            .newColumnName(newColumnName+fieldSuffix)
-                            .build()
-                    );
+            return comment("Rename of content property "+tablename+"."+oldColumnName+" to "+tablename+"."+newColumnName)
+                    .wrap(CONTENT_TYPE_FIELD_SUFFIXES.stream()
+                            .map(fieldSuffix -> RenameColumnStatement.builder()
+                                    .table(tablename)
+                                    .oldColumnName(oldColumnName+fieldSuffix)
+                                    .newColumnName(newColumnName+fieldSuffix)
+                                    .build()
+                            ));
         }
 
 
@@ -160,11 +162,14 @@ public class AttributeOperationStatementGenerator implements StatementGenerator 
                 .orElseThrow();
 
         if(attribute.getType().equals("CONTENT")) {
-            return CONTENT_TYPE_FIELD_SUFFIXES.stream()
-                    .map(fieldSuffix -> DropColumnStatement.builder()
-                            .table(tablename)
-                            .column(columnName+fieldSuffix)
-                            .build()
+
+            return comment("Delete of content property "+tablename+"."+columnName)
+                    .wrap(CONTENT_TYPE_FIELD_SUFFIXES.stream()
+                            .map(fieldSuffix -> DropColumnStatement.builder()
+                                    .table(tablename)
+                                    .column(columnName+fieldSuffix)
+                                    .build()
+                            )
                     );
         }
         return Stream.of(DropColumnStatement.builder()

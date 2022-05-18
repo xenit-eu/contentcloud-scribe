@@ -12,13 +12,14 @@ import eu.xenit.contentcloud.scribe.generator.database.sql.CreateIndexStatement;
 import eu.xenit.contentcloud.scribe.generator.database.sql.DropColumnStatement;
 import eu.xenit.contentcloud.scribe.generator.database.sql.RenameColumnStatement;
 import eu.xenit.contentcloud.scribe.generator.database.sql.RenameIndexStatement;
+import eu.xenit.contentcloud.scribe.generator.database.sql.UnsupportedStatement;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 class AttributeOperationStatementGeneratorTest {
-    private final StatementGenerator generator = new AttributeOperationStatementGenerator();
+    private final StatementGenerator generator = new CommentFilteringStatementGenerator(new AttributeOperationStatementGenerator());
 
     @ParameterizedTest
     @CsvSource({
@@ -117,6 +118,36 @@ class AttributeOperationStatementGeneratorTest {
                                 .nullable(true)
                                 .build()
                 );
+    }
+
+    @Test
+    void addAttributeUnknownType() {
+        var statements = generator.generate(new Operation(
+                "add-attribute",
+                Map.of(
+                        "entity-name", "Invoice",
+                        "attribute-name", "Scan",
+                        "type", "UNKNOWN",
+                        "naturalId", false,
+                        "indexed", true,
+                        "unique", false,
+                        "required", false
+                ),
+                Model.builder()
+                        .entity(Entity.builder()
+                                .name("Invoice")
+                                .build())
+                        .build(),
+                Model.builder()
+                        .entity(Entity.builder()
+                                .name("Invoice")
+                                .attribute(Attribute.builder("Scan").type("UNKNOWN").build())
+                                .build())
+                        .build()
+        ));
+
+        assertThat(statements)
+                .hasAtLeastOneElementOfType(UnsupportedStatement.class);
     }
 
     @Test
