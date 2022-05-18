@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.xenit.contentcloud.scribe.changeset.Changeset;
 import eu.xenit.contentcloud.scribe.generator.ScribeProjectDescription;
+import eu.xenit.contentcloud.scribe.generator.database.DatabaseMigrationProjectGenerationConfiguration;
 import eu.xenit.contentcloud.scribe.generator.spring.content.SpringContentProjectionGenerationConfiguration;
 import eu.xenit.contentcloud.scribe.generator.spring.data.SpringDataProjectGenerationConfiguration;
 import eu.xenit.contentcloud.scribe.infrastructure.changeset.ChangesetFactory;
@@ -52,7 +53,9 @@ public class ChangesetFixturesIntegrationTest {
                 .withConfiguration(
                         SpringDataProjectGenerationConfiguration.class,
                         SpringContentProjectionGenerationConfiguration.class,
-                        JavaProjectGenerationConfiguration.class)
+                        JavaProjectGenerationConfiguration.class,
+                        DatabaseMigrationProjectGenerationConfiguration.class
+                )
                 .withDirectory(directory)
                 .withDescriptionCustomizer((description) -> {
                     description.setLanguage(new JavaLanguage());

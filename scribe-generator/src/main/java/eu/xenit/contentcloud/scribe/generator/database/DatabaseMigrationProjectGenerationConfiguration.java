@@ -4,6 +4,7 @@ import eu.xenit.contentcloud.scribe.generator.ScribeProjectDescription;
 import eu.xenit.contentcloud.scribe.generator.database.operations.AggregateStatementGenerator;
 import eu.xenit.contentcloud.scribe.generator.database.operations.AttributeOperationStatementGenerator;
 import eu.xenit.contentcloud.scribe.generator.database.operations.EntityOperationStatementGenerator;
+import eu.xenit.contentcloud.scribe.generator.database.operations.UnsupportedOperationErrorStatementGenerator;
 import io.spring.initializr.generator.project.ProjectGenerationConfiguration;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
@@ -23,10 +24,10 @@ public class DatabaseMigrationProjectGenerationConfiguration {
 
     @Bean
     DatabaseMigrationWriter databaseMigrationOperations() {
-        return new DatabaseMigrationWriter(new AggregateStatementGenerator(Set.of(
+        return new DatabaseMigrationWriter(new UnsupportedOperationErrorStatementGenerator(new AggregateStatementGenerator(Set.of(
                 new AttributeOperationStatementGenerator(),
                 new EntityOperationStatementGenerator()
-        )));
+        ))));
     }
 
 }

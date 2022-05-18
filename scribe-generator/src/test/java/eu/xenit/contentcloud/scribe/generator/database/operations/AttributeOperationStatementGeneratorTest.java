@@ -12,7 +12,7 @@ import eu.xenit.contentcloud.scribe.generator.database.sql.CreateIndexStatement;
 import eu.xenit.contentcloud.scribe.generator.database.sql.DropColumnStatement;
 import eu.xenit.contentcloud.scribe.generator.database.sql.RenameColumnStatement;
 import eu.xenit.contentcloud.scribe.generator.database.sql.RenameIndexStatement;
-import eu.xenit.contentcloud.scribe.generator.database.sql.UnsupportedStatement;
+import eu.xenit.contentcloud.scribe.generator.database.sql.ErrorStatement;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -147,7 +147,7 @@ class AttributeOperationStatementGeneratorTest {
         ));
 
         assertThat(statements)
-                .hasAtLeastOneElementOfType(UnsupportedStatement.class);
+                .hasAtLeastOneElementOfType(ErrorStatement.class);
     }
 
     @Test

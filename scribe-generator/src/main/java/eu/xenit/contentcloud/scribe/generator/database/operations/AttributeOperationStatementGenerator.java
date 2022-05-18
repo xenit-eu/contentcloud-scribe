@@ -3,7 +3,7 @@ package eu.xenit.contentcloud.scribe.generator.database.operations;
 import static eu.xenit.contentcloud.scribe.generator.database.operations.NamingUtils.convertAttributeNameToColumnName;
 import static eu.xenit.contentcloud.scribe.generator.database.operations.NamingUtils.convertEntityNameToTableName;
 import static eu.xenit.contentcloud.scribe.generator.database.sql.CommentStatement.comment;
-import static eu.xenit.contentcloud.scribe.generator.database.sql.UnsupportedStatement.unsupported;
+import static eu.xenit.contentcloud.scribe.generator.database.sql.ErrorStatement.error;
 
 import eu.xenit.contentcloud.scribe.changeset.Operation;
 import eu.xenit.contentcloud.scribe.generator.database.sql.CreateColumnStatement;
@@ -59,7 +59,7 @@ public class AttributeOperationStatementGenerator implements StatementGenerator 
         var dataType = DATA_TYPES.get(operationDataType);
 
         if(dataType == null) {
-            return Stream.of(unsupported("Operation "+operation+" uses unsupported data type "+operationDataType));
+            return Stream.of(error("Operation "+operation+" uses unsupported data type "+operationDataType));
         }
         var streamBuilder = Stream.<Statement>builder();
         var createColumn = CreateColumnStatement.builder()
