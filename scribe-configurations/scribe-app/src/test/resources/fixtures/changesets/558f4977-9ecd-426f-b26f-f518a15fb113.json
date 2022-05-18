@@ -1,0 +1,681 @@
+{
+  "baseModel": {
+    "entities": []
+  },
+  "operations": [
+    {
+      "type": "add-entity",
+      "description": "Add entity Detective",
+      "properties": {
+        "entity-name": "Detective"
+      },
+      "patches": [
+        {
+          "op": "add",
+          "path": "/entities/-",
+          "value": {
+            "name": "Detective",
+            "attributes": [],
+            "relations": []
+          }
+        }
+      ]
+    },
+    {
+      "type": "add-attribute",
+      "description": "Add attribute Name to entity Detective",
+      "properties": {
+        "entity-name": "Detective",
+        "unique": false,
+        "required": true,
+        "type": "STRING",
+        "naturalId": false,
+        "indexed": true,
+        "attribute-name": "Name"
+      },
+      "patches": [
+        {
+          "op": "add",
+          "path": "/entities/0/attributes/-",
+          "value": {
+            "name": "Name",
+            "type": "STRING",
+            "required": true,
+            "unique": false,
+            "indexed": true,
+            "naturalId": false
+          }
+        }
+      ]
+    },
+    {
+      "type": "add-attribute",
+      "description": "Add attribute FirstName to entity Detective",
+      "properties": {
+        "entity-name": "Detective",
+        "unique": false,
+        "required": true,
+        "type": "STRING",
+        "naturalId": false,
+        "indexed": true,
+        "attribute-name": "FirstName"
+      },
+      "patches": [
+        {
+          "op": "add",
+          "path": "/entities/0/attributes/-",
+          "value": {
+            "name": "FirstName",
+            "type": "STRING",
+            "required": true,
+            "unique": false,
+            "indexed": true,
+            "naturalId": false
+          }
+        }
+      ]
+    },
+    {
+      "type": "add-attribute",
+      "description": "Add attribute NickName to entity Detective",
+      "properties": {
+        "entity-name": "Detective",
+        "unique": false,
+        "required": false,
+        "type": "STRING",
+        "naturalId": false,
+        "indexed": true,
+        "attribute-name": "NickName"
+      },
+      "patches": [
+        {
+          "op": "add",
+          "path": "/entities/0/attributes/-",
+          "value": {
+            "name": "NickName",
+            "type": "STRING",
+            "required": false,
+            "unique": false,
+            "indexed": true,
+            "naturalId": false
+          }
+        }
+      ]
+    },
+    {
+      "type": "add-attribute",
+      "description": "Add attribute Title to entity Detective",
+      "properties": {
+        "entity-name": "Detective",
+        "unique": false,
+        "required": false,
+        "type": "STRING",
+        "naturalId": false,
+        "indexed": true,
+        "attribute-name": "Title"
+      },
+      "patches": [
+        {
+          "op": "add",
+          "path": "/entities/0/attributes/-",
+          "value": {
+            "name": "Title",
+            "type": "STRING",
+            "required": false,
+            "unique": false,
+            "indexed": true,
+            "naturalId": false
+          }
+        }
+      ]
+    },
+    {
+      "type": "add-entity",
+      "description": "Add entity Car",
+      "properties": {
+        "entity-name": "Car"
+      },
+      "patches": [
+        {
+          "op": "add",
+          "path": "/entities/-",
+          "value": {
+            "name": "Car",
+            "attributes": [],
+            "relations": []
+          }
+        }
+      ]
+    },
+    {
+      "type": "add-attribute",
+      "description": "Add attribute Brand to entity Car",
+      "properties": {
+        "entity-name": "Car",
+        "unique": false,
+        "required": true,
+        "type": "STRING",
+        "naturalId": false,
+        "indexed": true,
+        "attribute-name": "Brand"
+      },
+      "patches": [
+        {
+          "op": "add",
+          "path": "/entities/1/attributes/-",
+          "value": {
+            "name": "Brand",
+            "type": "STRING",
+            "required": true,
+            "unique": false,
+            "indexed": true,
+            "naturalId": false
+          }
+        }
+      ]
+    },
+    {
+      "type": "add-attribute",
+      "description": "Add attribute Type to entity Car",
+      "properties": {
+        "entity-name": "Car",
+        "unique": false,
+        "required": true,
+        "type": "STRING",
+        "naturalId": false,
+        "indexed": true,
+        "attribute-name": "Type"
+      },
+      "patches": [
+        {
+          "op": "add",
+          "path": "/entities/1/attributes/-",
+          "value": {
+            "name": "Type",
+            "type": "STRING",
+            "required": true,
+            "unique": false,
+            "indexed": true,
+            "naturalId": false
+          }
+        }
+      ]
+    },
+    {
+      "type": "add-attribute",
+      "description": "Add attribute BuildYear to entity Car",
+      "properties": {
+        "entity-name": "Car",
+        "unique": false,
+        "required": true,
+        "type": "DATETIME",
+        "naturalId": false,
+        "indexed": true,
+        "attribute-name": "BuildYear"
+      },
+      "patches": [
+        {
+          "op": "add",
+          "path": "/entities/1/attributes/-",
+          "value": {
+            "name": "BuildYear",
+            "type": "DATETIME",
+            "required": true,
+            "unique": false,
+            "indexed": true,
+            "naturalId": false
+          }
+        }
+      ]
+    },
+    {
+      "type": "add-attribute",
+      "description": "Add attribute Color to entity Car",
+      "properties": {
+        "entity-name": "Car",
+        "unique": false,
+        "required": true,
+        "type": "STRING",
+        "naturalId": false,
+        "indexed": true,
+        "attribute-name": "Color"
+      },
+      "patches": [
+        {
+          "op": "add",
+          "path": "/entities/1/attributes/-",
+          "value": {
+            "name": "Color",
+            "type": "STRING",
+            "required": true,
+            "unique": false,
+            "indexed": true,
+            "naturalId": false
+          }
+        }
+      ]
+    },
+    {
+      "type": "add-attribute",
+      "description": "Add attribute LicensePlate to entity Car",
+      "properties": {
+        "entity-name": "Car",
+        "unique": true,
+        "required": true,
+        "type": "STRING",
+        "naturalId": true,
+        "indexed": true,
+        "attribute-name": "LicensePlate"
+      },
+      "patches": [
+        {
+          "op": "add",
+          "path": "/entities/1/attributes/-",
+          "value": {
+            "name": "LicensePlate",
+            "type": "STRING",
+            "required": true,
+            "unique": true,
+            "indexed": true,
+            "naturalId": true
+          }
+        }
+      ]
+    },
+    {
+      "type": "add-attribute",
+      "description": "Add attribute Image to entity Car",
+      "properties": {
+        "entity-name": "Car",
+        "unique": false,
+        "required": false,
+        "type": "CONTENT",
+        "naturalId": false,
+        "indexed": false,
+        "attribute-name": "Image"
+      },
+      "patches": [
+        {
+          "op": "add",
+          "path": "/entities/1/attributes/-",
+          "value": {
+            "name": "Image",
+            "type": "CONTENT",
+            "required": false,
+            "unique": false,
+            "indexed": false,
+            "naturalId": false
+          }
+        }
+      ]
+    },
+    {
+      "type": "add-attribute",
+      "description": "Add attribute MugShot to entity Detective",
+      "properties": {
+        "entity-name": "Detective",
+        "unique": false,
+        "required": false,
+        "type": "CONTENT",
+        "naturalId": false,
+        "indexed": false,
+        "attribute-name": "MugShot"
+      },
+      "patches": [
+        {
+          "op": "add",
+          "path": "/entities/0/attributes/-",
+          "value": {
+            "name": "MugShot",
+            "type": "CONTENT",
+            "required": false,
+            "unique": false,
+            "indexed": false,
+            "naturalId": false
+          }
+        }
+      ]
+    },
+    {
+      "type": "add-attribute",
+      "description": "Add attribute LicenseID to entity Detective",
+      "properties": {
+        "entity-name": "Detective",
+        "unique": true,
+        "required": true,
+        "type": "LONG",
+        "naturalId": false,
+        "indexed": true,
+        "attribute-name": "LicenseID"
+      },
+      "patches": [
+        {
+          "op": "add",
+          "path": "/entities/0/attributes/-",
+          "value": {
+            "name": "LicenseID",
+            "type": "LONG",
+            "required": true,
+            "unique": true,
+            "indexed": true,
+            "naturalId": false
+          }
+        }
+      ]
+    },
+    {
+      "type": "add-entity",
+      "description": "Add entity Weapon",
+      "properties": {
+        "entity-name": "Weapon"
+      },
+      "patches": [
+        {
+          "op": "add",
+          "path": "/entities/-",
+          "value": {
+            "name": "Weapon",
+            "attributes": [],
+            "relations": []
+          }
+        }
+      ]
+    },
+    {
+      "type": "add-attribute",
+      "description": "Add attribute Brand to entity Weapon",
+      "properties": {
+        "entity-name": "Weapon",
+        "unique": false,
+        "required": true,
+        "type": "STRING",
+        "naturalId": false,
+        "indexed": true,
+        "attribute-name": "Brand"
+      },
+      "patches": [
+        {
+          "op": "add",
+          "path": "/entities/2/attributes/-",
+          "value": {
+            "name": "Brand",
+            "type": "STRING",
+            "required": true,
+            "unique": false,
+            "indexed": true,
+            "naturalId": false
+          }
+        }
+      ]
+    },
+    {
+      "type": "add-attribute",
+      "description": "Add attribute Caliber to entity Weapon",
+      "properties": {
+        "entity-name": "Weapon",
+        "unique": false,
+        "required": true,
+        "type": "LONG",
+        "naturalId": false,
+        "indexed": true,
+        "attribute-name": "Caliber"
+      },
+      "patches": [
+        {
+          "op": "add",
+          "path": "/entities/2/attributes/-",
+          "value": {
+            "name": "Caliber",
+            "type": "LONG",
+            "required": true,
+            "unique": false,
+            "indexed": true,
+            "naturalId": false
+          }
+        }
+      ]
+    },
+    {
+      "type": "add-attribute",
+      "description": "Add attribute Image to entity Weapon",
+      "properties": {
+        "entity-name": "Weapon",
+        "unique": false,
+        "required": false,
+        "type": "CONTENT",
+        "naturalId": false,
+        "indexed": false,
+        "attribute-name": "Image"
+      },
+      "patches": [
+        {
+          "op": "add",
+          "path": "/entities/2/attributes/-",
+          "value": {
+            "name": "Image",
+            "type": "CONTENT",
+            "required": false,
+            "unique": false,
+            "indexed": false,
+            "naturalId": false
+          }
+        }
+      ]
+    },
+    {
+      "type": "add-relation",
+      "description": "Add ONE_TO_ONE relation drives from entity Detective to Car",
+      "properties": {
+        "target-entity": "Car",
+        "cardinality": "ONE_TO_ONE",
+        "required": false,
+        "relation-name": "drives",
+        "source-entity": "Detective"
+      },
+      "patches": [
+        {
+          "op": "add",
+          "path": "/entities/0/relations/-",
+          "value": {
+            "name": "drives",
+            "source": "Detective",
+            "target": "Car",
+            "manySourcePerTarget": false,
+            "manyTargetPerSource": false,
+            "required": false
+          }
+        }
+      ]
+    },
+    {
+      "type": "add-relation",
+      "description": "Add ONE_TO_MANY relation shoots-with from entity Detective to Weapon",
+      "properties": {
+        "target-entity": "Weapon",
+        "cardinality": "ONE_TO_MANY",
+        "required": false,
+        "relation-name": "shoots-with",
+        "source-entity": "Detective"
+      },
+      "patches": [
+        {
+          "op": "add",
+          "path": "/entities/0/relations/-",
+          "value": {
+            "name": "shoots-with",
+            "source": "Detective",
+            "target": "Weapon",
+            "manySourcePerTarget": false,
+            "manyTargetPerSource": true,
+            "required": false
+          }
+        }
+      ]
+    }
+  ],
+  "entities": [
+    {
+      "name": "Detective",
+      "attributes": [
+        {
+          "name": "Name",
+          "type": "STRING",
+          "required": true,
+          "unique": false,
+          "indexed": true,
+          "naturalId": false
+        },
+        {
+          "name": "FirstName",
+          "type": "STRING",
+          "required": true,
+          "unique": false,
+          "indexed": true,
+          "naturalId": false
+        },
+        {
+          "name": "NickName",
+          "type": "STRING",
+          "required": false,
+          "unique": false,
+          "indexed": true,
+          "naturalId": false
+        },
+        {
+          "name": "Title",
+          "type": "STRING",
+          "required": false,
+          "unique": false,
+          "indexed": true,
+          "naturalId": false
+        },
+        {
+          "name": "MugShot",
+          "type": "CONTENT",
+          "required": false,
+          "unique": false,
+          "indexed": false,
+          "naturalId": false
+        },
+        {
+          "name": "LicenseID",
+          "type": "LONG",
+          "required": true,
+          "unique": true,
+          "indexed": true,
+          "naturalId": false
+        }
+      ],
+      "relations": [
+        {
+          "name": "drives",
+          "source": "Detective",
+          "target": "Car",
+          "manySourcePerTarget": false,
+          "manyTargetPerSource": false,
+          "required": false
+        },
+        {
+          "name": "shoots-with",
+          "source": "Detective",
+          "target": "Weapon",
+          "manySourcePerTarget": false,
+          "manyTargetPerSource": true,
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "Car",
+      "attributes": [
+        {
+          "name": "Brand",
+          "type": "STRING",
+          "required": true,
+          "unique": false,
+          "indexed": true,
+          "naturalId": false
+        },
+        {
+          "name": "Type",
+          "type": "STRING",
+          "required": true,
+          "unique": false,
+          "indexed": true,
+          "naturalId": false
+        },
+        {
+          "name": "BuildYear",
+          "type": "DATETIME",
+          "required": true,
+          "unique": false,
+          "indexed": true,
+          "naturalId": false
+        },
+        {
+          "name": "Color",
+          "type": "STRING",
+          "required": true,
+          "unique": false,
+          "indexed": true,
+          "naturalId": false
+        },
+        {
+          "name": "LicensePlate",
+          "type": "STRING",
+          "required": true,
+          "unique": true,
+          "indexed": true,
+          "naturalId": true
+        },
+        {
+          "name": "Image",
+          "type": "CONTENT",
+          "required": false,
+          "unique": false,
+          "indexed": false,
+          "naturalId": false
+        }
+      ],
+      "relations": []
+    },
+    {
+      "name": "Weapon",
+      "attributes": [
+        {
+          "name": "Brand",
+          "type": "STRING",
+          "required": true,
+          "unique": false,
+          "indexed": true,
+          "naturalId": false
+        },
+        {
+          "name": "Caliber",
+          "type": "LONG",
+          "required": true,
+          "unique": false,
+          "indexed": true,
+          "naturalId": false
+        },
+        {
+          "name": "Image",
+          "type": "CONTENT",
+          "required": false,
+          "unique": false,
+          "indexed": false,
+          "naturalId": false
+        }
+      ],
+      "relations": []
+    }
+  ],
+  "_links": {
+    "self": {
+      "href": "http://172.17.0.1:8080/orgs/holmes/projects/dem/changesets/558f4977-9ecd-426f-b26f-f518a15fb113"
+    },
+    "project": {
+      "href": "http://172.17.0.1:8080/projects/holmes/dem"
+    }
+  }
+}
