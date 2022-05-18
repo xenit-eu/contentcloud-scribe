@@ -1,9 +1,9 @@
-package eu.xenit.contentcloud.scribe.infrastructure.changeset;
+package eu.xenit.contentcloud.scribe.infrastructure.changeset.dto;
 
 import lombok.Data;
 
 @Data
-public class ProjectModel {
+public class ProjectDto {
     private String name;
     private String organization;
     private String slug;

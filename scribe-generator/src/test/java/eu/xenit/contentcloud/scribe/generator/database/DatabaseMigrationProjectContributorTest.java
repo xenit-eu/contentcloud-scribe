@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import eu.xenit.contentcloud.scribe.changeset.Attribute;
 import eu.xenit.contentcloud.scribe.changeset.Changeset;
 import eu.xenit.contentcloud.scribe.changeset.Entity;
+import eu.xenit.contentcloud.scribe.changeset.Model;
 import eu.xenit.contentcloud.scribe.changeset.Operation;
 import eu.xenit.contentcloud.scribe.generator.ScribeProjectDescription;
 import eu.xenit.contentcloud.scribe.generator.spring.content.SpringContentProjectionGenerationConfiguration;
@@ -17,6 +18,7 @@ import io.spring.initializr.generator.test.project.ProjectAssetTester;
 import io.spring.initializr.generator.test.project.ProjectStructure;
 import io.spring.initializr.generator.version.Version;
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,44 +47,54 @@ class DatabaseMigrationProjectContributorTest {
 
         var description = new ScribeProjectDescription();
         description.setChangeset(Changeset.builder()
-                .entities(List.of())
-                .operations(List.of(
-                        new Operation("add-entity", Map.of(
-                                "entity-name", "Invoice",
-                                "entity-id", "inv001"
-                        )),
-                        new Operation("add-attribute", Map.of(
+                .baseModel(new Model(Collections.emptyList()))
+                .operation("add-entity", Map.of(
+                                "entity-name", "Invoice"
+                        ),
+                        new Model(List.of(Entity.builder()
+                                .name("Invoice")
+                                .build()))
+                )
+                .operation("add-attribute", Map.of(
                                 "entity-name", "Invoice",
                                 "attribute-name", "Amount",
                                 "type", "LONG",
-                                "attribute-id", "inv001amo001",
                                 "naturalId", false,
                                 "indexed", true,
                                 "unique", false,
                                 "required", false
-                        )),
-                        new Operation("add-attribute", Map.of(
+                        ),
+                        new Model(List.of(Entity.builder()
+                                .name("Invoice")
+                                .attribute(Attribute.builder("Amount").number().indexed(true).build())
+                                .build()))
+                )
+                .operation("add-attribute", Map.of(
                                 "entity-name", "Invoice",
                                 "attribute-name", "Reference",
                                 "type", "STRING",
-                                "attribute-id", "inv001ref001",
                                 "naturalId", true,
                                 "indexed", true,
                                 "unique", true,
                                 "required", true
-                        ))
-                        /*
-                        new Operation("add-attribute", Map.of(
-                                "entity-name", "Invoice",
-                                "attribute-name", "Scan",
-                                "type", "CONTENT",
-                                "attribute-id", "inv001sca001",
-                                "naturalId", false,
-                                "indexed", false,
-                                "unique", false,
-                                "required", true
-                        ))*/
-                ))
+                        ), new Model(List.of(Entity.builder()
+                                .name("Invoice")
+                                .attribute(Attribute.builder("Amount").number().indexed(true).build())
+                                .attribute(Attribute.builder("Reference").string().unique(true).required(true).naturalId(true).indexed(true).build())
+                                .build()))
+                )
+                .entities(Collections.emptyList())
+                /*
+                new Operation("add-attribute", Map.of(
+                        "entity-name", "Invoice",
+                        "attribute-name", "Scan",
+                        "type", "CONTENT",
+                        "naturalId", false,
+                        "indexed", false,
+                        "unique", false,
+                        "required", true
+                ))*/
+
                 .build());
 
         ProjectStructure project = this.projectTester.generate(description);

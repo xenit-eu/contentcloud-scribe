@@ -6,7 +6,7 @@ import eu.xenit.contentcloud.scribe.changeset.Changeset;
 import eu.xenit.contentcloud.scribe.generator.ScribeProjectDescription;
 import eu.xenit.contentcloud.scribe.generator.spring.content.SpringContentProjectionGenerationConfiguration;
 import eu.xenit.contentcloud.scribe.generator.spring.data.SpringDataProjectGenerationConfiguration;
-import eu.xenit.contentcloud.scribe.infrastructure.changeset.ChangesetModel;
+import eu.xenit.contentcloud.scribe.infrastructure.changeset.dto.ChangesetDto;
 import io.spring.initializr.generator.buildsystem.gradle.GradleBuildSystem;
 import io.spring.initializr.generator.language.java.JavaLanguage;
 import io.spring.initializr.generator.spring.code.java.JavaProjectGenerationConfiguration;
@@ -69,7 +69,7 @@ public class ChangesetFixturesIntegrationTest {
 
     @SneakyThrows
     private Changeset parseChangeset(URL changesetUrl) {
-        var model = objectMapper.readValue(changesetUrl, new TypeReference<EntityModel<ChangesetModel>>() {});
+        var model = objectMapper.readValue(changesetUrl, new TypeReference<EntityModel<ChangesetDto>>() {});
 
         return Changeset.builder()
                 .project("project")
