@@ -13,7 +13,6 @@ public class CreateIndexStatement implements Statement {
     String table;
     @NonNull
     String column;
-    @NonNull
     boolean unique;
 
     public static class CreateIndexStatementBuilder {

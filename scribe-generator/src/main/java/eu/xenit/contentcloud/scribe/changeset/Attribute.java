@@ -45,7 +45,7 @@ public class Attribute {
             return this.type("NUMBER");
         }
 
-        private Builder type(String type) {
+        public Builder type(String type) {
             return new Builder(this.name, type);
         }
     }

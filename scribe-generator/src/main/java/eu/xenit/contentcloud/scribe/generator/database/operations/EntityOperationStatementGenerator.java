@@ -53,8 +53,10 @@ public class EntityOperationStatementGenerator implements StatementGenerator {
                 .orElseThrow();
 
         for (Attribute attribute : entity.getAttributes()) {
-            String columnName = convertAttributeNameToColumnName(attribute.getName());
-            streamBuilder.add(RenameIndexStatement.forTable(renameTable, columnName));
+            if(attribute.isUnique() || attribute.isIndexed()) {
+                String columnName = convertAttributeNameToColumnName(attribute.getName());
+                streamBuilder.add(RenameIndexStatement.forTable(renameTable, columnName));
+            }
         }
 
         return streamBuilder.build();
