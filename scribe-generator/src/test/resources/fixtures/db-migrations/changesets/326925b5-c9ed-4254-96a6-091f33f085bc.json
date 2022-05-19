@@ -1,0 +1,203 @@
+{
+  "baseModel": {
+    "entities": [
+      {
+        "name": "case",
+        "attributes": [
+          {
+            "name": "name",
+            "type": "STRING",
+            "required": true,
+            "unique": true,
+            "indexed": true,
+            "naturalId": false
+          },
+          {
+            "name": "description",
+            "type": "STRING",
+            "required": false,
+            "unique": false,
+            "indexed": true,
+            "naturalId": false
+          }
+        ],
+        "relations": []
+      },
+      {
+        "name": "person",
+        "attributes": [
+          {
+            "name": "name",
+            "type": "STRING",
+            "required": false,
+            "unique": false,
+            "indexed": false,
+            "naturalId": false
+          },
+          {
+            "name": "notes",
+            "type": "STRING",
+            "required": false,
+            "unique": false,
+            "indexed": false,
+            "naturalId": false
+          }
+        ],
+        "relations": []
+      }
+    ]
+  },
+  "operations": [
+    {
+      "type": "add-entity",
+      "description": "Add entity evidence",
+      "properties": {
+        "entity-name": "evidence"
+      },
+      "patches": [
+        {
+          "op": "add",
+          "path": "/entities/-",
+          "value": {
+            "name": "evidence",
+            "attributes": [],
+            "relations": []
+          }
+        }
+      ]
+    },
+    {
+      "type": "add-attribute",
+      "description": "Add attribute name to entity evidence",
+      "properties": {
+        "entity-name": "evidence",
+        "unique": true,
+        "required": false,
+        "type": "STRING",
+        "naturalId": false,
+        "indexed": false,
+        "attribute-name": "name"
+      },
+      "patches": [
+        {
+          "op": "add",
+          "path": "/entities/2/attributes/-",
+          "value": {
+            "name": "name",
+            "type": "STRING",
+            "required": false,
+            "unique": true,
+            "indexed": false,
+            "naturalId": false
+          }
+        }
+      ]
+    },
+    {
+      "type": "add-attribute",
+      "description": "Add attribute description to entity evidence",
+      "properties": {
+        "entity-name": "evidence",
+        "unique": false,
+        "required": false,
+        "type": "STRING",
+        "naturalId": false,
+        "indexed": false,
+        "attribute-name": "description"
+      },
+      "patches": [
+        {
+          "op": "add",
+          "path": "/entities/2/attributes/-",
+          "value": {
+            "name": "description",
+            "type": "STRING",
+            "required": false,
+            "unique": false,
+            "indexed": false,
+            "naturalId": false
+          }
+        }
+      ]
+    }
+  ],
+  "entities": [
+    {
+      "name": "case",
+      "attributes": [
+        {
+          "name": "name",
+          "type": "STRING",
+          "required": true,
+          "unique": true,
+          "indexed": true,
+          "naturalId": false
+        },
+        {
+          "name": "description",
+          "type": "STRING",
+          "required": false,
+          "unique": false,
+          "indexed": true,
+          "naturalId": false
+        }
+      ],
+      "relations": []
+    },
+    {
+      "name": "person",
+      "attributes": [
+        {
+          "name": "name",
+          "type": "STRING",
+          "required": false,
+          "unique": false,
+          "indexed": false,
+          "naturalId": false
+        },
+        {
+          "name": "notes",
+          "type": "STRING",
+          "required": false,
+          "unique": false,
+          "indexed": false,
+          "naturalId": false
+        }
+      ],
+      "relations": []
+    },
+    {
+      "name": "evidence",
+      "attributes": [
+        {
+          "name": "name",
+          "type": "STRING",
+          "required": false,
+          "unique": true,
+          "indexed": false,
+          "naturalId": false
+        },
+        {
+          "name": "description",
+          "type": "STRING",
+          "required": false,
+          "unique": false,
+          "indexed": false,
+          "naturalId": false
+        }
+      ],
+      "relations": []
+    }
+  ],
+  "_links": {
+    "self": {
+      "href": "http://172.17.0.1:8080/orgs/holmes/projects/dcm/changesets/326925b5-c9ed-4254-96a6-091f33f085bc"
+    },
+    "parent": {
+      "href": "http://172.17.0.1:8080/orgs/holmes/projects/dcm/changesets/a470d440-3519-4802-8576-650237c9151f"
+    },
+    "project": {
+      "href": "http://172.17.0.1:8080/projects/holmes/dcm"
+    }
+  }
+}

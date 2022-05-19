@@ -42,6 +42,7 @@ public class Changeset {
                 this.operations = new ArrayList<>();
             }
             this.operations.add(operation);
+            entities(operation.getAfterModel().getEntities());
             return this;
         }
 
