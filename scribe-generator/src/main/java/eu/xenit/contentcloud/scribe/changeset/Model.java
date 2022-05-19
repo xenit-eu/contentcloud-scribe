@@ -27,4 +27,8 @@ public class Model {
     public Optional<Attribute> getEntityAttribute(String entityName, String attributeName) {
         return getEntity(entityName).flatMap(e -> e.getAttribute(attributeName));
     }
+
+    public Optional<Relation> getEntityRelation(String entityName, String relationName) {
+        return getEntity(entityName).flatMap(e -> e.getRelation(relationName));
+    }
 }

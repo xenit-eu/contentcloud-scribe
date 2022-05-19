@@ -67,12 +67,12 @@ class EntityOperationStatementGeneratorTest {
                         .newName("outgoing_invoice")
                         .build(),
                 RenameIndexStatement.builder()
-                        .oldName("invoice_amount_idx")
-                        .newName("outgoing_invoice_amount_idx")
+                        .oldName("invoice__amount_idx")
+                        .newName("outgoing_invoice__amount_idx")
                         .build(),
                 RenameIndexStatement.builder()
-                        .oldName("invoice_identifier_idx")
-                        .newName("outgoing_invoice_identifier_idx")
+                        .oldName("invoice__identifier_idx")
+                        .newName("outgoing_invoice__identifier_idx")
                         .build()
         );
     }

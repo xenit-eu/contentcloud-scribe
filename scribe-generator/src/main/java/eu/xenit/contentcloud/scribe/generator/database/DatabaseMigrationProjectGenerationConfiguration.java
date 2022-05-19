@@ -4,6 +4,7 @@ import eu.xenit.contentcloud.scribe.generator.ScribeProjectDescription;
 import eu.xenit.contentcloud.scribe.generator.database.operations.AggregateStatementGenerator;
 import eu.xenit.contentcloud.scribe.generator.database.operations.AttributeOperationStatementGenerator;
 import eu.xenit.contentcloud.scribe.generator.database.operations.EntityOperationStatementGenerator;
+import eu.xenit.contentcloud.scribe.generator.database.operations.RelationOperationStatementGenerator;
 import eu.xenit.contentcloud.scribe.generator.database.operations.UnsupportedOperationErrorStatementGenerator;
 import io.spring.initializr.generator.project.ProjectGenerationConfiguration;
 import java.util.Set;
@@ -25,8 +26,9 @@ public class DatabaseMigrationProjectGenerationConfiguration {
     @Bean
     DatabaseMigrationWriter databaseMigrationOperations() {
         return new DatabaseMigrationWriter(new UnsupportedOperationErrorStatementGenerator(new AggregateStatementGenerator(Set.of(
-                new AttributeOperationStatementGenerator(),
-                new EntityOperationStatementGenerator()
+                new RelationOperationStatementGenerator(), // Needs to be before EntityOperationStatementGenerator, because relations must be dropped before entities can be
+                new EntityOperationStatementGenerator(),
+                new AttributeOperationStatementGenerator()
         ))));
     }
 

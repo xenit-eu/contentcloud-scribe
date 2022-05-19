@@ -1,6 +1,5 @@
 package eu.xenit.contentcloud.scribe.infrastructure.changeset;
 
-import com.github.fge.jsonpatch.JsonPatchException;
 import eu.xenit.contentcloud.scribe.changeset.Changeset;
 import eu.xenit.contentcloud.scribe.changeset.Model;
 import eu.xenit.contentcloud.scribe.changeset.Operation;

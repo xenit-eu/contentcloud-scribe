@@ -180,8 +180,8 @@ class AttributeOperationStatementGeneratorTest {
                                 .newColumnName("debit_amount")
                                 .build(),
                         RenameIndexStatement.builder()
-                                .oldName("invoice_amount_idx")
-                                .newName("invoice_debit_amount_idx")
+                                .oldName("invoice__amount_idx")
+                                .newName("invoice__debit_amount_idx")
                                 .build()
                 );
     }
