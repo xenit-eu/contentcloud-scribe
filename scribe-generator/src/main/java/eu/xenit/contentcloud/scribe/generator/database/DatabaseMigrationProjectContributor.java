@@ -5,9 +5,11 @@ import eu.xenit.contentcloud.scribe.generator.ScribeProjectDescription;
 import io.spring.initializr.generator.language.SourceStructure;
 import io.spring.initializr.generator.project.contributor.ProjectContributor;
 import java.io.IOException;
-import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Deque;
+import java.util.LinkedList;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -22,24 +24,27 @@ public class DatabaseMigrationProjectContributor implements ProjectContributor {
         Path resourcesDir = projectRoot.resolve(mainSource.getResourcesDirectory());
         Path migrationsDir = Files.createDirectories(resourcesDir.resolve("db/migration"));
 
+        var head = description.getChangeset();
+        Deque<Changeset> changesets = new LinkedList<>();
 
-        var changeset = description.getChangeset();
-        this.contributeChangesetMigration(changeset, migrationsDir);
+        for(var parent = Optional.ofNullable(head); parent.isPresent(); parent = parent.get().getParent()) {
+            changesets.addFirst(parent.get());
+        }
+
+        int i = 0;
+        for(Changeset changeset: changesets) {
+            i++;
+            this.contributeChangesetMigration(changeset, migrationsDir, i);
+        }
     }
 
-    private void contributeChangesetMigration(Changeset changeset, Path migrationsDir) throws IOException {
-
-        Path sql = Files.createFile(migrationsDir.resolve("V1.sql"));
+    private void contributeChangesetMigration(Changeset changeset, Path migrationsDir, int version) throws IOException {
+        Path sql = Files.createFile(migrationsDir.resolve("V"+version+".sql"));
         try (var writer = Files.newBufferedWriter(sql)) {
-            this.writeMigrationSql(writer, changeset);
+            for (var operation : changeset.getOperations()) {
+                migrationOperations.writeOperation(writer, operation);
+            }
         }
     }
-
-    void writeMigrationSql(Writer out, Changeset changeset) throws IOException {
-        for (var operation : changeset.getOperations()) {
-            migrationOperations.writeOperation(out, operation);
-        }
-    }
-
 
 }

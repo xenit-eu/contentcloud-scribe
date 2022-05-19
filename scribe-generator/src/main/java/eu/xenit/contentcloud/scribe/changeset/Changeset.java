@@ -3,8 +3,12 @@ package eu.xenit.contentcloud.scribe.changeset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Supplier;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.Value;
@@ -23,6 +27,14 @@ public class Changeset {
 
     @NonNull
     List<Operation> operations;
+
+    @Getter(AccessLevel.NONE)
+    Supplier<Changeset> parentLoader;
+
+    public Optional<Changeset> getParent() {
+        return Optional.ofNullable(parentLoader)
+                .map(Supplier::get);
+    }
 
     public static class ChangesetBuilder {
         @Setter

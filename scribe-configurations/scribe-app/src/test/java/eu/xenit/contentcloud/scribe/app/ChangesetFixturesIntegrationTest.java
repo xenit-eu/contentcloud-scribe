@@ -19,9 +19,11 @@ import io.spring.initializr.generator.test.project.ProjectStructure;
 import io.spring.initializr.generator.version.Version;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.net.URI;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,6 +38,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
 import org.springframework.http.MediaType;
 
 @SpringBootTest
@@ -75,11 +78,26 @@ public class ChangesetFixturesIntegrationTest {
     }
 
     @SneakyThrows
+    private URL toStoredChangesetURL(URL baseUrl, String href) {
+        int lastSlash = href.lastIndexOf('/');
+        var fileName = href.substring(lastSlash) + ".json";
+        return baseUrl.toURI().resolve(fileName).toURL();
+    }
+
+    @SneakyThrows
     private Changeset parseChangeset(URL changesetUrl) {
         var model = objectMapper.readValue(changesetUrl, new TypeReference<EntityModel<ChangesetDto>>() {});
         var changesetFactory = new ChangesetFactory(
                 (changesetDto, contentType) -> new Model(objectMapper, changesetDto.getBaseModel()));
-        return changesetFactory.create(model.getContent(), new ProjectDto("project", "org", "org/project"), MediaType.APPLICATION_JSON);
+        var parentUrl = model.getLink("parent")
+                .map(Link::getHref)
+                .map(href -> toStoredChangesetURL(changesetUrl, href));
+        return changesetFactory.create(
+                model.getContent(),
+                new ProjectDto("project", "org", "org/project"),
+                MediaType.APPLICATION_JSON,
+                parentUrl.map(u -> ((Supplier<Changeset>)() -> parseChangeset(u))).orElse(null)
+        );
     }
 
     static class ChangesetTestFixturesProvider implements ArgumentsProvider {

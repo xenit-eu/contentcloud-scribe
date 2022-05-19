@@ -7,6 +7,7 @@ import eu.xenit.contentcloud.scribe.infrastructure.changeset.dto.ProjectDto;
 import eu.xenit.contentcloud.scribe.infrastructure.changeset.model.RestTemplateModelFactory;
 import java.net.URI;
 import java.util.Set;
+import java.util.function.Supplier;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.hateoas.EntityModel;
@@ -50,7 +51,18 @@ public class ChangesetRepository implements ChangesetResolver {
                 .map(HttpEntity::getBody)
                 .orElseThrow();
 
-        return changesetFactory.create(changeset.getContent(), project, changesetResponse.getHeaders().getContentType());
+        var parentLoader = changeset.getLink("parent")
+                .map(Link::getHref)
+                .map(URI::create)
+                .map(uri -> ((Supplier<Changeset>)() -> this.get(uri)))
+                .orElse(null);
+
+        return changesetFactory.create(
+                changeset.getContent(),
+                project,
+                changesetResponse.getHeaders().getContentType(),
+                parentLoader
+        );
     }
 
     private void checkAllowedPaths(URI changeset) {

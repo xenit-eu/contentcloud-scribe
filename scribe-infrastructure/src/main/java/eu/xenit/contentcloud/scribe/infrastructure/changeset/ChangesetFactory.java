@@ -9,17 +9,19 @@ import eu.xenit.contentcloud.scribe.infrastructure.changeset.dto.ProjectDto;
 import eu.xenit.contentcloud.scribe.infrastructure.changeset.model.ModelFactory;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Supplier;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Component;
 
 @AllArgsConstructor
 public class ChangesetFactory {
     private final ModelFactory modelFactory;
 
     @SneakyThrows
-    public Changeset create(ChangesetDto changeset, ProjectDto project, MediaType contentType) {
+    public Changeset create(ChangesetDto changeset, ProjectDto project, MediaType contentType,
+            Supplier<Changeset> parentLoader) {
 
         var baseModel = modelFactory.createBaseModel(changeset, contentType);
         var currentModel = baseModel;
@@ -39,6 +41,7 @@ public class ChangesetFactory {
 
 
         return Changeset.builder()
+                .parentLoader(parentLoader)
                 .baseModel(new Model(baseModel.toDto().getEntities()))
                 .project(project.getName())
                 .organization(project.getOrganization())
