@@ -4,9 +4,13 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.xenit.contentcloud.scribe.changeset.Changeset;
 import eu.xenit.contentcloud.scribe.generator.ScribeProjectDescription;
+import eu.xenit.contentcloud.scribe.generator.database.DatabaseMigrationProjectGenerationConfiguration;
 import eu.xenit.contentcloud.scribe.generator.spring.content.SpringContentProjectionGenerationConfiguration;
 import eu.xenit.contentcloud.scribe.generator.spring.data.SpringDataProjectGenerationConfiguration;
-import eu.xenit.contentcloud.scribe.infrastructure.changeset.ChangesetModel;
+import eu.xenit.contentcloud.scribe.infrastructure.changeset.ChangesetFactory;
+import eu.xenit.contentcloud.scribe.infrastructure.changeset.dto.ChangesetDto;
+import eu.xenit.contentcloud.scribe.infrastructure.changeset.dto.ProjectDto;
+import eu.xenit.contentcloud.scribe.infrastructure.changeset.model.Model;
 import io.spring.initializr.generator.buildsystem.gradle.GradleBuildSystem;
 import io.spring.initializr.generator.language.java.JavaLanguage;
 import io.spring.initializr.generator.spring.code.java.JavaProjectGenerationConfiguration;
@@ -15,9 +19,11 @@ import io.spring.initializr.generator.test.project.ProjectStructure;
 import io.spring.initializr.generator.version.Version;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.net.URI;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,6 +38,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
+import org.springframework.http.MediaType;
 
 @SpringBootTest
 public class ChangesetFixturesIntegrationTest {
@@ -48,7 +56,9 @@ public class ChangesetFixturesIntegrationTest {
                 .withConfiguration(
                         SpringDataProjectGenerationConfiguration.class,
                         SpringContentProjectionGenerationConfiguration.class,
-                        JavaProjectGenerationConfiguration.class)
+                        JavaProjectGenerationConfiguration.class,
+                        DatabaseMigrationProjectGenerationConfiguration.class
+                )
                 .withDirectory(directory)
                 .withDescriptionCustomizer((description) -> {
                     description.setLanguage(new JavaLanguage());
@@ -68,15 +78,26 @@ public class ChangesetFixturesIntegrationTest {
     }
 
     @SneakyThrows
-    private Changeset parseChangeset(URL changesetUrl) {
-        var model = objectMapper.readValue(changesetUrl, new TypeReference<EntityModel<ChangesetModel>>() {});
+    private URL toStoredChangesetURL(URL baseUrl, String href) {
+        int lastSlash = href.lastIndexOf('/');
+        var fileName = href.substring(lastSlash) + ".json";
+        return baseUrl.toURI().resolve(fileName).toURL();
+    }
 
-        return Changeset.builder()
-                .project("project")
-                .organization("org")
-                .entities(model.getContent().getEntities())
-                .operations(model.getContent().getOperations())
-                .build();
+    @SneakyThrows
+    private Changeset parseChangeset(URL changesetUrl) {
+        var model = objectMapper.readValue(changesetUrl, new TypeReference<EntityModel<ChangesetDto>>() {});
+        var changesetFactory = new ChangesetFactory(
+                (changesetDto, contentType) -> new Model(objectMapper, changesetDto.getBaseModel()));
+        var parentUrl = model.getLink("parent")
+                .map(Link::getHref)
+                .map(href -> toStoredChangesetURL(changesetUrl, href));
+        return changesetFactory.create(
+                model.getContent(),
+                new ProjectDto("project", "org", "org/project"),
+                MediaType.APPLICATION_JSON,
+                parentUrl.map(u -> ((Supplier<Changeset>)() -> parseChangeset(u))).orElse(null)
+        );
     }
 
     static class ChangesetTestFixturesProvider implements ArgumentsProvider {

@@ -1,0 +1,319 @@
+{
+  "baseModel": {
+    "entities": [
+      {
+        "name": "case",
+        "attributes": [
+          {
+            "name": "name",
+            "type": "STRING",
+            "required": true,
+            "unique": true,
+            "indexed": true,
+            "naturalId": false
+          },
+          {
+            "name": "description",
+            "type": "STRING",
+            "required": false,
+            "unique": false,
+            "indexed": true,
+            "naturalId": false
+          },
+          {
+            "name": "opened",
+            "type": "DATETIME",
+            "required": true,
+            "unique": false,
+            "indexed": false,
+            "naturalId": false
+          },
+          {
+            "name": "closed",
+            "type": "DATETIME",
+            "required": false,
+            "unique": false,
+            "indexed": false,
+            "naturalId": false
+          }
+        ],
+        "relations": []
+      },
+      {
+        "name": "person",
+        "attributes": [
+          {
+            "name": "name",
+            "type": "STRING",
+            "required": false,
+            "unique": false,
+            "indexed": false,
+            "naturalId": false
+          },
+          {
+            "name": "notes",
+            "type": "STRING",
+            "required": false,
+            "unique": false,
+            "indexed": false,
+            "naturalId": false
+          }
+        ],
+        "relations": []
+      },
+      {
+        "name": "evidence",
+        "attributes": [
+          {
+            "name": "name",
+            "type": "STRING",
+            "required": false,
+            "unique": true,
+            "indexed": false,
+            "naturalId": false
+          },
+          {
+            "name": "description",
+            "type": "STRING",
+            "required": false,
+            "unique": false,
+            "indexed": false,
+            "naturalId": false
+          }
+        ],
+        "relations": []
+      }
+    ]
+  },
+  "operations": [
+    {
+      "type": "add-relation",
+      "description": "Add ONE_TO_MANY relation suspect from entity case to person",
+      "properties": {
+        "target-entity": "person",
+        "cardinality": "ONE_TO_MANY",
+        "required": false,
+        "relation-name": "suspect",
+        "source-entity": "case"
+      },
+      "patches": [
+        {
+          "op": "add",
+          "path": "/entities/0/relations/-",
+          "value": {
+            "name": "suspect",
+            "source": "case",
+            "target": "person",
+            "manySourcePerTarget": false,
+            "manyTargetPerSource": true,
+            "required": false
+          }
+        }
+      ]
+    },
+    {
+      "type": "add-relation",
+      "description": "Add MANY_TO_ONE relation foundBy from entity evidence to person",
+      "properties": {
+        "target-entity": "person",
+        "cardinality": "MANY_TO_ONE",
+        "required": true,
+        "relation-name": "foundBy",
+        "source-entity": "evidence"
+      },
+      "patches": [
+        {
+          "op": "add",
+          "path": "/entities/2/relations/-",
+          "value": {
+            "name": "foundBy",
+            "source": "evidence",
+            "target": "person",
+            "manySourcePerTarget": true,
+            "manyTargetPerSource": false,
+            "required": true
+          }
+        }
+      ]
+    },
+    {
+      "type": "add-relation",
+      "description": "Add MANY_TO_ONE relation investigator from entity case to person",
+      "properties": {
+        "target-entity": "person",
+        "cardinality": "MANY_TO_ONE",
+        "required": false,
+        "relation-name": "investigator",
+        "source-entity": "case"
+      },
+      "patches": [
+        {
+          "op": "add",
+          "path": "/entities/0/relations/-",
+          "value": {
+            "name": "investigator",
+            "source": "case",
+            "target": "person",
+            "manySourcePerTarget": true,
+            "manyTargetPerSource": false,
+            "required": false
+          }
+        }
+      ]
+    },
+    {
+      "type": "add-relation",
+      "description": "Add ONE_TO_MANY relation evidence from entity case to evidence",
+      "properties": {
+        "target-entity": "evidence",
+        "cardinality": "ONE_TO_MANY",
+        "required": false,
+        "relation-name": "evidence",
+        "source-entity": "case"
+      },
+      "patches": [
+        {
+          "op": "add",
+          "path": "/entities/0/relations/-",
+          "value": {
+            "name": "evidence",
+            "source": "case",
+            "target": "evidence",
+            "manySourcePerTarget": false,
+            "manyTargetPerSource": true,
+            "required": false
+          }
+        }
+      ]
+    }
+  ],
+  "entities": [
+    {
+      "name": "case",
+      "attributes": [
+        {
+          "name": "name",
+          "type": "STRING",
+          "required": true,
+          "unique": true,
+          "indexed": true,
+          "naturalId": false
+        },
+        {
+          "name": "description",
+          "type": "STRING",
+          "required": false,
+          "unique": false,
+          "indexed": true,
+          "naturalId": false
+        },
+        {
+          "name": "opened",
+          "type": "DATETIME",
+          "required": true,
+          "unique": false,
+          "indexed": false,
+          "naturalId": false
+        },
+        {
+          "name": "closed",
+          "type": "DATETIME",
+          "required": false,
+          "unique": false,
+          "indexed": false,
+          "naturalId": false
+        }
+      ],
+      "relations": [
+        {
+          "name": "suspect",
+          "source": "case",
+          "target": "person",
+          "manySourcePerTarget": false,
+          "manyTargetPerSource": true,
+          "required": false
+        },
+        {
+          "name": "investigator",
+          "source": "case",
+          "target": "person",
+          "manySourcePerTarget": true,
+          "manyTargetPerSource": false,
+          "required": false
+        },
+        {
+          "name": "evidence",
+          "source": "case",
+          "target": "evidence",
+          "manySourcePerTarget": false,
+          "manyTargetPerSource": true,
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "person",
+      "attributes": [
+        {
+          "name": "name",
+          "type": "STRING",
+          "required": false,
+          "unique": false,
+          "indexed": false,
+          "naturalId": false
+        },
+        {
+          "name": "notes",
+          "type": "STRING",
+          "required": false,
+          "unique": false,
+          "indexed": false,
+          "naturalId": false
+        }
+      ],
+      "relations": []
+    },
+    {
+      "name": "evidence",
+      "attributes": [
+        {
+          "name": "name",
+          "type": "STRING",
+          "required": false,
+          "unique": true,
+          "indexed": false,
+          "naturalId": false
+        },
+        {
+          "name": "description",
+          "type": "STRING",
+          "required": false,
+          "unique": false,
+          "indexed": false,
+          "naturalId": false
+        }
+      ],
+      "relations": [
+        {
+          "name": "foundBy",
+          "source": "evidence",
+          "target": "person",
+          "manySourcePerTarget": true,
+          "manyTargetPerSource": false,
+          "required": true
+        }
+      ]
+    }
+  ],
+  "_links": {
+    "self": {
+      "href": "http://172.17.0.1:8080/orgs/holmes/projects/dcm/changesets/30f4b7e8-155c-4f63-91eb-24f7ee6381bc"
+    },
+    "parent": {
+      "href": "http://172.17.0.1:8080/orgs/holmes/projects/dcm/changesets/d39e329f-3b2f-4417-97c9-f5fdc0b7e6ff"
+    },
+    "project": {
+      "href": "http://172.17.0.1:8080/projects/holmes/dcm"
+    }
+  }
+}

@@ -3,4 +3,5 @@ eu.xenit.contentcloud.scribe.generator.service.ApiServiceGenerationConfiguration
 eu.xenit.contentcloud.scribe.generator.build.ContentCloudBuildProjectGenerationConfiguration,\
 eu.xenit.contentcloud.scribe.generator.spring.data.SpringDataProjectGenerationConfiguration,\
 eu.xenit.contentcloud.scribe.generator.spring.content.SpringContentProjectionGenerationConfiguration,\
-eu.xenit.contentcloud.scribe.generator.properties.ApplicationPropertiesProjectGenerationConfiguration
+eu.xenit.contentcloud.scribe.generator.properties.ApplicationPropertiesProjectGenerationConfiguration,\
+eu.xenit.contentcloud.scribe.generator.database.DatabaseMigrationProjectGenerationConfiguration
