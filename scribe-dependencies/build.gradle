@@ -23,13 +23,6 @@ dependencies {
     constraints {
         api "eu.xenit.contentcloud.bard:bard:${bardVersion}"
 
-        api ('org.assertj:assertj-core') {
-            version {
-                strictly '3.19.0'
-            }
-            because '3.21 results in a NoSuchMethodException with initializr:0.11.0'
-        }
-
         api project(':scribe-generator')
         api project(':scribe-drivers:scribe-driver-web')
         api project(':scribe-configurations:scribe-app')
