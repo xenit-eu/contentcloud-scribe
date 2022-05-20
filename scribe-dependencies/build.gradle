@@ -21,7 +21,7 @@ dependencies {
     api platform("io.spring.initializr:initializr-bom:0.12.0")
 
     constraints {
-        api "eu.xenit.contentcloud.bard:bard:${bardVersion}"
+        api "eu.xenit.contentcloud.bard:bard:0.1.0"
 
         api project(':scribe-generator')
         api project(':scribe-drivers:scribe-driver-web')
