@@ -34,7 +34,7 @@ publishing {
 
 
     repositories {
-        if (version.version.isSignificant()) {
+        if (!"${version}".endsWith("-SNAPSHOT")) {
             sonatypeMavenCentral {
                 credentials {
                     username = project.findProperty('sonatype_username')
