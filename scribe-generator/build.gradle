@@ -13,7 +13,6 @@ dependencies {
     implementation 'eu.xenit.contentcloud.bard:bard:0.1.0-SNAPSHOT'
     implementation 'org.slf4j:slf4j-api'
 
-    testImplementation enforcedPlatform(project(":scribe-dependencies"))
     testImplementation project(':scribe-infrastructure')
     testImplementation 'org.springframework.hateoas:spring-hateoas'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
