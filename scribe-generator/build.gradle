@@ -10,7 +10,7 @@ dependencies {
 
     implementation 'io.spring.initializr:initializr-generator-spring'
     implementation 'org.springframework.data:spring-data-commons'
-    implementation 'eu.xenit.contentcloud.bard:bard:0.1.0-SNAPSHOT'
+    implementation 'eu.xenit.contentcloud.bard:bard:0.1.0'
     implementation 'org.slf4j:slf4j-api'
 
     testImplementation project(':scribe-infrastructure')
