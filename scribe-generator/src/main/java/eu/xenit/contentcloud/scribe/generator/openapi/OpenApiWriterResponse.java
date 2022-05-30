@@ -1,9 +1,11 @@
 package eu.xenit.contentcloud.scribe.generator.openapi;
 
-public class OpenApiWriterResponses {
-    private String description;
+public class OpenApiWriterResponse {
 
-    public OpenApiWriterResponses(String description) {
+    private String description;
+    private Object content;
+
+    public OpenApiWriterResponse(String description) {
         this.description = description;
     }
 
