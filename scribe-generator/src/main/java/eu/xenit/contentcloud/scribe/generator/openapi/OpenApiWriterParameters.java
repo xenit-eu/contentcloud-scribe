@@ -1,47 +1,25 @@
 package eu.xenit.contentcloud.scribe.generator.openapi;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter @Setter
 public class OpenApiWriterParameters {
+
+    public enum ParameterType {
+        PATH,
+        QUERY
+    }
+
     private String name;
-    private String in;
+    private ParameterType in;
     private boolean required;
-    private String type;
+    private OpenApiDataType schema;
 
-    public OpenApiWriterParameters(String name, String in, boolean required, String type) {
+    public OpenApiWriterParameters(String name, ParameterType in, boolean required, OpenApiDataType schema) {
         this.name = name;
         this.in = in;
         this.required = required;
-        this.type = type;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getIn() {
-        return in;
-    }
-
-    public void setIn(String in) {
-        this.in = in;
-    }
-
-    public boolean isRequired() {
-        return required;
-    }
-
-    public void setRequired(boolean required) {
-        this.required = required;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
+        this.schema = schema;
     }
 }
