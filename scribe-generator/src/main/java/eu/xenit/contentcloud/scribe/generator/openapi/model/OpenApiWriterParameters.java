@@ -1,5 +1,6 @@
-package eu.xenit.contentcloud.scribe.generator.openapi;
+package eu.xenit.contentcloud.scribe.generator.openapi.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -7,7 +8,9 @@ import lombok.Setter;
 public class OpenApiWriterParameters {
 
     public enum ParameterType {
+        @JsonProperty("path")
         PATH,
+        @JsonProperty("query")
         QUERY
     }
 

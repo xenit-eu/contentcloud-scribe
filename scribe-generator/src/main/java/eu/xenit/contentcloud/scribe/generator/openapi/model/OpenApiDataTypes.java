@@ -1,4 +1,4 @@
-package eu.xenit.contentcloud.scribe.generator.openapi;
+package eu.xenit.contentcloud.scribe.generator.openapi.model;
 
 public class OpenApiDataTypes {
 
