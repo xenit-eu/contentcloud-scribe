@@ -12,7 +12,7 @@ dependencies {
     implementation 'org.springframework.data:spring-data-commons'
     implementation 'eu.xenit.contentcloud.bard:bard'
     implementation 'org.slf4j:slf4j-api'
-
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml'
     testImplementation project(':scribe-infrastructure')
     testImplementation 'org.springframework.hateoas:spring-hateoas'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
