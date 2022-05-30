@@ -9,7 +9,7 @@ import lombok.Getter;
 public class OpenApiModel {
 
     @Getter
-    private final String swagger;
+    private final String openapi;
 
     @Getter
     private final OpenApiWriterInfo info;
@@ -20,8 +20,8 @@ public class OpenApiModel {
     @Getter
     private final Map<String, Map<String, OpenApiModelPaths>> paths = new LinkedHashMap<>();
 
-    public OpenApiModel(String swagger, OpenApiWriterInfo info) {
-        this.swagger = swagger;
+    public OpenApiModel(String openapi, OpenApiWriterInfo info) {
+        this.openapi = openapi;
         this.info = info;
     }
 }

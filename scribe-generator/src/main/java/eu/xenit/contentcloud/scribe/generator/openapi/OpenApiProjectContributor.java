@@ -43,7 +43,7 @@ public class OpenApiProjectContributor implements ProjectContributor {
         Map<String, Map<String, OpenApiModelPaths>> pathsMap = null;
         Map<String, OpenApiWriterResponse> responsesMap = new HashMap<>();
 
-        var model = new OpenApiModel("2.0", info);
+        var model = new OpenApiModel("3.0.0", info);
 
         for (Entity entity : entityModel.entities()) {
             this.contributeEntityToOpenApiModel(entity, model);
@@ -75,7 +75,6 @@ public class OpenApiProjectContributor implements ProjectContributor {
     private void contributeCollectionResources(Entity entity, OpenApiModel model) {
         List<String> tags = List.of(entity.getName());
 
-
         Map<String, OpenApiModelPaths> pathMap = new HashMap<>();
         var pathGet = new OpenApiModelPaths(tags);
         pathGet.getParameters().addAll(List.of(
@@ -94,8 +93,6 @@ public class OpenApiProjectContributor implements ProjectContributor {
 
         var pathPost = new OpenApiModelPaths(tags);
         pathMap.put("post", pathPost);
-
-
 
 //        pathsMap = Map.of("/" + entity.getName(), pathMap);
         model.getPaths().put("/" + entity.getName(), pathMap);
