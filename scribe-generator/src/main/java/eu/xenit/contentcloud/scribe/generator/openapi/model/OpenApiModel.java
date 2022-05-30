@@ -1,4 +1,4 @@
-package eu.xenit.contentcloud.scribe.generator.openapi;
+package eu.xenit.contentcloud.scribe.generator.openapi.model;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -18,7 +18,9 @@ public class OpenApiModel {
     private final List<OpenApiWriterTags> tags = new ArrayList<>();
 
     @Getter
-    private final Map<String, Map<String, OpenApiModelPaths>> paths = new LinkedHashMap<>();
+    private final Map<String, Map<String, OpenApiModelPath>> paths = new LinkedHashMap<>();
+
+    // TODO add components field
 
     public OpenApiModel(String openapi, OpenApiWriterInfo info) {
         this.openapi = openapi;
