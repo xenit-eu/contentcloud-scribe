@@ -12,18 +12,22 @@ public class OpenApiModel {
     private final String openapi;
 
     @Getter
-    private final OpenApiWriterInfo info;
+    private final OpenApiInfo info;
 
     @Getter
-    private final List<OpenApiWriterTags> tags = new ArrayList<>();
+    private final List<OpenApiTags> tags = new ArrayList<>();
 
     @Getter
     private final Map<String, Map<String, OpenApiModelPath>> paths = new LinkedHashMap<>();
 
     // TODO add components field
+    @Getter
+//    private final Map<String, Map<String, OpenApiSchemas>> components = new LinkedHashMap<>();
+    private final OpenApiComponents components;
 
-    public OpenApiModel(String openapi, OpenApiWriterInfo info) {
+    public OpenApiModel(String openapi, OpenApiInfo info, OpenApiComponents components) {
         this.openapi = openapi;
         this.info = info;
+        this.components = components;
     }
 }

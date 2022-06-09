@@ -8,6 +8,8 @@ dependencies {
 
     api 'io.spring.initializr:initializr-generator'
 
+    implementation 'org.atteo:evo-inflector:1.3'
+
     implementation 'io.spring.initializr:initializr-generator-spring'
     implementation 'org.springframework.data:spring-data-commons'
     implementation 'eu.xenit.contentcloud.bard:bard'
