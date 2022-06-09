@@ -23,6 +23,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.core.io.ByteArrayResource;
 
 class SpringContentStoreSourceCodeProjectContributorTest {
 
@@ -63,45 +64,47 @@ class SpringContentStoreSourceCodeProjectContributorTest {
         String path = "src/main/java/com/example/demo/model/Invoice.java";
         assertThat(project).containsFiles(path);
         assertThat(project).textFile(path).containsExactly(
-                "package com.example.demo.model;",
-                "",
-                "import java.lang.String;",
-                "import java.util.UUID;",
-                "import javax.persistence.Entity;",
-                "import javax.persistence.GeneratedValue;",
-                "import javax.persistence.GenerationType;",
-                "import javax.persistence.Id;",
-                "import lombok.Getter;",
-                "import lombok.NoArgsConstructor;",
-                "import lombok.Setter;",
-                "import org.springframework.content.commons.annotations.ContentId;",
-                "import org.springframework.content.commons.annotations.ContentLength;",
-                "import org.springframework.content.commons.annotations.MimeType;",
-                "import org.springframework.content.commons.annotations.OriginalFileName;",
-                "",
-                "@Entity",
-                "@NoArgsConstructor",
-                "@Getter",
-                "@Setter",
-                "public class Invoice {",
-                "\t@Id",
-                "\t@GeneratedValue(strategy = GenerationType.AUTO)",
-                "\tprivate UUID id;",
-                "",
-                "\tprivate String number;",
-                "",
-                "\t@ContentId",
-                "\tprivate String contentId;",
-                "",
-                "\t@ContentLength",
-                "\tprivate long contentLength;",
-                "",
-                "\t@MimeType",
-                "\tprivate String contentMimetype;",
-                "",
-                "\t@OriginalFileName",
-                "\tprivate String contentFilename;",
-                "}"
+                """
+                package com.example.demo.model;
+                
+                import java.lang.String;
+                import java.util.UUID;
+                import javax.persistence.Entity;
+                import javax.persistence.GeneratedValue;
+                import javax.persistence.GenerationType;
+                import javax.persistence.Id;
+                import lombok.Getter;
+                import lombok.NoArgsConstructor;
+                import lombok.Setter;
+                import org.springframework.content.commons.annotations.ContentId;
+                import org.springframework.content.commons.annotations.ContentLength;
+                import org.springframework.content.commons.annotations.MimeType;
+                import org.springframework.content.commons.annotations.OriginalFileName;
+                
+                @Entity
+                @NoArgsConstructor
+                @Getter
+                @Setter
+                public class Invoice {
+                \t@Id
+                \t@GeneratedValue(strategy = GenerationType.AUTO)
+                \tprivate UUID id;
+                
+                \tprivate String number;
+                
+                \t@ContentId
+                \tprivate String contentId;
+                
+                \t@ContentLength
+                \tprivate long contentLength;
+                
+                \t@MimeType
+                \tprivate String contentMimetype;
+                
+                \t@OriginalFileName
+                \tprivate String contentFilename;
+                }
+                """.split("\n")
         );
     }
 
