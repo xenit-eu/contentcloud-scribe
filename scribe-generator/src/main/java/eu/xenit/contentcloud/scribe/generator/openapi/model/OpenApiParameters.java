@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter @Setter
-public class OpenApiWriterParameters {
+public class OpenApiParameters {
 
     public enum ParameterType {
         @JsonProperty("path")
@@ -19,7 +19,7 @@ public class OpenApiWriterParameters {
     private boolean required;
     private OpenApiDataType schema;
 
-    public OpenApiWriterParameters(String name, ParameterType in, boolean required, OpenApiDataType schema) {
+    public OpenApiParameters(String name, ParameterType in, boolean required, OpenApiDataType schema) {
         this.name = name;
         this.in = in;
         this.required = required;

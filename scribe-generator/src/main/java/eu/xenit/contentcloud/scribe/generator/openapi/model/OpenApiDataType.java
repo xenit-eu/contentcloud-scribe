@@ -10,5 +10,4 @@ public class OpenApiDataType extends OpenApiSchema {
 
     @Getter @Setter
     private String type;
-
 }
