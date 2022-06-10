@@ -20,7 +20,7 @@ subprojects {
         }
 
         project.java {
-            sourceCompatibility = 11
+            sourceCompatibility = 17
 
             withSourcesJar()
             withJavadocJar()
