@@ -9,7 +9,7 @@ public class OpenApiObjectDataType extends OpenApiDataType {
     @Getter
     private final Map<String, OpenApiSchema> properties = new LinkedHashMap<>();
 
-    public OpenApiObjectDataType() { // super class pass along type (object)
+    public OpenApiObjectDataType() {
         super("object");
     }
 

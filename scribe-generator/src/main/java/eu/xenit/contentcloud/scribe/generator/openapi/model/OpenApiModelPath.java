@@ -14,11 +14,11 @@ public class OpenApiModelPath {
 
     private final List<String> tags;
 
-    @Setter
-    private OpenApiRequestBody requestBody = null;
-
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private final List<OpenApiParameters> parameters = new ArrayList<>();
+
+    @Setter
+    private OpenApiRequestBody requestBody = null;
 
     private final Map<String, OpenApiResponse> responses = new LinkedHashMap<>();
 
