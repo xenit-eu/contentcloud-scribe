@@ -39,6 +39,8 @@ public class OpenApiProjectContributor implements ProjectContributor {
         OpenApiInfo info = new OpenApiInfo("broker-content", "1.0.6", "Maelstrom Money");
         var model = new OpenApiModel("3.0.2", info, new OpenApiComponents());
 
+        model.getServers().add(new OpenApiServers("http://localhost:8000"));
+
         for (Entity entity : entityModel.entities()) {
             this.contributeEntityToOpenApiModel(entity, model);
         }
@@ -198,6 +200,10 @@ public class OpenApiProjectContributor implements ProjectContributor {
                     "204", new OpenApiResponse(""),
                     "400", new OpenApiResponse("")
             ));
+            pathPut.setRequestBody(new OpenApiRequestBody(
+                    "Create " + entity.getName(), true,
+                    Map.of("text/uri-list", new OpenApiMediaTypeObject(new OpenApiRelationReference("/" + entity.getName() + "/5"))))
+            );
             pathMap.put("put", pathPut);
 
             var pathPost = new OpenApiModelPath(tags);
@@ -208,6 +214,10 @@ public class OpenApiProjectContributor implements ProjectContributor {
                     "204", new OpenApiResponse(""),
                     "400", new OpenApiResponse("")
                     ));
+            pathPost.setRequestBody(new OpenApiRequestBody(
+                    "Create " + entity.getName(), true,
+                    Map.of("text/uri-list", new OpenApiMediaTypeObject(new OpenApiRelationReference("/" + entity.getName() + "/5"))))
+            );
             pathMap.put("post", pathPost);
 
             // DELETE
@@ -229,8 +239,8 @@ public class OpenApiProjectContributor implements ProjectContributor {
     private OpenApiReferenceObject createOrReferenceModel(OpenApiModel model, Entity entity) {
         // figure out how to represent the entity attributes in swagger
         // if it already exists, just get the name
+        // otherwise, add it first to model.components, before returning the reference
 
-        // TODO lookup 'entity' in model.components
         if (!model.getComponents().getSchemas().containsKey(entity.getName())) {
             var attributes = entity.getAttributes();
             var entitySchema = new OpenApiObjectDataType();
@@ -242,18 +252,16 @@ public class OpenApiProjectContributor implements ProjectContributor {
                     "name", OpenApiDataTypes.STRING,
                     "_links", new OpenApiObjectDataType(Map.of(
                             "self", new OpenApiReferenceObject("#/components/schemas/Link"),
-                            entity.getName(), new OpenApiReferenceObject("#/components/schemas/Link"))
+                            StringUtils.uncapitalize(entity.getName()), new OpenApiReferenceObject("#/components/schemas/Link"))
             )));
             model.getComponents().getSchemas().put(entity.getName(), entitySchema);
         }
 
         if (!model.getComponents().getSchemas().containsKey("Link")) {
             var linkSchema = new OpenApiObjectDataType();
+            linkSchema.getProperties().putAll(Map.of("href", OpenApiDataTypes.STRING));
             model.getComponents().getSchemas().put("Link", linkSchema);
         }
-
-        // otherwise, add it first to model.components, before returning the reference
-        // TODO or create 'entity' in model.components
 
         // return a reference to the entity-model we just created
         return new OpenApiReferenceObject("#/components/schemas/" + entity.getName());

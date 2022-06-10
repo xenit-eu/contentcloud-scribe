@@ -15,6 +15,9 @@ public class OpenApiModel {
     private final OpenApiInfo info;
 
     @Getter
+    private final List<OpenApiServers> servers = new ArrayList<>();
+
+    @Getter
     private final List<OpenApiTags> tags = new ArrayList<>();
 
     @Getter
@@ -22,7 +25,6 @@ public class OpenApiModel {
 
     // TODO add components field
     @Getter
-//    private final Map<String, Map<String, OpenApiSchemas>> components = new LinkedHashMap<>();
     private final OpenApiComponents components;
 
     public OpenApiModel(String openapi, OpenApiInfo info, OpenApiComponents components) {
