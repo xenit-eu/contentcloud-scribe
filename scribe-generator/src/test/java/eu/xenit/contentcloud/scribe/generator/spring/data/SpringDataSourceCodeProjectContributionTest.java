@@ -60,33 +60,35 @@ class SpringDataSourceCodeProjectContributionTest {
         String path = "src/main/java/com/example/demo/model/Invoice.java";
         assertThat(project).containsFiles(path);
         assertThat(project).textFile(path).containsExactly(
-                "package com.example.demo.model;",
-                "",
-                "import java.lang.String;",
-                "import java.util.UUID;",
-                "import javax.persistence.Entity;",
-                "import javax.persistence.GeneratedValue;",
-                "import javax.persistence.GenerationType;",
-                "import javax.persistence.Id;",
-                "import javax.persistence.OneToOne;",
-                "import lombok.Getter;",
-                "import lombok.NoArgsConstructor;",
-                "import lombok.Setter;",
-                "",
-                "@Entity",
-                "@NoArgsConstructor",
-                "@Getter",
-                "@Setter",
-                "public class Invoice {",
-                "\t@Id",
-                "\t@GeneratedValue(strategy = GenerationType.AUTO)",
-                "\tprivate UUID id;",
-                "",
-                "\tprivate String number;",
-                "",
-                "\t@OneToOne(optional = false)",
-                "\tprivate PurchaseOrder po;",
-                "}"
+                """
+                package com.example.demo.model;
+                
+                import java.lang.String;
+                import java.util.UUID;
+                import javax.persistence.Entity;
+                import javax.persistence.GeneratedValue;
+                import javax.persistence.GenerationType;
+                import javax.persistence.Id;
+                import javax.persistence.OneToOne;
+                import lombok.Getter;
+                import lombok.NoArgsConstructor;
+                import lombok.Setter;
+                
+                @Entity
+                @NoArgsConstructor
+                @Getter
+                @Setter
+                public class Invoice {
+                \t@Id
+                \t@GeneratedValue(strategy = GenerationType.AUTO)
+                \tprivate UUID id;
+                
+                \tprivate String number;
+                
+                \t@OneToOne(optional = false)
+                \tprivate PurchaseOrder po;
+                }
+                """.split("\n")
         );
     }
 
