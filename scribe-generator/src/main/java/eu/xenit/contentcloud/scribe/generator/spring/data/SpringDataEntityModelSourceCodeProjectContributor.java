@@ -83,7 +83,7 @@ public class SpringDataEntityModelSourceCodeProjectContributor implements Projec
                 } else {
                     // one-to-one
                     jpaEntity.addOneToOneRelation(relation.getName(), targetType, oneToOne -> {
-                        // edit @OneToOne attributes here
+                        oneToOne.required(relation.isRequired());
                     });
                 }
             }

@@ -6,9 +6,13 @@ import java.util.stream.Stream;
 
 public interface OneToOneRelation extends JpaEntityProperty {
 
+    OneToOneRelation required(boolean isRequired);
+
 }
 
 class OneToOneRelationImpl extends JpaEntityFieldImpl implements OneToOneRelation {
+
+    private boolean required = false;
 
     OneToOneRelationImpl(SemanticType fieldType, String name) {
         super(fieldType, name);
@@ -17,8 +21,15 @@ class OneToOneRelationImpl extends JpaEntityFieldImpl implements OneToOneRelatio
     @Override
     public Stream<Annotation> annotations() {
         return Stream.concat(
-            Stream.of(Annotation.withType(JpaAnnotations.OneToOne)),
+            Stream.of(Annotation.withType(JpaAnnotations.OneToOne)
+                    .withMembers(member -> member.put("optional", !this.required))),
             super.annotations()
         );
+    }
+
+    @Override
+    public OneToOneRelation required(boolean isRequired) {
+        this.required = isRequired;
+        return this;
     }
 }

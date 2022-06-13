@@ -40,17 +40,17 @@ class SpringDataSourceCodeProjectContributionTest {
     }
 
     @Test
-    void entityClassIsContributed() {
+    void oneToOneRelation() {
         var description = new ScribeProjectDescription();
         description.setChangeset(Changeset.builder()
                 .entities(List.of(
-                        Entity.builder().name("Party")
-                                .attribute(Attribute.builder("VAT").string().naturalId(true).build())
-                                .attribute(Attribute.builder("name").string().build())
+                        Entity.builder().name("PurchaseOrder")
+                                .attribute(Attribute.builder("number").string().naturalId(true).build())
+                                .attribute(Attribute.builder("description").string().build())
                                 .build(),
                         Entity.builder().name("Invoice")
                                 .attribute(Attribute.builder("number").string().naturalId(true).build())
-                                .relation(Relation.builder().name("party").source("Invoice").target("Party").required(true).build())
+                                .relation(Relation.builder().name("po").source("Invoice").target("PurchaseOrder").required(true).build())
                                 .build()
                 ))
                 .operations(List.of())
@@ -84,8 +84,8 @@ class SpringDataSourceCodeProjectContributionTest {
                 "",
                 "\tprivate String number;",
                 "",
-                "\t@OneToOne",
-                "\tprivate Party party;",
+                "\t@OneToOne(optional = false)",
+                "\tprivate PurchaseOrder po;",
                 "}"
         );
     }
