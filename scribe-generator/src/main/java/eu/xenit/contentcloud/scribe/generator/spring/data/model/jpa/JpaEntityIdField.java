@@ -6,6 +6,7 @@ import eu.xenit.contentcloud.scribe.generator.spring.data.model.JavaBeanProperty
 import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.stream.Stream;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -43,8 +44,11 @@ class JpaEntityIdFieldImpl implements JpaEntityIdField {
     @Getter @Setter
     private GenerationStrategy generationStrategy = GenerationStrategy.AUTO;
 
-    @Getter
     private Collection<Annotation> annotations = new HashSet<>();
+
+    public Stream<Annotation> annotations() {
+        return this.annotations.stream();
+    }
 
     JpaEntityIdFieldImpl(String name) {
         this.name = name;

@@ -104,7 +104,7 @@ public class SpringDataProjectGenerationConfiguration {
             SpringDataPackageStructure packageStructure, DataTypeResolver dataTypeResolver,
             ObjectProvider<JpaEntityCustomizer> jpaEntityCustomizers) {
         return new SpringDataEntityModelSourceCodeProjectContributor(this.description, entityModel, sourceGenerator,
-                packageStructure, dataTypeResolver, jpaEntityCustomizers);
+                dataTypeResolver, jpaEntityCustomizers);
     }
 
     @Bean

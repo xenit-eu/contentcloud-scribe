@@ -5,7 +5,6 @@ import eu.xenit.contentcloud.scribe.generator.ScribeProjectDescription;
 import eu.xenit.contentcloud.scribe.generator.source.SourceFile;
 import eu.xenit.contentcloud.scribe.generator.source.types.DataTypeResolver;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.EntityModel;
-import eu.xenit.contentcloud.scribe.generator.spring.data.model.SpringDataPackageStructure;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.JpaEntity;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.JpaEntityCustomizer;
 import eu.xenit.contentcloud.scribe.generator.spring.data.source.SpringDataSourceCodeGenerator;
@@ -31,8 +30,6 @@ public class SpringDataEntityModelSourceCodeProjectContributor implements Projec
     private final EntityModel entityModel;
 
     private final SpringDataSourceCodeGenerator sourceGenerator;
-
-    private final SpringDataPackageStructure packageStructure;
 
     private final DataTypeResolver dataTypeResolver;
 
@@ -76,6 +73,9 @@ public class SpringDataEntityModelSourceCodeProjectContributor implements Projec
 
                 } else {
                     // many-to-one
+                    jpaEntity.addManyToOneRelation(relation.getName(), targetType, manyToOne -> {
+                        manyToOne.required(relation.isRequired());
+                    });
                 }
             } else {
                 if (relation.isManyTargetPerSource()) {

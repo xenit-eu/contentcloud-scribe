@@ -1,10 +1,6 @@
 package eu.xenit.contentcloud.scribe.changeset;
 
-import eu.xenit.contentcloud.scribe.generator.source.types.Annotation;
-import eu.xenit.contentcloud.scribe.generator.source.types.Annotation.Builder;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;

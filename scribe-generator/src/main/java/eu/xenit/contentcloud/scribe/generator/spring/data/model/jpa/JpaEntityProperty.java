@@ -7,6 +7,7 @@ import eu.xenit.contentcloud.scribe.generator.spring.data.model.JavaBeanProperty
 import java.beans.Introspector;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.stream.Stream;
 import javax.lang.model.element.Modifier;
 import lombok.Getter;
 import lombok.NonNull;
@@ -54,6 +55,10 @@ class JpaEntityFieldImpl implements JpaEntityProperty {
     public JavaBeanProperty addAnnotation(Annotation annotation) {
         this.annotations.add(annotation);
         return this;
+    }
+
+    public Stream<Annotation> annotations() {
+        return this.annotations.stream();
     }
 
 

@@ -1,9 +1,8 @@
 package eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa;
 
-import eu.xenit.contentcloud.bard.TypeName;
 import eu.xenit.contentcloud.scribe.generator.source.types.Annotation;
 import eu.xenit.contentcloud.scribe.generator.source.types.SemanticType;
-import eu.xenit.contentcloud.scribe.generator.spring.data.model.SimpleType;
+import java.util.stream.Stream;
 
 public interface OneToOneRelation extends JpaEntityProperty {
 
@@ -13,7 +12,13 @@ class OneToOneRelationImpl extends JpaEntityFieldImpl implements OneToOneRelatio
 
     OneToOneRelationImpl(SemanticType fieldType, String name) {
         super(fieldType, name);
+    }
 
-        this.addAnnotation(Annotation.builder(JpaAnnotations.OneToOne).build());
+    @Override
+    public Stream<Annotation> annotations() {
+        return Stream.concat(
+            Stream.of(Annotation.withType(JpaAnnotations.OneToOne)),
+            super.annotations()
+        );
     }
 }

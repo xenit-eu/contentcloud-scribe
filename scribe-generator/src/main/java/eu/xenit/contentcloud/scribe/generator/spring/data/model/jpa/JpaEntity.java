@@ -29,6 +29,7 @@ public interface JpaEntity extends JavaBean {
     Stream<JpaEntityProperty> fields();
 
     JpaEntity addOneToOneRelation(String fieldName, SemanticType targetClass, Consumer<OneToOneRelation> customizer);
+    JpaEntity addManyToOneRelation(String fieldName, SemanticType targetClass, Consumer<ManyToOneRelation> customizer);
 }
 
 
@@ -87,6 +88,15 @@ class JpaEntityImpl implements JpaEntity {
     public JpaEntity addOneToOneRelation(String fieldName, SemanticType targetClass,
             Consumer<OneToOneRelation> customizer) {
         var relation = new OneToOneRelationImpl(targetClass, fieldName);
+        customizer.accept(relation);
+        this.fields.put(fieldName, relation);
+        return this;
+    }
+
+    @Override
+    public JpaEntity addManyToOneRelation(String fieldName, SemanticType targetClass,
+            Consumer<ManyToOneRelation> customizer) {
+        var relation = new ManyToOneRelationImpl(targetClass, fieldName);
         customizer.accept(relation);
         this.fields.put(fieldName, relation);
         return this;
