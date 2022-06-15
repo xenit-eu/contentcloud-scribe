@@ -82,24 +82,39 @@ public class OpenApiProjectContributor implements ProjectContributor {
         ));
         pathGet.getResponses().putAll(Map.of(
                 "200", new OpenApiResponse("OK", Map.of("application/json",
+<<<<<<< HEAD
                         new OpenApiMediaTypeObject(createOrReferenceCollectionModel(model, entity)))),
                 "405", new OpenApiResponse("Not Allowed")
+=======
+                        new OpenApiMediaTypeObject(createOrReferenceModel(model, entity)))),
+                "405", new OpenApiResponse("List is not supported")
+>>>>>>> ad7b07a1d6c6895cb9c9b11b5619274ac9f2c157
         ));
         pathMap.put("get", pathGet);
 
         // HEAD
         var pathHead = new OpenApiModelPath(tags);
         pathHead.getResponses().putAll(Map.of(
+<<<<<<< HEAD
                 "204", new OpenApiResponse("No Content"),
                 "404", new OpenApiResponse("Not Found")
+=======
+                "204", new OpenApiResponse(""),
+                "404", new OpenApiResponse("")
+>>>>>>> ad7b07a1d6c6895cb9c9b11b5619274ac9f2c157
         ));
         pathMap.put("head", pathHead);
 
         // POST
         var pathPost = new OpenApiModelPath(tags);
         pathPost.getResponses().putAll(Map.of(
+<<<<<<< HEAD
                 "204", new OpenApiResponse("No Content"),
                 "405", new OpenApiResponse("Not Allowed")
+=======
+                "204", new OpenApiResponse(""),
+                "405", new OpenApiResponse("")
+>>>>>>> ad7b07a1d6c6895cb9c9b11b5619274ac9f2c157
         ));
         pathPost.setRequestBody(new OpenApiRequestBody(
                 "Create " + entity.getName(), true,
@@ -119,12 +134,19 @@ public class OpenApiProjectContributor implements ProjectContributor {
         pathGet.getParameters().addAll(List.of(
                 new OpenApiParameters("id", ParameterType.PATH, true, OpenApiDataTypes.INTEGER)
         ));
+<<<<<<< HEAD
         var allOf = new OpenApiAllOfReference();
         allOf.getAllOf().add(createOrReferenceModel(model, entity));
         allOf.getAllOf().add(new OpenApiReferenceObject("#/components/schemas/" + entity.getName() + "Links"));
         pathGet.getResponses().putAll(Map.of(
                 "200", new OpenApiResponse("OK", Map.of("application/json", new OpenApiMediaTypeObject(allOf))),
                 "405", new OpenApiResponse("Not Allowed")
+=======
+        pathGet.getResponses().putAll(Map.of(
+                "200", new OpenApiResponse("OK", Map.of("application/json",
+                        new OpenApiMediaTypeObject(createOrReferenceModel(model, entity)))),
+                "405", new OpenApiResponse("")
+>>>>>>> ad7b07a1d6c6895cb9c9b11b5619274ac9f2c157
         ));
         pathMap.put("get", pathGet);
 
@@ -134,8 +156,13 @@ public class OpenApiProjectContributor implements ProjectContributor {
                 new OpenApiParameters("id", ParameterType.PATH, true, OpenApiDataTypes.INTEGER)
         ));
         pathHead.getResponses().putAll(Map.of(
+<<<<<<< HEAD
                 "204", new OpenApiResponse("No Content"),
                 "404", new OpenApiResponse("Not Found")
+=======
+                "204", new OpenApiResponse(""),
+                "404", new OpenApiResponse("")
+>>>>>>> ad7b07a1d6c6895cb9c9b11b5619274ac9f2c157
         ));
         pathMap.put("head", pathHead);
 
@@ -145,8 +172,13 @@ public class OpenApiProjectContributor implements ProjectContributor {
                 new OpenApiParameters("id", ParameterType.PATH, true, OpenApiDataTypes.INTEGER)
         ));
         pathPut.getResponses().putAll(Map.of(
+<<<<<<< HEAD
                 "204", new OpenApiResponse("No Content"),
                 "405", new OpenApiResponse("Not Allowed")
+=======
+                "204", new OpenApiResponse(""),
+                "405", new OpenApiResponse("")
+>>>>>>> ad7b07a1d6c6895cb9c9b11b5619274ac9f2c157
         ));
         pathMap.put("put", pathPut);
 
@@ -156,8 +188,12 @@ public class OpenApiProjectContributor implements ProjectContributor {
                 new OpenApiParameters("id", ParameterType.PATH, true, OpenApiDataTypes.INTEGER)
         ));
         pathPatch.getResponses().putAll(Map.of(
+<<<<<<< HEAD
                 "204", new OpenApiResponse("No Content"),
                 "405", new OpenApiResponse("Not Allowed")
+=======
+                "405", new OpenApiResponse("")
+>>>>>>> ad7b07a1d6c6895cb9c9b11b5619274ac9f2c157
         ));
         pathMap.put("patch", pathPatch);
 
@@ -167,8 +203,13 @@ public class OpenApiProjectContributor implements ProjectContributor {
                 new OpenApiParameters("id", ParameterType.PATH, true, OpenApiDataTypes.INTEGER)
         ));
         pathDelete.getResponses().putAll(Map.of(
+<<<<<<< HEAD
                 "204", new OpenApiResponse("No Content"),
                 "405", new OpenApiResponse("Not Allowed")
+=======
+                "204", new OpenApiResponse(""),
+                "405", new OpenApiResponse("")
+>>>>>>> ad7b07a1d6c6895cb9c9b11b5619274ac9f2c157
         ));
         pathMap.put("delete", pathDelete);
 
@@ -187,6 +228,7 @@ public class OpenApiProjectContributor implements ProjectContributor {
             pathGet.getParameters().addAll(List.of(
                     new OpenApiParameters("id", ParameterType.PATH, true, OpenApiDataTypes.INTEGER)
             ));
+<<<<<<< HEAD
             var allOf = new OpenApiAllOfReference();
             allOf.getAllOf().add(createOrReferenceModel(model, entity));
             allOf.getAllOf().add(new OpenApiReferenceObject("#/components/schemas/" + entity.getName() + "Links"));
@@ -194,6 +236,12 @@ public class OpenApiProjectContributor implements ProjectContributor {
                     "200", new OpenApiResponse("OK", Map.of("application/json",
                             new OpenApiMediaTypeObject(allOf))),
                     "405", new OpenApiResponse("Not Allowed")
+=======
+            pathGet.getResponses().putAll(Map.of(
+                    "200", new OpenApiResponse("OK", Map.of("application/json",
+                            new OpenApiMediaTypeObject(createOrReferenceModel(model, entity)))),
+                    "405", new OpenApiResponse("")
+>>>>>>> ad7b07a1d6c6895cb9c9b11b5619274ac9f2c157
             ));
             pathMap.put("get", pathGet);
 
@@ -203,8 +251,13 @@ public class OpenApiProjectContributor implements ProjectContributor {
                     new OpenApiParameters("id", ParameterType.PATH, true, OpenApiDataTypes.INTEGER)
             ));
             pathPut.getResponses().putAll(Map.of(
+<<<<<<< HEAD
                     "204", new OpenApiResponse("No Content"),
                     "400", new OpenApiResponse("Bad Request")
+=======
+                    "204", new OpenApiResponse(""),
+                    "400", new OpenApiResponse("")
+>>>>>>> ad7b07a1d6c6895cb9c9b11b5619274ac9f2c157
             ));
             pathPut.setRequestBody(new OpenApiRequestBody(
                     "Create " + entity.getName(), true,
@@ -217,8 +270,13 @@ public class OpenApiProjectContributor implements ProjectContributor {
                     new OpenApiParameters("id", ParameterType.PATH, true, OpenApiDataTypes.INTEGER)
             ));
             pathPost.getResponses().putAll(Map.of(
+<<<<<<< HEAD
                     "204", new OpenApiResponse("No Content"),
                     "400", new OpenApiResponse("Bad Request")
+=======
+                    "204", new OpenApiResponse(""),
+                    "400", new OpenApiResponse("")
+>>>>>>> ad7b07a1d6c6895cb9c9b11b5619274ac9f2c157
                     ));
             pathPost.setRequestBody(new OpenApiRequestBody(
                     "Create " + entity.getName(), true,
@@ -232,8 +290,13 @@ public class OpenApiProjectContributor implements ProjectContributor {
                     new OpenApiParameters("id", ParameterType.PATH, true, OpenApiDataTypes.INTEGER)
             ));
             pathDelete.getResponses().putAll(Map.of(
+<<<<<<< HEAD
                     "204", new OpenApiResponse("No Content"),
                     "405", new OpenApiResponse("Not Allowed")
+=======
+                    "204", new OpenApiResponse(""),
+                    "405", new OpenApiResponse("")
+>>>>>>> ad7b07a1d6c6895cb9c9b11b5619274ac9f2c157
             ));
             pathMap.put("delete", pathDelete);
 
@@ -254,14 +317,22 @@ public class OpenApiProjectContributor implements ProjectContributor {
                 entitySchema.getProperties().putAll(Map.of(
                         StringUtils.uncapitalize(attribute.getName()), OpenApiDataTypes.STRING));
             }
+<<<<<<< HEAD
             var entityLinkSchema = new OpenApiObjectDataType();
             entityLinkSchema.getProperties().putAll(Map.of(
+=======
+            entitySchema.getProperties().putAll(Map.of(
+                    "name", OpenApiDataTypes.STRING,
+>>>>>>> ad7b07a1d6c6895cb9c9b11b5619274ac9f2c157
                     "_links", new OpenApiObjectDataType(Map.of(
                             "self", new OpenApiReferenceObject("#/components/schemas/Link"),
                             StringUtils.uncapitalize(entity.getName()), new OpenApiReferenceObject("#/components/schemas/Link"))
             )));
             model.getComponents().getSchemas().put(entity.getName(), entitySchema);
+<<<<<<< HEAD
             model.getComponents().getSchemas().put(entity.getName() + "Links", entityLinkSchema);
+=======
+>>>>>>> ad7b07a1d6c6895cb9c9b11b5619274ac9f2c157
         }
 
         if (!model.getComponents().getSchemas().containsKey("Link")) {
@@ -274,6 +345,7 @@ public class OpenApiProjectContributor implements ProjectContributor {
         return new OpenApiReferenceObject("#/components/schemas/" + entity.getName());
     }
 
+<<<<<<< HEAD
     private OpenApiReferenceObject createOrReferenceCollectionModel(OpenApiModel model, Entity entity) {
         // add collection item to model.components, before returning the reference
         if (!model.getComponents().getSchemas().containsKey("Page")) {
@@ -303,6 +375,8 @@ public class OpenApiProjectContributor implements ProjectContributor {
 
     }
 
+=======
+>>>>>>> ad7b07a1d6c6895cb9c9b11b5619274ac9f2c157
     private static String modifiedName(String myString) {
         return English.plural(StringUtils.uncapitalize(myString));
     }
