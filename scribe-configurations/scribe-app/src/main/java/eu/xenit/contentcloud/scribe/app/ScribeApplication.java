@@ -1,6 +1,7 @@
 package eu.xenit.contentcloud.scribe.app;
 
 import eu.xenit.contentcloud.scribe.changeset.ChangesetResolver;
+import eu.xenit.contentcloud.scribe.drivers.rest.OpenApiGenerationInvoker;
 import eu.xenit.contentcloud.scribe.drivers.rest.ScribeProjectRequestToDescriptionConverter;
 import eu.xenit.contentcloud.scribe.drivers.rest.ScribeRestController;
 import eu.xenit.contentcloud.scribe.infrastructure.changeset.ChangesetRepository;
@@ -18,17 +19,10 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.hateoas.config.HypermediaRestTemplateConfigurer;
-import org.springframework.http.HttpRequest;
-import org.springframework.http.client.ClientHttpRequestExecution;
-import org.springframework.http.client.ClientHttpRequestInterceptor;
-import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.AbstractOAuth2Token;
-import org.springframework.web.client.RestTemplate;
-
-import java.io.IOException;
 
 @SpringBootApplication
 @EnableCaching
@@ -79,7 +73,8 @@ public class ScribeApplication {
             ChangesetResolver changeSetResolver) {
         var converter = new ScribeProjectRequestToDescriptionConverter(changeSetResolver);
         var invoker = new ProjectGenerationInvoker<>(applicationContext, converter);
-        return new ScribeRestController(metadataProvider, invoker);
+        var openapi = new OpenApiGenerationInvoker<>(applicationContext, converter);
+        return new ScribeRestController(metadataProvider, invoker, openapi);
     }
 
     @Bean

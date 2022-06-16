@@ -6,7 +6,9 @@ import eu.xenit.contentcloud.scribe.generator.openapi.model.*;
 import eu.xenit.contentcloud.scribe.generator.openapi.model.OpenApiParameters.ParameterType;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.EntityModel;
 import io.spring.initializr.generator.project.contributor.ProjectContributor;
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.LinkedHashMap;
@@ -22,15 +24,19 @@ public class OpenApiProjectContributor implements ProjectContributor {
     private final ScribeProjectDescription description;
     private final EntityModel entityModel;
 
-    private final OpenApiWriter openApiWriter = new OpenApiWriter();
+    private final OpenApiYmlWriter openApiWriter = new OpenApiYmlWriter();
 
     @Override
     public void contribute(Path projectRoot) throws IOException {
         Path openapiPath = projectRoot.resolve("openapi.yml");
 
-        var model = this.createOpenApiModel();
+        BufferedWriter output = Files.newBufferedWriter(openapiPath);
+        writeOpenApiSpec(output);
+    }
 
-        try (var writer = Files.newBufferedWriter(openapiPath)) {
+    public void writeOpenApiSpec(Writer output) throws IOException {
+        try (var writer = output) {
+            var model = this.createOpenApiModel();
             openApiWriter.writeOpenApiSpec(writer, model);
         }
     }
