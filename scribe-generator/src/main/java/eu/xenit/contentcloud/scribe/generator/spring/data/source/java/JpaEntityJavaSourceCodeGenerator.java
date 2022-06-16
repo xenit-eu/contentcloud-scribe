@@ -1,5 +1,7 @@
 package eu.xenit.contentcloud.scribe.generator.spring.data.source.java;
 
+import static java.lang.Character.isISOControl;
+
 import eu.xenit.contentcloud.bard.AnnotationSpec;
 import eu.xenit.contentcloud.bard.ClassName;
 import eu.xenit.contentcloud.bard.FieldSpec;
@@ -9,7 +11,6 @@ import eu.xenit.contentcloud.bard.TypeName;
 import eu.xenit.contentcloud.bard.TypeSpec;
 import eu.xenit.contentcloud.bard.TypeSpec.Builder;
 import eu.xenit.contentcloud.scribe.generator.language.SemanticTypeResolver;
-import eu.xenit.contentcloud.scribe.generator.language.java.JavaBuiltInTypeResolver;
 import eu.xenit.contentcloud.scribe.generator.language.java.JavaTypeName;
 import eu.xenit.contentcloud.scribe.generator.source.SourceFile;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.SpringDataPackageStructure;
@@ -77,7 +78,15 @@ class JpaEntityJavaSourceCodeGenerator implements JpaEntitySourceCodeGenerator {
 
         field.annotations().forEach(annotationType -> {
             var annotationClassName = typeResolver.resolve(annotationType.getType());
-            fieldSpec.addAnnotation((ClassName) annotationClassName.getTypeName());
+            var annotation = AnnotationSpec.builder((ClassName) annotationClassName.getTypeName());
+
+            annotationType.withMembers(members -> {
+                members.forEach((name, value) -> {
+                    addAnnotationMember_makePublicInBard(annotation, name, value);
+                });
+            });
+
+            fieldSpec.addAnnotation(annotation.build());
         });
 
         type.addField(fieldSpec.build());
@@ -131,5 +140,52 @@ class JpaEntityJavaSourceCodeGenerator implements JpaEntitySourceCodeGenerator {
         this.addSetter(jpaEntity, idField, type, fieldSpec);
 
         type.addField(fieldSpec.build());
+    }
+
+
+    private static AnnotationSpec.Builder addAnnotationMember_makePublicInBard(AnnotationSpec.Builder _this,
+            String memberName, Object value) {
+
+        if (value instanceof Class<?>) {
+            return _this.addMember(memberName, "$T.class", value);
+        }
+        if (value instanceof Enum) {
+            return _this.addMember(memberName, "$T.$L", value.getClass(), ((Enum<?>) value).name());
+        }
+        if (value instanceof String) {
+            return _this.addMember(memberName, "$S", value);
+        }
+        if (value instanceof Float) {
+            return _this.addMember(memberName, "$Lf", value);
+        }
+        if (value instanceof Character) {
+            return _this.addMember(memberName, "'$L'", characterLiteralWithoutSingleQuotes((char) value));
+        }
+        return _this.addMember(memberName, "$L", value);
+
+    }
+
+    static String characterLiteralWithoutSingleQuotes(char c) {
+        // see https://docs.oracle.com/javase/specs/jls/se7/html/jls-3.html#jls-3.10.6
+        switch (c) {
+            case '\b':
+                return "\\b"; /* \u0008: backspace (BS) */
+            case '\t':
+                return "\\t"; /* \u0009: horizontal tab (HT) */
+            case '\n':
+                return "\\n"; /* \u000a: linefeed (LF) */
+            case '\f':
+                return "\\f"; /* \u000c: form feed (FF) */
+            case '\r':
+                return "\\r"; /* \u000d: carriage return (CR) */
+            case '\"':
+                return "\"";  /* \u0022: double quote (") */
+            case '\'':
+                return "\\'"; /* \u0027: single quote (') */
+            case '\\':
+                return "\\\\";  /* \u005c: backslash (\) */
+            default:
+                return isISOControl(c) ? String.format("\\u%04x", (int) c) : Character.toString(c);
+        }
     }
 }

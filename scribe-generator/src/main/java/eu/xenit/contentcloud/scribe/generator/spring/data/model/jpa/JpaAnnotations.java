@@ -9,6 +9,7 @@ import lombok.ToString;
 public interface JpaAnnotations {
 
     JpaAnnotation OneToOne = new JpaAnnotation("OneToOne");
+    JpaAnnotation ManyToOne = new JpaAnnotation("ManyToOne");
 
     @ToString
     @RequiredArgsConstructor(access = AccessLevel.PRIVATE)

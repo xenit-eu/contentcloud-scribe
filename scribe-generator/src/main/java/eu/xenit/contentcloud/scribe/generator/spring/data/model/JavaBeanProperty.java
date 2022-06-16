@@ -2,7 +2,7 @@ package eu.xenit.contentcloud.scribe.generator.spring.data.model;
 
 import eu.xenit.contentcloud.scribe.generator.source.types.Annotation;
 import eu.xenit.contentcloud.scribe.generator.source.types.SemanticType;
-import java.util.Collection;
+import java.util.stream.Stream;
 
 public interface JavaBeanProperty {
 
@@ -15,10 +15,10 @@ public interface JavaBeanProperty {
 
     JavaBeanProperty addAnnotation(Annotation annotation);
     default JavaBeanProperty addAnnotation(SemanticType type) {
-        return this.addAnnotation(Annotation.builder(type).build());
+        return this.addAnnotation(Annotation.withType(type));
     }
 
-    Collection<Annotation> annotations();
+    Stream<Annotation> annotations();
 }
 
 
