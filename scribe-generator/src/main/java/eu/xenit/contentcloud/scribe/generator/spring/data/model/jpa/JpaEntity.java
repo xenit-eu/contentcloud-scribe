@@ -6,13 +6,16 @@ import eu.xenit.contentcloud.scribe.generator.spring.data.model.JavaBeanProperty
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.lombok.LombokTypeAnnotations;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.lombok.LombokTypeAnnotationsConfig;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.lombok.LombokTypeAnnotationsCustomizer;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
+import org.springframework.util.StringUtils;
 
 public interface JpaEntity extends JavaBean {
     
@@ -73,6 +76,7 @@ class JpaEntityImpl implements JpaEntity {
 
     @Override
     public JavaBean removeProperty(String name) {
+        name = asFieldName(name);
         var field = this.fields.remove(name);
         if (field == null) {
             throw new IllegalArgumentException("Entity "+entityName+" does not contain a field '"+name+"'");
@@ -90,7 +94,7 @@ class JpaEntityImpl implements JpaEntity {
             Consumer<OneToOneRelation> customizer) {
         var relation = new OneToOneRelationImpl(targetClass, fieldName);
         customizer.accept(relation);
-        this.fields.put(fieldName, relation);
+        this.fields.put(relation.name(), relation);
         return this;
     }
 
@@ -99,7 +103,7 @@ class JpaEntityImpl implements JpaEntity {
             Consumer<OneToManyRelation> customizer) {
         var relation = new OneToManyWithJoinColumnRelationImpl(this::entityName, targetClass, fieldName);
         customizer.accept(relation);
-        this.fields.put(fieldName, relation);
+        this.fields.put(relation.name(), relation);
         return this;
     }
 
@@ -108,7 +112,7 @@ class JpaEntityImpl implements JpaEntity {
             Consumer<ManyToOneRelation> customizer) {
         var relation = new ManyToOneRelationImpl(targetClass, fieldName);
         customizer.accept(relation);
-        this.fields.put(fieldName, relation);
+        this.fields.put(relation.name(), relation);
         return this;
     }
 
@@ -124,5 +128,16 @@ class JpaEntityImpl implements JpaEntity {
     }
 
 
+    static String asFieldName(@NonNull String fieldName) {
+        // changesets allow (non-consecutive) hyphens '-' in field names
+        return kebabToCamelCase(fieldName);
+    }
+
+    static String kebabToCamelCase(@NonNull String source) {
+        var titleCase = Arrays.stream(source.split("-"))
+                .reduce("", (buffer, part) -> buffer + StringUtils.capitalize(part));
+
+        return StringUtils.uncapitalize(titleCase);
+    }
 
 }
