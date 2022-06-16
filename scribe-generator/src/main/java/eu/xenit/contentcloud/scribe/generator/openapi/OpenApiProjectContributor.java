@@ -36,10 +36,11 @@ public class OpenApiProjectContributor implements ProjectContributor {
     }
 
     OpenApiModel createOpenApiModel() {
-        OpenApiInfo info = new OpenApiInfo("broker-content", "1.0.6", "Maelstrom Money");
+        OpenApiInfo info = new OpenApiInfo(description.getDescription(), description.getVersion(), description.getApplicationName());
         var model = new OpenApiModel("3.0.2", info, new OpenApiComponents());
 
         model.getServers().add(new OpenApiServers("http://localhost:8000"));
+        componentInitialization(model);
 
         for (Entity entity : entityModel.entities()) {
             this.contributeEntityToOpenApiModel(entity, model);
@@ -80,8 +81,8 @@ public class OpenApiProjectContributor implements ProjectContributor {
                 new OpenApiParameters("size", ParameterType.QUERY, false, OpenApiDataTypes.INTEGER),
                 new OpenApiParameters("sort", ParameterType.QUERY, false, OpenApiDataTypes.STRING)
         ));
-        pathGet.getResponses().putAll(Map.of(
-                "200", new OpenApiResponse("OK", Map.of("application/json",
+        pathGet.getResponses().putAll(linkedMapOf(
+                "200", new OpenApiResponse("OK", linkedMapOf("application/json",
                         new OpenApiMediaTypeObject(createOrReferenceCollectionModel(model, entity)))),
                 "405", new OpenApiResponse("Not Allowed")
         ));
@@ -89,7 +90,7 @@ public class OpenApiProjectContributor implements ProjectContributor {
 
         // HEAD
         var pathHead = new OpenApiModelPath(tags);
-        pathHead.getResponses().putAll(Map.of(
+        pathHead.getResponses().putAll(linkedMapOf(
                 "204", new OpenApiResponse("No Content"),
                 "404", new OpenApiResponse("Not Found")
         ));
@@ -97,13 +98,13 @@ public class OpenApiProjectContributor implements ProjectContributor {
 
         // POST
         var pathPost = new OpenApiModelPath(tags);
-        pathPost.getResponses().putAll(Map.of(
+        pathPost.getResponses().putAll(linkedMapOf(
                 "204", new OpenApiResponse("No Content"),
                 "405", new OpenApiResponse("Not Allowed")
         ));
         pathPost.setRequestBody(new OpenApiRequestBody(
                 "Create " + entity.getName(), true,
-                Map.of("application/json", new OpenApiMediaTypeObject(createOrReferenceModel(model, entity))))
+                linkedMapOf("application/json", new OpenApiMediaTypeObject(createOrReferenceModel(model, entity))))
         );
         pathMap.put("post", pathPost);
 
@@ -122,8 +123,8 @@ public class OpenApiProjectContributor implements ProjectContributor {
         var allOf = new OpenApiAllOfReference();
         allOf.getAllOf().add(createOrReferenceModel(model, entity));
         allOf.getAllOf().add(new OpenApiReferenceObject("#/components/schemas/" + entity.getName() + "Links"));
-        pathGet.getResponses().putAll(Map.of(
-                "200", new OpenApiResponse("OK", Map.of("application/json", new OpenApiMediaTypeObject(allOf))),
+        pathGet.getResponses().putAll(linkedMapOf(
+                "200", new OpenApiResponse("OK", linkedMapOf("application/json", new OpenApiMediaTypeObject(allOf))),
                 "405", new OpenApiResponse("Not Allowed")
         ));
         pathMap.put("get", pathGet);
@@ -133,7 +134,7 @@ public class OpenApiProjectContributor implements ProjectContributor {
         pathHead.getParameters().addAll(List.of(
                 new OpenApiParameters("id", ParameterType.PATH, true, OpenApiDataTypes.INTEGER)
         ));
-        pathHead.getResponses().putAll(Map.of(
+        pathHead.getResponses().putAll(linkedMapOf(
                 "204", new OpenApiResponse("No Content"),
                 "404", new OpenApiResponse("Not Found")
         ));
@@ -144,7 +145,7 @@ public class OpenApiProjectContributor implements ProjectContributor {
         pathPut.getParameters().addAll(List.of(
                 new OpenApiParameters("id", ParameterType.PATH, true, OpenApiDataTypes.INTEGER)
         ));
-        pathPut.getResponses().putAll(Map.of(
+        pathPut.getResponses().putAll(linkedMapOf(
                 "204", new OpenApiResponse("No Content"),
                 "405", new OpenApiResponse("Not Allowed")
         ));
@@ -155,7 +156,7 @@ public class OpenApiProjectContributor implements ProjectContributor {
         pathPatch.getParameters().addAll(List.of(
                 new OpenApiParameters("id", ParameterType.PATH, true, OpenApiDataTypes.INTEGER)
         ));
-        pathPatch.getResponses().putAll(Map.of(
+        pathPatch.getResponses().putAll(linkedMapOf(
                 "204", new OpenApiResponse("No Content"),
                 "405", new OpenApiResponse("Not Allowed")
         ));
@@ -166,7 +167,7 @@ public class OpenApiProjectContributor implements ProjectContributor {
         pathDelete.getParameters().addAll(List.of(
                 new OpenApiParameters("id", ParameterType.PATH, true, OpenApiDataTypes.INTEGER)
         ));
-        pathDelete.getResponses().putAll(Map.of(
+        pathDelete.getResponses().putAll(linkedMapOf(
                 "204", new OpenApiResponse("No Content"),
                 "405", new OpenApiResponse("Not Allowed")
         ));
@@ -190,8 +191,8 @@ public class OpenApiProjectContributor implements ProjectContributor {
             var allOf = new OpenApiAllOfReference();
             allOf.getAllOf().add(createOrReferenceModel(model, entity));
             allOf.getAllOf().add(new OpenApiReferenceObject("#/components/schemas/" + entity.getName() + "Links"));
-            pathGet.getResponses().putAll(Map.of(
-                    "200", new OpenApiResponse("OK", Map.of("application/json",
+            pathGet.getResponses().putAll(linkedMapOf(
+                    "200", new OpenApiResponse("OK", linkedMapOf("application/json",
                             new OpenApiMediaTypeObject(allOf))),
                     "405", new OpenApiResponse("Not Allowed")
             ));
@@ -202,13 +203,13 @@ public class OpenApiProjectContributor implements ProjectContributor {
             pathPut.getParameters().addAll(List.of(
                     new OpenApiParameters("id", ParameterType.PATH, true, OpenApiDataTypes.INTEGER)
             ));
-            pathPut.getResponses().putAll(Map.of(
+            pathPut.getResponses().putAll(linkedMapOf(
                     "204", new OpenApiResponse("No Content"),
                     "400", new OpenApiResponse("Bad Request")
             ));
             pathPut.setRequestBody(new OpenApiRequestBody(
                     "Create " + entity.getName(), true,
-                    Map.of("text/uri-list", new OpenApiMediaTypeObject(new OpenApiRelationReference("/" + entity.getName() + "/5"))))
+                    linkedMapOf("text/uri-list", new OpenApiMediaTypeObject(new OpenApiRelationReference("/" + entity.getName() + "/5"))))
             );
             pathMap.put("put", pathPut);
 
@@ -216,13 +217,13 @@ public class OpenApiProjectContributor implements ProjectContributor {
             pathPost.getParameters().addAll(List.of(
                     new OpenApiParameters("id", ParameterType.PATH, true, OpenApiDataTypes.INTEGER)
             ));
-            pathPost.getResponses().putAll(Map.of(
+            pathPost.getResponses().putAll(linkedMapOf(
                     "204", new OpenApiResponse("No Content"),
                     "400", new OpenApiResponse("Bad Request")
                     ));
             pathPost.setRequestBody(new OpenApiRequestBody(
                     "Create " + entity.getName(), true,
-                    Map.of("text/uri-list", new OpenApiMediaTypeObject(new OpenApiRelationReference("/" + entity.getName() + "/5"))))
+                    linkedMapOf("text/uri-list", new OpenApiMediaTypeObject(new OpenApiRelationReference("/" + entity.getName() + "/5"))))
             );
             pathMap.put("post", pathPost);
 
@@ -231,7 +232,7 @@ public class OpenApiProjectContributor implements ProjectContributor {
             pathDelete.getParameters().addAll(List.of(
                     new OpenApiParameters("id", ParameterType.PATH, true, OpenApiDataTypes.INTEGER)
             ));
-            pathDelete.getResponses().putAll(Map.of(
+            pathDelete.getResponses().putAll(linkedMapOf(
                     "204", new OpenApiResponse("No Content"),
                     "405", new OpenApiResponse("Not Allowed")
             ));
@@ -251,23 +252,18 @@ public class OpenApiProjectContributor implements ProjectContributor {
             var attributes = entity.getAttributes();
             var entitySchema = new OpenApiObjectDataType();
             for (var attribute : attributes) {
-                entitySchema.getProperties().putAll(Map.of(
+                entitySchema.getProperties().putAll(linkedMapOf(
                         StringUtils.uncapitalize(attribute.getName()), OpenApiDataTypes.STRING));
             }
+            model.getComponents().getSchemas().put(entity.getName(), entitySchema);
+
             var entityLinkSchema = new OpenApiObjectDataType();
-            entityLinkSchema.getProperties().putAll(Map.of(
-                    "_links", new OpenApiObjectDataType(Map.of(
+            entityLinkSchema.getProperties().putAll(linkedMapOf(
+                    "_links", new OpenApiObjectDataType(linkedMapOf(
                             "self", new OpenApiReferenceObject("#/components/schemas/Link"),
                             StringUtils.uncapitalize(entity.getName()), new OpenApiReferenceObject("#/components/schemas/Link"))
             )));
-            model.getComponents().getSchemas().put(entity.getName(), entitySchema);
             model.getComponents().getSchemas().put(entity.getName() + "Links", entityLinkSchema);
-        }
-
-        if (!model.getComponents().getSchemas().containsKey("Link")) {
-            var linkSchema = new OpenApiObjectDataType();
-            linkSchema.getProperties().putAll(Map.of("href", OpenApiDataTypes.STRING));
-            model.getComponents().getSchemas().put("Link", linkSchema);
         }
 
         // return a reference to the entity-model we just created
@@ -276,21 +272,10 @@ public class OpenApiProjectContributor implements ProjectContributor {
 
     private OpenApiReferenceObject createOrReferenceCollectionModel(OpenApiModel model, Entity entity) {
         // add collection item to model.components, before returning the reference
-        if (!model.getComponents().getSchemas().containsKey("Page")) {
-            var pageSchema = new OpenApiObjectDataType();
-            pageSchema.getProperties().putAll(Map.of(
-                    "size", OpenApiDataTypes.INTEGER,
-                    "totalElements", OpenApiDataTypes.INTEGER,
-                    "totalPages", OpenApiDataTypes.INTEGER,
-                    "number", OpenApiDataTypes.INTEGER
-            ));
-            model.getComponents().getSchemas().put("page", pageSchema);
-        }
-
         if (!model.getComponents().getSchemas().containsKey(modifiedName(entity.getName()) + "Collection")) {
             var collectionSchema = new OpenApiObjectDataType();
-            collectionSchema.getProperties().putAll(Map.of(
-                    "_embedded", new OpenApiObjectDataType(Map.of(
+            collectionSchema.getProperties().putAll(linkedMapOf(
+                    "_embedded", new OpenApiObjectDataType(linkedMapOf(
                             modifiedName(entity.getName()), new OpenApiArrayDataType(
                                     new OpenApiReferenceObject("#/components/schemas/" + entity.getName())))),
                     "_links", new OpenApiReferenceObject("#/components/schemas/" + entity.getName() + "Links"),
@@ -300,7 +285,51 @@ public class OpenApiProjectContributor implements ProjectContributor {
         }
 
         return new OpenApiReferenceObject("#/components/schemas/" + modifiedName(entity.getName()) + "Collection");
+    }
 
+    private void componentInitialization(OpenApiModel model) {
+        if (!model.getComponents().getSchemas().containsKey("Link")) {
+            var linkSchema = new OpenApiObjectDataType();
+            linkSchema.getProperties().putAll(linkedMapOf("href", OpenApiDataTypes.STRING));
+            model.getComponents().getSchemas().put("Link", linkSchema);
+        }
+
+        var pageSchema = new OpenApiObjectDataType();
+        pageSchema.getProperties().putAll(linkedMapOf(
+                "size", OpenApiDataTypes.INTEGER,
+                "totalElements", OpenApiDataTypes.INTEGER,
+                "totalPages", OpenApiDataTypes.INTEGER,
+                "number", OpenApiDataTypes.INTEGER
+        ));
+        model.getComponents().getSchemas().put("page", pageSchema);
+    }
+
+    private <K,V> LinkedHashMap<K, V> linkedMapOf(K k1, V v1) {
+        LinkedHashMap<K, V> map = new LinkedHashMap<>();
+        map.put(k1, v1);
+        return map;
+    }
+    private <K,V> LinkedHashMap<K, V> linkedMapOf(K k1, V v1, K k2, V v2) {
+        LinkedHashMap<K, V> map = new LinkedHashMap<>();
+        map.put(k1, v1);
+        map.put(k2, v2);
+        return map;
+    }
+    private <K,V> LinkedHashMap<K, V> linkedMapOf(K k1, V v1, K k2, V v2, K k3, V v3) {
+        LinkedHashMap<K, V> map = new LinkedHashMap<>();
+        map.put(k1, v1);
+        map.put(k2, v2);
+        map.put(k3, v3);
+        return map;
+    }
+
+    private <K,V> LinkedHashMap<K, V> linkedMapOf(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4) {
+        LinkedHashMap<K, V> map = new LinkedHashMap<>();
+        map.put(k1, v1);
+        map.put(k2, v2);
+        map.put(k3, v3);
+        map.put(k4, v4);
+        return map;
     }
 
     private static String modifiedName(String myString) {

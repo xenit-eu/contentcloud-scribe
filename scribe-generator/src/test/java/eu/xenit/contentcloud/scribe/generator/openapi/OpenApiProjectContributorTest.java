@@ -1,8 +1,5 @@
 package eu.xenit.contentcloud.scribe.generator.openapi;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
-
 import eu.xenit.contentcloud.scribe.changeset.Attribute;
 import eu.xenit.contentcloud.scribe.changeset.Changeset;
 import eu.xenit.contentcloud.scribe.changeset.Entity;
@@ -15,11 +12,14 @@ import io.spring.initializr.generator.spring.code.java.JavaProjectGenerationConf
 import io.spring.initializr.generator.test.project.ProjectAssetTester;
 import io.spring.initializr.generator.test.project.ProjectStructure;
 import io.spring.initializr.generator.version.Version;
-import java.nio.file.Path;
-import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+
+import java.nio.file.Path;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 class OpenApiProjectContributorTest {
 
@@ -62,9 +62,8 @@ class OpenApiProjectContributorTest {
                 """
                 openapi: "3.0.2"
                 info:
-                  description: "broker-content"
-                  version: "1.0.6"
-                  title: "Maelstrom Money"
+                  version: "0.0.1-SNAPSHOT"
+                  title: "DemoApplication"
                 servers:
                 - url: "http://localhost:8000"
                 tags:
@@ -280,6 +279,36 @@ class OpenApiProjectContributorTest {
                           description: "Not Allowed"
                 components:
                   schemas:
+                    Link:
+                      type: "object"
+                      properties:
+                        href:
+                          type: "string"
+                    page:
+                      type: "object"
+                      properties:
+                        size:
+                          type: "integer"
+                        totalElements:
+                          type: "integer"
+                        totalPages:
+                          type: "integer"
+                        number:
+                          type: "integer"
+                    partiesCollection:
+                      type: "object"
+                      properties:
+                        _embedded:
+                          type: "object"
+                          properties:
+                            parties:
+                              type: "array"
+                              items:
+                                $ref: "#/components/schemas/Party"
+                        _links:
+                          $ref: "#/components/schemas/PartyLinks"
+                        page:
+                          $ref: "#/components/schemas/page"
                     Party:
                       type: "object"
                       properties:
@@ -297,36 +326,6 @@ class OpenApiProjectContributorTest {
                               $ref: "#/components/schemas/Link"
                             party:
                               $ref: "#/components/schemas/Link"
-                    partiesCollection:
-                      type: "object"
-                      properties:
-                        _embedded:
-                          type: "object"
-                          properties:
-                            parties:
-                              type: "array"
-                              items:
-                                $ref: "#/components/schemas/Party"
-                        _links:
-                          $ref: "#/components/schemas/PartyLinks"
-                        page:
-                          $ref: "#/components/schemas/page"
-                    page:
-                      type: "object"
-                      properties:
-                        size:
-                          type: "integer"
-                        totalElements:
-                          type: "integer"
-                        totalPages:
-                          type: "integer"
-                        number:
-                          type: "integer"
-                    Link:
-                      type: "object"
-                      properties:
-                        href:
-                          type: "string"
                 """.split("\n")
         );
     }
