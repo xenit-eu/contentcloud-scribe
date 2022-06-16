@@ -3,6 +3,7 @@ package eu.xenit.contentcloud.scribe.generator.spring.data;
 import eu.xenit.contentcloud.scribe.generator.ScribeProjectDescription;
 import eu.xenit.contentcloud.scribe.generator.language.SemanticTypeResolver;
 import eu.xenit.contentcloud.scribe.generator.language.SemanticTypeResolverRegistry;
+import eu.xenit.contentcloud.scribe.generator.language.java.JavaCollectionTypeResolver;
 import eu.xenit.contentcloud.scribe.generator.language.java.JavaTypeName;
 import eu.xenit.contentcloud.scribe.generator.source.types.DataTypeResolverRegistry;
 import eu.xenit.contentcloud.scribe.generator.language.java.JavaBuiltInTypeResolver;
@@ -67,8 +68,14 @@ public class SpringDataProjectGenerationConfiguration {
 
     @Bean
     @ConditionalOnLanguage(JavaLanguage.ID)
-    SemanticTypeResolver<JavaTypeName> javaSemanticTypeResolver() {
+    SemanticTypeResolver<JavaTypeName> javaBuiltInTypeResolver() {
         return new JavaBuiltInTypeResolver();
+    }
+
+    @Bean
+    @ConditionalOnLanguage(JavaLanguage.ID)
+    SemanticTypeResolver<JavaTypeName> javaCollectionTypeResolver() {
+        return new JavaCollectionTypeResolver();
     }
 
     @Bean

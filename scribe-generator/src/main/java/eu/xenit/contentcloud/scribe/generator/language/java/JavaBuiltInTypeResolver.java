@@ -2,6 +2,7 @@ package eu.xenit.contentcloud.scribe.generator.language.java;
 
 import eu.xenit.contentcloud.scribe.generator.language.SemanticTypeResolver;
 import eu.xenit.contentcloud.scribe.generator.source.types.BuiltInType;
+import eu.xenit.contentcloud.scribe.generator.source.types.CollectionType;
 import eu.xenit.contentcloud.scribe.generator.source.types.SemanticType;
 
 public class JavaBuiltInTypeResolver implements SemanticTypeResolver<JavaTypeName> {

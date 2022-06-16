@@ -80,6 +80,9 @@ public class SpringDataEntityModelSourceCodeProjectContributor implements Projec
             } else {
                 if (relation.isManyTargetPerSource()) {
                     // one-to-many
+                    jpaEntity.addOneToManyRelation(relation.getName(), targetType, oneToMany -> {
+
+                    });
                 } else {
                     // one-to-one
                     jpaEntity.addOneToOneRelation(relation.getName(), targetType, oneToOne -> {

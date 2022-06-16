@@ -2,6 +2,7 @@ package eu.xenit.contentcloud.scribe.generator.source.types;
 
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
@@ -15,5 +16,6 @@ import lombok.ToString;
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class BuiltInType implements SemanticType {
 
+    @NonNull
     private final String keyword;
 }

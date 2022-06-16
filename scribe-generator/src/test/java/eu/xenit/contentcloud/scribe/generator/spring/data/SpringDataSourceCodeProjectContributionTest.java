@@ -50,7 +50,8 @@ class SpringDataSourceCodeProjectContributionTest {
                                 .build(),
                         Entity.builder().name("Invoice")
                                 .attribute(Attribute.builder("number").string().naturalId(true).build())
-                                .relation(Relation.builder().name("po").source("Invoice").target("PurchaseOrder").required(true).build())
+                                .relation(Relation.builder().name("po").source("Invoice").target("PurchaseOrder")
+                                        .required(true).build())
                                 .build()
                 ))
                 .operations(List.of())
@@ -62,7 +63,7 @@ class SpringDataSourceCodeProjectContributionTest {
         assertThat(project).textFile(path).containsExactly(
                 """
                 package com.example.demo.model;
-                
+                                
                 import java.lang.String;
                 import java.util.UUID;
                 import javax.persistence.Entity;
@@ -73,7 +74,7 @@ class SpringDataSourceCodeProjectContributionTest {
                 import lombok.Getter;
                 import lombok.NoArgsConstructor;
                 import lombok.Setter;
-                
+                                
                 @Entity
                 @NoArgsConstructor
                 @Getter
@@ -82,9 +83,9 @@ class SpringDataSourceCodeProjectContributionTest {
                 \t@Id
                 \t@GeneratedValue(strategy = GenerationType.AUTO)
                 \tprivate UUID id;
-                
+                                
                 \tprivate String number;
-                
+                                
                 \t@OneToOne(optional = false)
                 \tprivate PurchaseOrder po;
                 }
@@ -147,6 +148,69 @@ class SpringDataSourceCodeProjectContributionTest {
                 
                 \t@ManyToOne(optional = false)
                 \tprivate Party counterparty;
+                }
+                """.split("\n")
+        );
+    }
+
+    @Test
+    void oneToMany_usingJoinColumn() {
+        var description = new ScribeProjectDescription();
+        description.setChangeset(Changeset.builder()
+                .entities(List.of(
+                        Entity.builder().name("Chapter")
+                                .attribute(Attribute.builder("name").string().build())
+                                .build(),
+                        Entity.builder().name("Book")
+                                .attribute(Attribute.builder("isbn").string().naturalId(true).build())
+                                .attribute(Attribute.builder("title").string().build())
+                                .relation(Relation.builder()
+                                        .name("chapters")
+                                        .source("Book")
+                                        .target("Chapter")
+                                        .manyTargetPerSource(true)
+                                        .build())
+                                .build()
+                ))
+                .operations(List.of())
+                .build());
+        ProjectStructure project = this.projectTester.generate(description);
+
+        String path = "src/main/java/com/example/demo/model/Book.java";
+        assertThat(project).containsFiles(path);
+        assertThat(project).textFile(path).containsExactly(
+                """
+                package com.example.demo.model;
+                                
+                import java.lang.String;
+                import java.util.List;
+                import java.util.UUID;
+                import javax.persistence.Entity;
+                import javax.persistence.GeneratedValue;
+                import javax.persistence.GenerationType;
+                import javax.persistence.Id;
+                import javax.persistence.JoinColumn;
+                import javax.persistence.OneToMany;
+                import lombok.Getter;
+                import lombok.NoArgsConstructor;
+                import lombok.Setter;
+                                
+                @Entity
+                @NoArgsConstructor
+                @Getter
+                @Setter
+                public class Book {
+                \t@Id
+                \t@GeneratedValue(strategy = GenerationType.AUTO)
+                \tprivate UUID id;
+                                
+                \tprivate String isbn;
+                                
+                \tprivate String title;
+                                
+                \t@OneToMany
+                \t@JoinColumn(name = "_book_id__chapters")
+                \tprivate List<Chapter> chapters;
                 }
                 """.split("\n")
         );
