@@ -1,51 +1,53 @@
 {
-  "baseModel": {
-    "entities": [
-      {
-        "name": "case",
-        "attributes": [
-          {
-            "name": "name",
-            "type": "STRING",
-            "required": true,
-            "unique": true,
-            "indexed": true,
-            "naturalId": false
-          },
-          {
-            "name": "description",
-            "type": "STRING",
-            "required": false,
-            "unique": false,
-            "indexed": true,
-            "naturalId": false
-          }
-        ],
-        "relations": []
-      },
-      {
-        "name": "person",
-        "attributes": [
-          {
-            "name": "name",
-            "type": "STRING",
-            "required": false,
-            "unique": false,
-            "indexed": false,
-            "naturalId": false
-          },
-          {
-            "name": "notes",
-            "type": "STRING",
-            "required": false,
-            "unique": false,
-            "indexed": false,
-            "naturalId": false
-          }
-        ],
-        "relations": []
-      }
-    ]
+  "projections": {
+    "base": {
+      "entities": [
+        {
+          "name": "case",
+          "attributes": [
+            {
+              "name": "name",
+              "type": "STRING",
+              "required": true,
+              "unique": true,
+              "indexed": true,
+              "naturalId": false
+            },
+            {
+              "name": "description",
+              "type": "STRING",
+              "required": false,
+              "unique": false,
+              "indexed": true,
+              "naturalId": false
+            }
+          ],
+          "relations": []
+        },
+        {
+          "name": "person",
+          "attributes": [
+            {
+              "name": "name",
+              "type": "STRING",
+              "required": false,
+              "unique": false,
+              "indexed": false,
+              "naturalId": false
+            },
+            {
+              "name": "notes",
+              "type": "STRING",
+              "required": false,
+              "unique": false,
+              "indexed": false,
+              "naturalId": false
+            }
+          ],
+          "relations": []
+        }
+      ]
+    }
   },
   "operations": [
     {
