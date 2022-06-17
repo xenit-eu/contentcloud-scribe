@@ -295,20 +295,6 @@ class OpenApiProjectContributorTest {
                           type: "integer"
                         number:
                           type: "integer"
-                    partiesCollection:
-                      type: "object"
-                      properties:
-                        _embedded:
-                          type: "object"
-                          properties:
-                            parties:
-                              type: "array"
-                              items:
-                                $ref: "#/components/schemas/Party"
-                        _links:
-                          $ref: "#/components/schemas/PartyLinks"
-                        page:
-                          $ref: "#/components/schemas/page"
                     Party:
                       type: "object"
                       properties:
@@ -326,6 +312,27 @@ class OpenApiProjectContributorTest {
                               $ref: "#/components/schemas/Link"
                             party:
                               $ref: "#/components/schemas/Link"
+                    partiesCollection:
+                      type: "object"
+                      properties:
+                        _embedded:
+                          type: "object"
+                          properties:
+                            parties:
+                              type: "array"
+                              items:
+                                allOf:
+                                - $ref: "#/components/schemas/Party"
+                                - $ref: "#/components/schemas/PartyLinks"
+                        _links:
+                          type: "object"
+                          properties:
+                            self:
+                              $ref: "#/components/schemas/Link"
+                            profile:
+                              $ref: "#/components/schemas/Link"
+                        page:
+                          $ref: "#/components/schemas/page"
                 """.split("\n")
         );
     }
