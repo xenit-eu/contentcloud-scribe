@@ -48,7 +48,7 @@ class JpaEntityFieldImpl implements JpaEntityProperty {
 
     JpaEntityFieldImpl(SemanticType fieldType, String name) {
         this.type = fieldType;
-        this.name = Introspector.decapitalize(name);
+        this.name = JpaEntityImpl.asFieldName(name);
     }
 
     @Override
