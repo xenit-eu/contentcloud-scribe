@@ -7,7 +7,7 @@ import lombok.Data;
 
 @Data
 public class ChangesetDto {
-    private JsonNode baseModel;
+    private ChangesetProjectionsDto projections;
 
     private List<Entity> entities;
     private List<OperationWithPatchesDto> operations;

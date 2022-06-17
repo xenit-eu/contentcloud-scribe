@@ -1,6 +1,9 @@
 {
-  "baseModel": {
-    "entities": []
+  "projections": {
+    "base": {
+      "entities": [],
+      "policies": []
+    }
   },
   "operations": [
     {

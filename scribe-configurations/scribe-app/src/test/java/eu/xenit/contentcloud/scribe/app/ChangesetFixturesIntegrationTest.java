@@ -88,7 +88,7 @@ public class ChangesetFixturesIntegrationTest {
     private Changeset parseChangeset(URL changesetUrl) {
         var model = objectMapper.readValue(changesetUrl, new TypeReference<EntityModel<ChangesetDto>>() {});
         var changesetFactory = new ChangesetFactory(
-                (changesetDto, contentType) -> new Model(objectMapper, changesetDto.getBaseModel()));
+                (changesetDto, contentType) -> new Model(objectMapper, changesetDto.getProjections().getBase()));
         var parentUrl = model.getLink("parent")
                 .map(Link::getHref)
                 .map(href -> toStoredChangesetURL(changesetUrl, href));
