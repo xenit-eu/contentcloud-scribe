@@ -308,7 +308,7 @@ class DatabaseMigrationProjectContributorTest {
     private Changeset parseChangeset(URL changesetUrl) {
         var model = objectMapper.readValue(changesetUrl, new TypeReference<EntityModel<ChangesetDto>>() {});
         var changesetFactory = new ChangesetFactory(
-                (changesetDto, contentType) -> new eu.xenit.contentcloud.scribe.infrastructure.changeset.model.Model(objectMapper, changesetDto.getBaseModel()));
+                (changesetDto, contentType) -> new eu.xenit.contentcloud.scribe.infrastructure.changeset.model.Model(objectMapper, changesetDto.getProjections().getBase()));
         return changesetFactory.create(model.getContent(), new ProjectDto("project", "org", "org/project"), MediaType.APPLICATION_JSON, null);
     }
 

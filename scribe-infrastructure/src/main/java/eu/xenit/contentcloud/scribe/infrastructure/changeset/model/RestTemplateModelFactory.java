@@ -30,7 +30,7 @@ public class RestTemplateModelFactory implements ModelFactory {
 
     @Override
     public Model createBaseModel(ChangesetDto changesetDto, MediaType contentType) {
-        return new Model(getObjectMapperFor(contentType), changesetDto.getBaseModel());
+        return new Model(getObjectMapperFor(contentType), changesetDto.getProjections().getBase());
 
     }
 
