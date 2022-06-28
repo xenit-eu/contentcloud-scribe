@@ -280,11 +280,16 @@ public class OpenApiProjectContributor implements ProjectContributor {
         // add collection item to model.components, before returning the reference
         if (!model.getComponents().getSchemas().containsKey(modifiedName(entity.getName()) + "Collection")) {
             var collectionSchema = new OpenApiObjectDataType();
+            var allOf = new OpenApiAllOfReference();
+            allOf.getAllOf().add(createOrReferenceModel(model, entity));
+            allOf.getAllOf().add(new OpenApiReferenceObject("#/components/schemas/" + entity.getName() + "Links"));
             collectionSchema.getProperties().putAll(linkedMapOf(
                     "_embedded", new OpenApiObjectDataType(linkedMapOf(
-                            modifiedName(entity.getName()), new OpenApiArrayDataType(
-                                    new OpenApiReferenceObject("#/components/schemas/" + entity.getName())))),
-                    "_links", new OpenApiReferenceObject("#/components/schemas/" + entity.getName() + "Links"),
+                            modifiedName(entity.getName()), new OpenApiArrayDataType(allOf))),
+                    "_links", new OpenApiObjectDataType(linkedMapOf(
+                            "self", new OpenApiReferenceObject("#/components/schemas/Link"),
+                            "profile", new OpenApiReferenceObject("#/components/schemas/Link"))
+                    ),
                     "page", new OpenApiReferenceObject("#/components/schemas/page")
             ));
             model.getComponents().getSchemas().put(modifiedName(entity.getName()) + "Collection", collectionSchema);

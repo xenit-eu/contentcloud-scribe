@@ -4,13 +4,13 @@ import lombok.Getter;
 
 public class OpenApiArrayDataType extends OpenApiDataType {
     @Getter
-    private OpenApiReferenceObject items;
+    private OpenApiSchema items;
 
     public OpenApiArrayDataType() {
         super("array");
     }
 
-    public OpenApiArrayDataType(OpenApiReferenceObject items) {
+    public OpenApiArrayDataType(OpenApiSchema items) {
         this();
         this.items = items;
     }
