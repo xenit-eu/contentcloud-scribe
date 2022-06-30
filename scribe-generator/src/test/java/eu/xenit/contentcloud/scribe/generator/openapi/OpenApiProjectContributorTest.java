@@ -56,7 +56,7 @@ class OpenApiProjectContributorTest {
                 .build());
         ProjectStructure project = this.projectTester.generate(description);
 
-        String path = "openapi.yml";
+        String path = "src/main/resources/META-INF/resources/openapi.yml";
         assertThat(project).containsFiles(path);
         assertThat(project).textFile(path).containsExactly(
                 """
