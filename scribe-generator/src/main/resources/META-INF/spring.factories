@@ -5,4 +5,6 @@ eu.xenit.contentcloud.scribe.generator.spring.data.SpringDataProjectGenerationCo
 eu.xenit.contentcloud.scribe.generator.spring.content.SpringContentProjectionGenerationConfiguration,\
 eu.xenit.contentcloud.scribe.generator.properties.ApplicationPropertiesProjectGenerationConfiguration,\
 eu.xenit.contentcloud.scribe.generator.database.DatabaseMigrationProjectGenerationConfiguration,\
-eu.xenit.contentcloud.scribe.generator.openapi.OpenApiProjectGenerationConfiguration
+eu.xenit.contentcloud.scribe.generator.openapi.OpenApiProjectGenerationConfiguration,\
+eu.xenit.contentcloud.scribe.generator.swaggerui.SwaggerUIProjectGenerationConfiguration
+

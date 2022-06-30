@@ -40,6 +40,7 @@ public class ScribeProjectRequestToDescriptionConverter
                 });
 
         description.useLombok(request.isLombok());
+        description.enableSwaggerUI(request.isSwaggerUI());
 
         return description;
     }

@@ -12,4 +12,7 @@ public class ScribeProjectRequest extends WebProjectRequest {
     @Getter @Setter
     private boolean lombok = true;
 
+    @Getter @Setter
+    private boolean swaggerUI = true;
+
 }
