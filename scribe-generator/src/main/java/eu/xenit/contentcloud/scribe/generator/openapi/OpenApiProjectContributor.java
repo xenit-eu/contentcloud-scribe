@@ -5,6 +5,7 @@ import eu.xenit.contentcloud.scribe.generator.ScribeProjectDescription;
 import eu.xenit.contentcloud.scribe.generator.openapi.model.*;
 import eu.xenit.contentcloud.scribe.generator.openapi.model.OpenApiParameters.ParameterType;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.EntityModel;
+import io.spring.initializr.generator.language.SourceStructure;
 import io.spring.initializr.generator.project.contributor.ProjectContributor;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -28,7 +29,10 @@ public class OpenApiProjectContributor implements ProjectContributor {
 
     @Override
     public void contribute(Path projectRoot) throws IOException {
-        Path openapiPath = projectRoot.resolve("openapi.yml");
+        SourceStructure mainSource = description.getBuildSystem().getMainSource(projectRoot, description.getLanguage());
+        Path mainResourcesDir = projectRoot.resolve(mainSource.getResourcesDirectory());
+        Path staticResourcesDir = Files.createDirectories(mainResourcesDir.resolve("META-INF/resources"));
+        Path openapiPath = staticResourcesDir.resolve("openapi.yml");
 
         BufferedWriter output = Files.newBufferedWriter(openapiPath);
         writeOpenApiSpec(output);
