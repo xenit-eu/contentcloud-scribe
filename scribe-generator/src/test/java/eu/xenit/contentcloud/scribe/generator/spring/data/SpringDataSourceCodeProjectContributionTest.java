@@ -40,6 +40,62 @@ class SpringDataSourceCodeProjectContributionTest {
     }
 
     @Test
+    void testDefaultDataTypes() {
+        var description = new ScribeProjectDescription();
+        description.setChangeset(Changeset.builder()
+                .entities(List.of(
+                        Entity.builder().name("Document")
+                                .attribute(Attribute.builder("name").string().build())
+                                .attribute(Attribute.builder("number").number().build())
+                                .attribute(Attribute.builder("check").bool().build())
+                                .attribute(Attribute.builder("uuid").uuid().build())
+                                .attribute(Attribute.builder("datetime").timestamp().build())
+                                .build()
+                ))
+                .operations(List.of())
+                .build());
+        var project = this.projectTester.generate(description);
+
+        String path = "src/main/java/com/example/demo/model/Document.java";
+        assertThat(project).containsFiles(path);
+        assertThat(project).textFile(path).containsExactly("""
+                package com.example.demo.model;
+                                
+                import java.lang.String;
+                import java.time.Instant;
+                import java.util.UUID;
+                import javax.persistence.Entity;
+                import javax.persistence.GeneratedValue;
+                import javax.persistence.GenerationType;
+                import javax.persistence.Id;
+                import lombok.Getter;
+                import lombok.NoArgsConstructor;
+                import lombok.Setter;
+                                
+                @Entity
+                @NoArgsConstructor
+                @Getter
+                @Setter
+                public class Document {
+                \t@Id
+                \t@GeneratedValue(strategy = GenerationType.AUTO)
+                \tprivate UUID id;
+                
+                \tprivate String name;
+                
+                \tprivate long number;
+               
+                \tprivate boolean check;
+                
+                \tprivate UUID uuid;
+                
+                \tprivate Instant datetime;
+                }
+                """.split("\n")
+        );
+    }
+
+    @Test
     void oneToOneRelation() {
         var description = new ScribeProjectDescription();
         description.setChangeset(Changeset.builder()
@@ -60,8 +116,7 @@ class SpringDataSourceCodeProjectContributionTest {
 
         String path = "src/main/java/com/example/demo/model/Invoice.java";
         assertThat(project).containsFiles(path);
-        assertThat(project).textFile(path).containsExactly(
-                """
+        assertThat(project).textFile(path).containsExactly("""
                 package com.example.demo.model;
                                 
                 import java.lang.String;
@@ -120,10 +175,9 @@ class SpringDataSourceCodeProjectContributionTest {
 
         String path = "src/main/java/com/example/demo/model/Invoice.java";
         assertThat(project).containsFiles(path);
-        assertThat(project).textFile(path).containsExactly(
-                """
+        assertThat(project).textFile(path).containsExactly("""
                 package com.example.demo.model;
-                
+                                
                 import java.lang.String;
                 import java.util.UUID;
                 import javax.persistence.Entity;
@@ -134,7 +188,7 @@ class SpringDataSourceCodeProjectContributionTest {
                 import lombok.Getter;
                 import lombok.NoArgsConstructor;
                 import lombok.Setter;
-                
+                                
                 @Entity
                 @NoArgsConstructor
                 @Getter
@@ -143,9 +197,9 @@ class SpringDataSourceCodeProjectContributionTest {
                 \t@Id
                 \t@GeneratedValue(strategy = GenerationType.AUTO)
                 \tprivate UUID id;
-                
+                                
                 \tprivate String number;
-                
+                                
                 \t@ManyToOne(optional = false)
                 \tprivate Party counterparty;
                 }
@@ -178,8 +232,7 @@ class SpringDataSourceCodeProjectContributionTest {
 
         String path = "src/main/java/com/example/demo/model/Book.java";
         assertThat(project).containsFiles(path);
-        assertThat(project).textFile(path).containsExactly(
-                """
+        assertThat(project).textFile(path).containsExactly("""
                 package com.example.demo.model;
                                 
                 import java.lang.String;

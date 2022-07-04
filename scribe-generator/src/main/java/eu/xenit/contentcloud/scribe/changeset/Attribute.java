@@ -37,6 +37,16 @@ public class Attribute {
             return this.type("CONTENT");
         }
 
+        public Builder bool() { return this.type("BOOLEAN"); }
+
+        public Builder uuid() {
+            return this.type("UUID");
+        }
+
+        public Builder timestamp() {
+            return this.type("TIMESTAMP");
+        }
+
         public Builder number() {
             return this.type("NUMBER");
         }
