@@ -30,6 +30,10 @@ public class JavaBuiltInTypeResolver implements SemanticTypeResolver<JavaTypeNam
             return JavaTypeName.LONG;
         }
 
+        if (BuiltInType.BOOLEAN.equals(type)) {
+            return JavaTypeName.BOOLEAN;
+        }
+
         if (BuiltInType.UUID.equals(type)) {
             return JavaTypeName.UUID;
         }

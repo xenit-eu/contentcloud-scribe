@@ -13,6 +13,7 @@ public class JavaTypeName implements ResolvedTypeName {
 
     public static final JavaTypeName STRING = new JavaTypeName(ClassName.get(String.class));
     public static final JavaTypeName LONG = new JavaTypeName(TypeName.LONG);
+    public static final JavaTypeName BOOLEAN = new JavaTypeName(TypeName.BOOLEAN);
     public static final JavaTypeName UUID = new JavaTypeName(ClassName.get(java.util.UUID.class));
     public static final JavaTypeName INSTANT = new JavaTypeName(ClassName.get(Instant.class));
 

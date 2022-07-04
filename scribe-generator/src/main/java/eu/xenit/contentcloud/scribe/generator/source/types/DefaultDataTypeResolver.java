@@ -14,8 +14,16 @@ public class DefaultDataTypeResolver implements DataTypeResolver {
             return Optional.of(SemanticType.NUMBER);
         }
 
-        if (Objects.equals(type, "DATETIME")) {
+        if (Objects.equals(type, "DATETIME") || Objects.equals(type, "TIMESTAMP")) {
             return Optional.of(SemanticType.TIMESTAMP);
+        }
+
+        if (Objects.equals(type, "BOOLEAN")) {
+            return Optional.of(SemanticType.BOOLEAN);
+        }
+
+        if (Objects.equals(type, "UUID")) {
+            return Optional.of(SemanticType.UUID);
         }
 
         return Optional.empty();
