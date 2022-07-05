@@ -14,32 +14,31 @@ import org.junit.jupiter.api.Test;
 class UnsupportedOperationStatementGeneratorTest {
     @Test
     void addsStatementIfNoneGenerated() {
-        var generator = new UnsupportedOperationErrorStatementGenerator(new StatementGenerator() {
-            @Override
-            public Stream<Statement> generate(Operation operation) {
-                return Stream.empty();
-            }
-        });
+        var generator = new UnsupportedOperationErrorStatementGenerator(operation -> Stream.empty());
+        var operation = new Operation("test-123", Collections.emptyMap(), Model.builder().build(), Model.builder().build());
 
-        var statements = generator.generate(new Operation("test-123", Collections.emptyMap(), Model.builder().build(), Model.builder().build()));
+        var statements = generator.generate(operation);
 
-        assertThat(statements)
-                .hasAtLeastOneElementOfType(ErrorStatement.class);
+        assertThat(statements).hasAtLeastOneElementOfType(ErrorStatement.class);
     }
 
     @Test
     void doesNotAddStatementIfSomeGenerated() {
-        var generator = new UnsupportedOperationErrorStatementGenerator(new StatementGenerator() {
-            @Override
-            public Stream<Statement> generate(Operation operation) {
-                return Stream.of(comment("Something"));
-            }
-        });
+        var generator = new UnsupportedOperationErrorStatementGenerator(operation -> Stream.of(comment("Something")));
+        var operation = new Operation("test-123", Collections.emptyMap(), Model.builder().build(), Model.builder().build());
 
-        var statements = generator.generate(new Operation("test-123", Collections.emptyMap(), Model.builder().build(), Model.builder().build()));
+        var statements = generator.generate(operation);
 
-        assertThat(statements)
-                .containsExactly(comment("Something"));
+        assertThat(statements).containsExactly(comment("Something"));
+    }
+
+    @Test
+    void skipsStatementIfInSkipList() {
+        var generator = new UnsupportedOperationErrorStatementGenerator(operation -> Stream.of(comment("Something")), "skip-this");
+        var operation = new Operation("skip-this", Collections.emptyMap(), Model.builder().build(), Model.builder().build());
+
+        var statements = generator.generate(operation);
+        assertThat(statements).isEmpty();
     }
 
 }
