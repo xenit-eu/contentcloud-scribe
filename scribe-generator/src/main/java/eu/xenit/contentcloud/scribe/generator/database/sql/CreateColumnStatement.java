@@ -49,6 +49,7 @@ public class CreateColumnStatement implements Statement {
         TEXT("text"),
         BIGINT("bigint"),
         DATETIME("datetime"),
+        BOOLEAN("boolean"),
         UUID("uuid");
 
         private final String pgType;
