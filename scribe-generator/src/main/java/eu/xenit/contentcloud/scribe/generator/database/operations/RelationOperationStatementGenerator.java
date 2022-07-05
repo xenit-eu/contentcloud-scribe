@@ -60,11 +60,11 @@ public class RelationOperationStatementGenerator implements StatementGenerator {
                                 (String) operation.getProperty("relation-name")).orElseThrow();
                 return RelationType.forRelation(relation).generator.create(relation);
             }
-            case "remove-relation": {
+            case "delete-relation": {
                 var relation = operation.getBeforeModel().getEntityRelation((String)operation.getProperty("entity-name"), (String)operation.getProperty("relation-name")).orElseThrow();
                 return RelationType.forRelation(relation).generator.delete(relation);
             }
-            case "remove-entity": {
+            case "delete-entity": {
                 var removedEntity = operation.getBeforeModel().getEntity((String)operation.getProperty("entity-name")).orElseThrow();
                 return operation.getBeforeModel().getEntities()
                         .stream()
