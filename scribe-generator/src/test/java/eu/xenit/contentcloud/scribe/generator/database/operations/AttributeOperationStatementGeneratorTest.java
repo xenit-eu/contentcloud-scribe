@@ -25,14 +25,15 @@ class AttributeOperationStatementGeneratorTest {
     @CsvSource({
             "LONG,BIGINT",
             "DATETIME,DATETIME",
-            "STRING,TEXT"
+            "STRING,TEXT",
+            "BOOLEAN,BOOLEAN"
     })
     void addAttributeSimple(String modelType, String dbType) {
         var statements = generator.generate(new Operation(
                 "add-attribute",
                 Map.of(
                         "entity-name", "Invoice",
-                        "attribute-name", "Amount",
+                        "attribute-name", "myAttribute",
                         "type", modelType,
                         "naturalId", false,
                         "indexed", true,
@@ -47,7 +48,7 @@ class AttributeOperationStatementGeneratorTest {
                 Model.builder()
                         .entity(Entity.builder()
                                 .name("Invoice")
-                                .attribute(Attribute.builder("Amount").type(modelType).indexed(true).build())
+                                .attribute(Attribute.builder("myAttribute").type(modelType).indexed(true).build())
                                 .build())
                         .build()
         ));
@@ -55,13 +56,13 @@ class AttributeOperationStatementGeneratorTest {
         assertThat(statements)
                 .containsExactly(CreateColumnStatement.builder()
                                 .table("invoice")
-                                .column("amount")
+                                .column("my_attribute")
                                 .dataType(DataType.valueOf(dbType))
                                 .nullable(true)
                                 .build(),
                         CreateIndexStatement.builder()
                                 .table("invoice")
-                                .column("amount")
+                                .column("my_attribute")
                                 .build()
                 );
     }

@@ -30,7 +30,8 @@ public class AttributeOperationStatementGenerator implements StatementGenerator 
     private static final Map<String, DataType> DATA_TYPES = Map.of(
             "STRING", DataType.TEXT,
             "DATETIME", DataType.DATETIME,
-            "LONG", DataType.BIGINT
+            "LONG", DataType.BIGINT,
+            "BOOLEAN", DataType.BOOLEAN
     );
 
     private static final List<String> CONTENT_TYPE_FIELD_SUFFIXES = List.of(
