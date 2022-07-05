@@ -23,7 +23,6 @@ public class OpenApiModel {
     @Getter
     private final Map<String, Map<String, OpenApiModelPath>> paths = new LinkedHashMap<>();
 
-    // TODO add components field
     @Getter
     private final OpenApiComponents components;
 

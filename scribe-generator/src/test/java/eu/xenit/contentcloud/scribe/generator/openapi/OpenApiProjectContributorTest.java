@@ -115,7 +115,9 @@ class OpenApiProjectContributorTest {
                         content:
                           application/json:
                             schema:
-                              $ref: "#/components/schemas/Party"
+                              allOf:
+                              - $ref: "#/components/schemas/Party"
+                              - $ref: "#/components/schemas/PartyLinks"
                       responses:
                         "204":
                           description: "No Content"
@@ -311,6 +313,8 @@ class OpenApiProjectContributorTest {
                             self:
                               $ref: "#/components/schemas/Link"
                             party:
+                              $ref: "#/components/schemas/Link"
+                            subsidiary:
                               $ref: "#/components/schemas/Link"
                     partiesCollection:
                       type: "object"
