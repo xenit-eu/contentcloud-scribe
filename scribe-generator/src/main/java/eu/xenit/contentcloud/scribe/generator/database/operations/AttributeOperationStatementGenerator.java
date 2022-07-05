@@ -44,7 +44,7 @@ public class AttributeOperationStatementGenerator implements StatementGenerator 
     @Override
     public Stream<Statement> generate(Operation operation) {
         StatementGenerator statementGenerator = OPERATIONS.get(operation.getType());
-        if(statementGenerator == null) {
+        if (statementGenerator == null) {
             return Stream.empty();
         }
         return statementGenerator.generate(operation);
@@ -53,14 +53,14 @@ public class AttributeOperationStatementGenerator implements StatementGenerator 
     private Stream<Statement> addAttribute(Operation operation) {
         var tablename = convertEntityNameToTableName((String) operation.getProperty("entity-name"));
         var columnName = convertAttributeNameToColumnName((String) operation.getProperty("attribute-name"));
-        var operationDataType = (String)operation.getProperty("type");
-        if(operationDataType.equals("CONTENT")) {
+        var operationDataType = (String) operation.getProperty("type");
+        if (operationDataType.equals("CONTENT")) {
             return addContentAttribute(operation);
         }
         var dataType = DATA_TYPES.get(operationDataType);
 
-        if(dataType == null) {
-            return Stream.of(error("Operation "+operation+" uses unsupported data type "+operationDataType));
+        if (dataType == null) {
+            return Stream.of(error("Operation " + operation + " uses unsupported data type " + operationDataType));
         }
         var streamBuilder = Stream.<Statement>builder();
         var createColumn = CreateColumnStatement.builder()
@@ -71,7 +71,8 @@ public class AttributeOperationStatementGenerator implements StatementGenerator 
                 .build();
         streamBuilder.add(createColumn);
 
-        if(Boolean.TRUE.equals(operation.getProperty(("unique"))) || Boolean.TRUE.equals(operation.getProperty("indexed"))) {
+        if (Boolean.TRUE.equals(operation.getProperty(("unique"))) || Boolean.TRUE.equals(
+                operation.getProperty("indexed"))) {
             var index = CreateIndexStatement.builder()
                     .forStatement(createColumn)
                     .unique(Boolean.TRUE.equals(operation.getProperty("unique")))
@@ -87,29 +88,29 @@ public class AttributeOperationStatementGenerator implements StatementGenerator 
         var columnName = convertAttributeNameToColumnName((String) operation.getProperty("attribute-name"));
         var nullable = Boolean.FALSE.equals(operation.getProperty("required"));
 
-        return comment("Create of content property "+tablename+"."+columnName)
+        return comment("Create of content property " + tablename + "." + columnName)
                 .wrap(Stream.of(
                         CreateColumnStatement.builder()
                                 .table(tablename)
-                                .column(columnName+"_id")
+                                .column(columnName + "_id")
                                 .dataType(DataType.TEXT)
                                 .nullable(nullable)
                                 .build(),
                         CreateColumnStatement.builder()
                                 .table(tablename)
-                                .column(columnName+"_length")
+                                .column(columnName + "_length")
                                 .dataType(DataType.BIGINT)
                                 .nullable(nullable)
                                 .build(),
                         CreateColumnStatement.builder()
                                 .table(tablename)
-                                .column(columnName+"_mimetype")
+                                .column(columnName + "_mimetype")
                                 .dataType(DataType.TEXT)
                                 .nullable(nullable)
                                 .build(),
                         CreateColumnStatement.builder()
                                 .table(tablename)
-                                .column(columnName+"_filename")
+                                .column(columnName + "_filename")
                                 .dataType(DataType.TEXT)
                                 .nullable(nullable)
                                 .build()
@@ -119,26 +120,29 @@ public class AttributeOperationStatementGenerator implements StatementGenerator 
 
     private Stream<Statement> renameAttribute(Operation operation) {
         var tablename = convertEntityNameToTableName((String) operation.getProperties().get("entity-name"));
-        var oldColumnName = convertAttributeNameToColumnName((String) operation.getProperties().get("old-attribute-name"));
-        var newColumnName = convertAttributeNameToColumnName((String) operation.getProperties().get("new-attribute-name"));
+        var oldColumnName = convertAttributeNameToColumnName(
+                (String) operation.getProperties().get("old-attribute-name"));
+        var newColumnName = convertAttributeNameToColumnName(
+                (String) operation.getProperties().get("new-attribute-name"));
 
         var streamBuilder = Stream.<Statement>builder();
 
         var attribute = operation.getBeforeModel()
-                .getEntityAttribute((String) operation.getProperty("entity-name"), (String) operation.getProperty("old-attribute-name"))
+                .getEntityAttribute((String) operation.getProperty("entity-name"),
+                        (String) operation.getProperty("old-attribute-name"))
                 .orElseThrow();
 
-        if(attribute.getType().equals("CONTENT")) {
-            return comment("Rename of content property "+tablename+"."+oldColumnName+" to "+tablename+"."+newColumnName)
+        if (attribute.getType().equals("CONTENT")) {
+            return comment("Rename of content property " + tablename + "." + oldColumnName + " to " + tablename + "."
+                    + newColumnName)
                     .wrap(CONTENT_TYPE_FIELD_SUFFIXES.stream()
                             .map(fieldSuffix -> RenameColumnStatement.builder()
                                     .table(tablename)
-                                    .oldColumnName(oldColumnName+fieldSuffix)
-                                    .newColumnName(newColumnName+fieldSuffix)
+                                    .oldColumnName(oldColumnName + fieldSuffix)
+                                    .newColumnName(newColumnName + fieldSuffix)
                                     .build()
                             ));
         }
-
 
         var renameColumn = RenameColumnStatement.builder()
                 .table(tablename)
@@ -147,8 +151,7 @@ public class AttributeOperationStatementGenerator implements StatementGenerator 
                 .build();
         streamBuilder.add(renameColumn);
 
-
-        if(attribute.isIndexed() || attribute.isUnique()) {
+        if (attribute.isIndexed() || attribute.isUnique()) {
             streamBuilder.add(RenameIndexStatement.forColumn(renameColumn));
         }
 
@@ -159,16 +162,17 @@ public class AttributeOperationStatementGenerator implements StatementGenerator 
         var tablename = convertEntityNameToTableName((String) operation.getProperties().get("entity-name"));
         var columnName = convertAttributeNameToColumnName((String) operation.getProperties().get("attribute-name"));
         var attribute = operation.getBeforeModel()
-                .getEntityAttribute((String) operation.getProperty("entity-name"), (String) operation.getProperty("attribute-name"))
+                .getEntityAttribute((String) operation.getProperty("entity-name"),
+                        (String) operation.getProperty("attribute-name"))
                 .orElseThrow();
 
-        if(attribute.getType().equals("CONTENT")) {
+        if (attribute.getType().equals("CONTENT")) {
 
-            return comment("Delete of content property "+tablename+"."+columnName)
+            return comment("Delete of content property " + tablename + "." + columnName)
                     .wrap(CONTENT_TYPE_FIELD_SUFFIXES.stream()
                             .map(fieldSuffix -> DropColumnStatement.builder()
                                     .table(tablename)
-                                    .column(columnName+fieldSuffix)
+                                    .column(columnName + fieldSuffix)
                                     .build()
                             )
                     );

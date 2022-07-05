@@ -25,11 +25,17 @@ public class DatabaseMigrationProjectGenerationConfiguration {
 
     @Bean
     DatabaseMigrationWriter databaseMigrationOperations() {
-        return new DatabaseMigrationWriter(new UnsupportedOperationErrorStatementGenerator(new AggregateStatementGenerator(Set.of(
-                new RelationOperationStatementGenerator(), // Needs to be before EntityOperationStatementGenerator, because relations must be dropped before entities can be
-                new EntityOperationStatementGenerator(),
-                new AttributeOperationStatementGenerator()
-        ))));
+        return new DatabaseMigrationWriter(
+                new UnsupportedOperationErrorStatementGenerator(
+                        new AggregateStatementGenerator(
+                                new RelationOperationStatementGenerator(),
+                                // Needs to be before EntityOperationStatementGenerator, because relations must be dropped before entities can be
+                                new EntityOperationStatementGenerator(),
+                                new AttributeOperationStatementGenerator()
+                        ),
+                        Set.of("add-policy", "set-policy-verbs", "set-policy-conditions")
+                )
+        );
     }
 
 }
