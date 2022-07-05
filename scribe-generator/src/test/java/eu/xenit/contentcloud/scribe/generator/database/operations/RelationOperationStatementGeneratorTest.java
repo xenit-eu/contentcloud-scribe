@@ -208,7 +208,7 @@ class RelationOperationStatementGeneratorTest {
     @Test
     void removeRelationOneToOne() {
         var statements = generator.generate(new Operation(
-                "remove-relation",
+                "delete-relation",
                 Map.of(
                         "entity-name", "Invoice",
                         "relation-name", "sender"
@@ -243,7 +243,7 @@ class RelationOperationStatementGeneratorTest {
     @Test
     void removeRelationOneToMany() {
         var statements = generator.generate(new Operation(
-                "remove-relation",
+                "delete-relation",
                 Map.of(
                         "entity-name", "Invoice",
                         "relation-name", "senders"
@@ -279,7 +279,7 @@ class RelationOperationStatementGeneratorTest {
     @Test
     void removeRelationManyToOne() {
         var statements = generator.generate(new Operation(
-                "remove-relation",
+                "delete-relation",
                 Map.of(
                         "entity-name", "Invoice",
                         "relation-name", "senders"
@@ -315,7 +315,7 @@ class RelationOperationStatementGeneratorTest {
     @Test
     void removeRelationManyToMany() {
         var statements = generator.generate(new Operation(
-                "remove-relation",
+                "delete-relation",
                 Map.of(
                         "entity-name", "Invoice",
                         "relation-name", "senders"
@@ -351,7 +351,7 @@ class RelationOperationStatementGeneratorTest {
     @Test
     void removeSourceEntityOneToOne() {
         var statements = generator.generate(new Operation(
-                "remove-entity",
+                "delete-entity",
                 Map.of(
                         "entity-name", "Invoice"
                 ),
@@ -384,7 +384,7 @@ class RelationOperationStatementGeneratorTest {
     @Test
     void removeSourceEntityOneToMany() {
         var statements = generator.generate(new Operation(
-                "remove-entity",
+                "delete-entity",
                 Map.of(
                         "entity-name", "Invoice"
                 ),
@@ -418,7 +418,7 @@ class RelationOperationStatementGeneratorTest {
     @Test
     void removeSourceEntityManyToOne() {
         var statements = generator.generate(new Operation(
-                "remove-entity",
+                "delete-entity",
                 Map.of(
                         "entity-name", "Invoice"
                 ),
@@ -452,7 +452,7 @@ class RelationOperationStatementGeneratorTest {
     @Test
     void removeSourceEntityManyToMany() {
         var statements = generator.generate(new Operation(
-                "remove-entity",
+                "delete-entity",
                 Map.of(
                         "entity-name", "Invoice"
                 ),
@@ -486,7 +486,7 @@ class RelationOperationStatementGeneratorTest {
     @Test
     void removeTargetEntityOneToOne() {
         var statements = generator.generate(new Operation(
-                "remove-entity",
+                "delete-entity",
                 Map.of(
                         "entity-name", "Party"
                 ),
@@ -519,7 +519,7 @@ class RelationOperationStatementGeneratorTest {
     @Test
     void removeTargetEntityOneToMany() {
         var statements = generator.generate(new Operation(
-                "remove-entity",
+                "delete-entity",
                 Map.of(
                         "entity-name", "Party"
                 ),
@@ -553,7 +553,7 @@ class RelationOperationStatementGeneratorTest {
     @Test
     void removeTargetEntityManyToOne() {
         var statements = generator.generate(new Operation(
-                "remove-entity",
+                "delete-entity",
                 Map.of(
                         "entity-name", "Party"
                 ),
@@ -587,7 +587,7 @@ class RelationOperationStatementGeneratorTest {
     @Test
     void removeTargetEntityManyToMany() {
         var statements = generator.generate(new Operation(
-                "remove-entity",
+                "delete-entity",
                 Map.of(
                         "entity-name", "Party"
                 ),
