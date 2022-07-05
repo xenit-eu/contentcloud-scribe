@@ -112,9 +112,12 @@ public class OpenApiProjectContributor implements ProjectContributor {
                 "204", new OpenApiResponse("No Content"),
                 "405", new OpenApiResponse("Not Allowed")
         ));
+        var allOf = new OpenApiAllOfReference();
+        allOf.getAllOf().add(createOrReferenceModel(model, entity));
+        allOf.getAllOf().add(new OpenApiReferenceObject("#/components/schemas/" + entity.getName() + "Links"));
         pathPost.setRequestBody(new OpenApiRequestBody(
                 "Create " + entity.getName(), true,
-                linkedMapOf("application/json", new OpenApiMediaTypeObject(createOrReferenceModel(model, entity))))
+                linkedMapOf("application/json", new OpenApiMediaTypeObject(allOf)))
         );
         pathMap.put("post", pathPost);
 
@@ -268,11 +271,15 @@ public class OpenApiProjectContributor implements ProjectContributor {
             model.getComponents().getSchemas().put(entity.getName(), entitySchema);
 
             var entityLinkSchema = new OpenApiObjectDataType();
-            entityLinkSchema.getProperties().putAll(linkedMapOf(
-                    "_links", new OpenApiObjectDataType(linkedMapOf(
-                            "self", new OpenApiReferenceObject("#/components/schemas/Link"),
-                            StringUtils.uncapitalize(entity.getName()), new OpenApiReferenceObject("#/components/schemas/Link"))
-            )));
+            var relations = entity.getRelations();
+            LinkedHashMap<String, OpenApiSchema> linksMap = linkedMapOf(
+                    "self", new OpenApiReferenceObject("#/components/schemas/Link"),
+                    StringUtils.uncapitalize(entity.getName()), new OpenApiReferenceObject("#/components/schemas/Link")
+            );
+            for (var relation : relations) {
+                linksMap.put(StringUtils.uncapitalize(relation.getName()), new OpenApiReferenceObject("#/components/schemas/Link"));
+            }
+            entityLinkSchema.getProperties().putAll(linkedMapOf("_links", new OpenApiObjectDataType(linksMap)));
             model.getComponents().getSchemas().put(entity.getName() + "Links", entityLinkSchema);
         }
 

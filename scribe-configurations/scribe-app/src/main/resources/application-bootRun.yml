@@ -18,4 +18,4 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://${DOCKER_HOST_IP:172.17.0.1}:8082/auth/realms/contentcloud-api
+          issuer-uri: https://auth.content-cloud.eu/auth/realms/contentcloud-dev
