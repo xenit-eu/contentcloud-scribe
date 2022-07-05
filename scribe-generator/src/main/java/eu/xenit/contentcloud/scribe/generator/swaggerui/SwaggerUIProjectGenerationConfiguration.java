@@ -3,6 +3,7 @@ package eu.xenit.contentcloud.scribe.generator.swaggerui;
 import eu.xenit.contentcloud.scribe.generator.ScribeProjectDescription;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.EntityModel;
 import io.spring.initializr.generator.project.ProjectGenerationConfiguration;
+import io.spring.initializr.generator.spring.configuration.ApplicationPropertiesContributor;
 import io.spring.initializr.metadata.InitializrMetadata;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -12,6 +13,11 @@ import org.springframework.context.annotation.Bean;
 public class SwaggerUIProjectGenerationConfiguration {
 
     private final ScribeProjectDescription description;
+
+    @Bean
+    public SwaggerUIPropertiesContributor swaggerUIPropertiesContributor() {
+        return new SwaggerUIPropertiesContributor();
+    }
 
     @Bean
     SwaggerUIDependencyBuildCustomizer swaggerUIDependencyBuildCustomizer(InitializrMetadata metadata) {

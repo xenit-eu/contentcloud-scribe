@@ -19,4 +19,4 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: https://auth.content-cloud.eu/auth/realms/contentcloud-console
+          issuer-uri: https://auth.content-cloud.eu/auth/realms/contentcloud-dev
