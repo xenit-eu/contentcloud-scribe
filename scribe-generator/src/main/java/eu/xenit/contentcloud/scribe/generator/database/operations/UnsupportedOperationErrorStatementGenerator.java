@@ -24,7 +24,7 @@ public class UnsupportedOperationErrorStatementGenerator implements StatementGen
 
     public UnsupportedOperationErrorStatementGenerator(StatementGenerator generator, String ... skipOperations) {
         this.generator = generator;
-        this.skipOperations = new HashSet<>(List.of(skipOperations));
+        this.skipOperations = Set.of(skipOperations);
     }
 
     @Override
