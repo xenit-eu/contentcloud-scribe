@@ -145,7 +145,7 @@ class JpaEntityImpl implements JpaEntity {
      */
     @Getter
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
-    static class JpaEntityNaming {
+    public static class JpaEntityNaming {
 
         private String name;
         private String className;
@@ -156,8 +156,7 @@ class JpaEntityImpl implements JpaEntity {
             return new JpaEntityNaming(name, deriveClassName(name));
         }
 
-
-        static String deriveClassName(String name) {
+        public static String deriveClassName(String name) {
             var className =
                     // split kebab case
                     // note that there are no consecutive hyphens, and name does not lead or end with a hyphen
