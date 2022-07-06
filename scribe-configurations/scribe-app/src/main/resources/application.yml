@@ -24,6 +24,12 @@ initializr:
           facets:
             - lombok
           starter: false
+        - name: SwaggerUI
+          id: swagger-ui
+          groupId: org.webjars
+          artifactId: swagger-ui
+          version: 4.11.1
+          description: A collection of HTML, JavaScript, and CSS assets that dynamically generate beautiful documentation from a Swagger-compliant API.
     - name: Web
       content:
         - name: Web

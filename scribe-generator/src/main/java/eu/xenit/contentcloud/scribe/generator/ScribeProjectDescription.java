@@ -14,5 +14,8 @@ public class ScribeProjectDescription extends MutableProjectDescription {
     @Getter @Setter @Accessors(fluent = true)
     private boolean useLombok = true;
 
+    @Getter @Setter @Accessors(fluent = true)
+    private boolean enableSwaggerUI = true;
+
 
 }
