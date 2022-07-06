@@ -17,7 +17,7 @@ import eu.xenit.contentcloud.scribe.generator.spring.data.model.SpringDataPackag
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.JpaEntity;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.JpaEntityProperty;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.JpaEntitySourceCodeGenerator;
-import java.beans.Introspector;
+import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Modifier;
 import lombok.AccessLevel;
 import lombok.NonNull;
@@ -70,11 +70,12 @@ class JpaEntityJavaSourceCodeGenerator implements JpaEntitySourceCodeGenerator {
 
         var fieldSpec = FieldSpec.builder(
                 this.typeResolver.resolve(field.type()).getTypeName(),
-                Introspector.decapitalize(field.name()),
+                field.fieldName(),
                 Modifier.PRIVATE);
 
         this.addGetter(jpaEntity, field, type, fieldSpec);
         this.addSetter(jpaEntity, field, type, fieldSpec);
+
 
         field.annotations().forEach(annotationType -> {
             var annotationClassName = typeResolver.resolve(annotationType.getType());
@@ -98,10 +99,10 @@ class JpaEntityJavaSourceCodeGenerator implements JpaEntitySourceCodeGenerator {
             return;
         }
 
-        MethodSpec setter = MethodSpec.methodBuilder("set" + StringUtils.capitalize(field.name()))
+        MethodSpec setter = MethodSpec.methodBuilder("set" + StringUtils.capitalize(field.canonicalName()))
                 .addModifiers(Modifier.PUBLIC)
-                .addParameter(fieldSpec.build().type, field.name())
-                .addStatement("this.$L = $L", fieldSpec.build().name, field.name())
+                .addParameter(fieldSpec.build().type, field.canonicalName())
+                .addStatement("this.$L = $L", fieldSpec.build().name, field.canonicalName())
                 .returns(TypeName.VOID)
                 .build();
         type.addMethod(setter);
@@ -114,7 +115,7 @@ class JpaEntityJavaSourceCodeGenerator implements JpaEntitySourceCodeGenerator {
             return;
         }
 
-        MethodSpec getter = MethodSpec.methodBuilder("get" + StringUtils.capitalize(field.name()))
+        MethodSpec getter = MethodSpec.methodBuilder("get" + StringUtils.capitalize(field.canonicalName()))
                 .addModifiers(Modifier.PUBLIC)
                 .addStatement("return this.$L", fieldSpec.build().name)
                 .returns(fieldSpec.build().type)
@@ -125,7 +126,7 @@ class JpaEntityJavaSourceCodeGenerator implements JpaEntitySourceCodeGenerator {
     void addIdProperty(JpaEntity jpaEntity, Builder type) {
         var idField = jpaEntity.id();
         var idTypeName = this.typeResolver.resolve(idField.type()).getTypeName();
-        var fieldSpec = FieldSpec.builder(idTypeName, idField.name(), Modifier.PRIVATE)
+        var fieldSpec = FieldSpec.builder(idTypeName, idField.canonicalName(), Modifier.PRIVATE)
                 .addAnnotation(AnnotationSpec.builder(ClassName.get("javax.persistence", "Id")).build());
 
         //        switch (id.generationStrategy()) {

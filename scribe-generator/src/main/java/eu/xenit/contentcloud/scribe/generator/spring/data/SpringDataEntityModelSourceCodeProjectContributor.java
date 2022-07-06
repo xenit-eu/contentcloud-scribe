@@ -48,7 +48,7 @@ public class SpringDataEntityModelSourceCodeProjectContributor implements Projec
     }
 
     private SourceFile generate(Entity entity) {
-        var jpaEntity = JpaEntity.withName(entity.getClassName());
+        var jpaEntity = JpaEntity.withName(entity.getName());
         jpaEntity.lombokTypeAnnotations(lombok -> lombok
                 .useGetter(this.description.useLombok())
                 .useSetter(this.description.useLombok())

@@ -39,6 +39,7 @@ public class Entity {
                 .findFirst();
     }
 
+    @Deprecated
     public String getClassName() {
         String candidate = StringUtils.capitalize(this.name);
         if (hasInvalidChar(candidate) /* || check blacklist ? */) {

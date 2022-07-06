@@ -2,6 +2,7 @@ package eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa;
 
 import eu.xenit.contentcloud.scribe.generator.source.types.Annotation;
 import eu.xenit.contentcloud.scribe.generator.source.types.SemanticType;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 public interface ManyToOneRelation extends JpaEntityProperty {
@@ -15,6 +16,15 @@ class ManyToOneRelationImpl extends JpaEntityFieldImpl implements ManyToOneRelat
 
     ManyToOneRelationImpl(SemanticType fieldType, String name) {
         super(fieldType, name);
+
+        // if the field has been renamed, add a `@RestResource` annotation
+        if (!Objects.equals(name, this.naming.fieldName())) {
+            this.addAnnotation(Annotation.withType(SpringDataRestAnnotations.RestResource)
+                    .withMembers(members -> {
+                        members.put("rel", name);
+                        members.put("path", name);
+                    }));
+        }
     }
 
     @Override

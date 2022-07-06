@@ -17,7 +17,6 @@ import eu.xenit.contentcloud.scribe.generator.spring.data.model.SpringDataPackag
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.JpaEntity;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.JpaEntityCustomizer;
 import io.spring.initializr.generator.condition.ConditionalOnLanguage;
-import io.spring.initializr.generator.language.Language;
 import io.spring.initializr.generator.language.java.JavaLanguage;
 import io.spring.initializr.generator.project.ProjectGenerationConfiguration;
 import java.util.stream.Collectors;
@@ -77,7 +76,7 @@ public class SpringContentProjectionGenerationConfiguration {
                 // collect all the content-attributes
                 var contentAttributes = jpaEntity.fields()
                         .filter(field -> field.type() instanceof ContentDataType)
-                        .collect(Collectors.toUnmodifiableList());
+                        .toList();
 
                 // Replace/expand the CONTENT attribute into the following properties:
                 // - @ContentId String/UUID <name>Id
@@ -85,18 +84,18 @@ public class SpringContentProjectionGenerationConfiguration {
                 // - @Mimetype String mimetype
                 // - @OriginalFilename String originalFilename
                 contentAttributes.forEach(attr -> {
-                    jpaEntity.removeProperty(attr.name());
+                    jpaEntity.removeProperty(attr.canonicalName());
 
-                    jpaEntity.addProperty(SemanticType.STRING, attr.name() + "Id", field -> {
+                    jpaEntity.addProperty(SemanticType.STRING, attr.canonicalName() + "Id", field -> {
                             field.addAnnotation(SpringContentAnnotations.ContentId);
                     });
-                    jpaEntity.addProperty(SemanticType.NUMBER, attr.name() + "Length", field -> {
+                    jpaEntity.addProperty(SemanticType.NUMBER, attr.canonicalName() + "Length", field -> {
                         field.addAnnotation(SpringContentAnnotations.ContentLength);
                     });
-                    jpaEntity.addProperty(SemanticType.STRING, attr.name() + "Mimetype", field -> {
+                    jpaEntity.addProperty(SemanticType.STRING, attr.canonicalName() + "Mimetype", field -> {
                         field.addAnnotation(SpringContentAnnotations.Mimetype);
                     });
-                    jpaEntity.addProperty(SemanticType.STRING, attr.name() + "Filename", field -> {
+                    jpaEntity.addProperty(SemanticType.STRING, attr.canonicalName() + "Filename", field -> {
                         field.addAnnotation(SpringContentAnnotations.OriginalFilename);
                     });
                 });

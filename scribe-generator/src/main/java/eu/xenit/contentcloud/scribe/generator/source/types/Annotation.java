@@ -1,11 +1,8 @@
 package eu.xenit.contentcloud.scribe.generator.source.types;
 
-import java.lang.module.Configuration;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.function.Consumer;
-import java.util.stream.Stream;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;

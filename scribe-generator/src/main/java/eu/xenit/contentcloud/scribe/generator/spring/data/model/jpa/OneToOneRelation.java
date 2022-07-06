@@ -2,7 +2,10 @@ package eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa;
 
 import eu.xenit.contentcloud.scribe.generator.source.types.Annotation;
 import eu.xenit.contentcloud.scribe.generator.source.types.SemanticType;
+import java.util.Objects;
 import java.util.stream.Stream;
+import org.atteo.evo.inflector.English;
+import org.springframework.util.StringUtils;
 
 public interface OneToOneRelation extends JpaEntityProperty {
 
@@ -16,6 +19,15 @@ class OneToOneRelationImpl extends JpaEntityFieldImpl implements OneToOneRelatio
 
     OneToOneRelationImpl(SemanticType fieldType, String name) {
         super(fieldType, name);
+
+        // if the field has been renamed, add a `@RestResource` annotation
+        if (!Objects.equals(name, this.naming.fieldName())) {
+            this.addAnnotation(Annotation.withType(SpringDataRestAnnotations.RestResource)
+                    .withMembers(members -> {
+                        members.put("rel", name);
+                        members.put("path", name);
+                    }));
+        }
     }
 
     @Override

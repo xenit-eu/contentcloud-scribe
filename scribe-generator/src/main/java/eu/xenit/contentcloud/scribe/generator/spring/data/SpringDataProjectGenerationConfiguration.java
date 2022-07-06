@@ -16,8 +16,10 @@ import eu.xenit.contentcloud.scribe.generator.spring.data.model.SpringDataPackag
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.EntityDataTypeResolver;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.JpaEntityCustomizer;
 import eu.xenit.contentcloud.scribe.generator.spring.data.source.SpringDataSourceCodeGenerator;
+import eu.xenit.contentcloud.scribe.generator.spring.data.source.java.JacksonAnnotationTypeResolver;
 import eu.xenit.contentcloud.scribe.generator.spring.data.source.java.JavaEntityTypeNameResolver;
 import eu.xenit.contentcloud.scribe.generator.spring.data.source.java.JpaAnnotationTypeResolver;
+import eu.xenit.contentcloud.scribe.generator.spring.data.source.java.SpringDataAnnotationTypeResolver;
 import eu.xenit.contentcloud.scribe.generator.spring.data.source.java.SpringDataJavaSourceCodeGenerator;
 import io.spring.initializr.generator.condition.ConditionalOnLanguage;
 import io.spring.initializr.generator.language.java.JavaLanguage;
@@ -88,6 +90,18 @@ public class SpringDataProjectGenerationConfiguration {
     @ConditionalOnLanguage(JavaLanguage.ID)
     SemanticTypeResolver<JavaTypeName> jpaAnnotationTypeResolver() {
         return new JpaAnnotationTypeResolver();
+    }
+
+    @Bean
+    @ConditionalOnLanguage(JavaLanguage.ID)
+    SemanticTypeResolver<JavaTypeName> jacksonAnnotationTypeResolver() {
+        return new JacksonAnnotationTypeResolver();
+    }
+
+    @Bean
+    @ConditionalOnLanguage(JavaLanguage.ID)
+    SemanticTypeResolver<JavaTypeName> springDataRestAnnotationTypeResolver() {
+        return new SpringDataAnnotationTypeResolver();
     }
 
     @Bean
