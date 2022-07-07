@@ -72,8 +72,8 @@ class JpaEntityJavaSourceCodeGenerator implements JpaEntitySourceCodeGenerator {
                 field.fieldName(),
                 Modifier.PRIVATE);
 
-        this.addGetter(jpaEntity, field, type, fieldSpec);
-        this.addSetter(jpaEntity, field, type, fieldSpec);
+        this.addGetter(jpaEntity, type, fieldSpec);
+        this.addSetter(jpaEntity, type, fieldSpec);
 
 
         field.annotations().forEach(annotationType -> {
@@ -92,31 +92,34 @@ class JpaEntityJavaSourceCodeGenerator implements JpaEntitySourceCodeGenerator {
         type.addField(fieldSpec.build());
     }
 
-    void addSetter(JpaEntity jpaEntity, JpaEntityProperty field, Builder type, FieldSpec.Builder fieldSpec) {
+    void addSetter(JpaEntity jpaEntity, Builder type, FieldSpec.Builder fieldSpec) {
         if (jpaEntity.lombok().useSetter()) {
             // there is a @Setter class annotation
             return;
         }
 
-        MethodSpec setter = MethodSpec.methodBuilder("set" + StringUtils.capitalize(field.normalizedName()))
+        String fieldName = fieldSpec.build().name;
+
+        MethodSpec setter = MethodSpec.methodBuilder("set" + StringUtils.capitalize(fieldName))
                 .addModifiers(Modifier.PUBLIC)
-                .addParameter(fieldSpec.build().type, field.normalizedName())
-                .addStatement("this.$L = $L", fieldSpec.build().name, field.normalizedName())
+                .addParameter(fieldSpec.build().type, fieldName)
+                .addStatement("this.$L = $L", fieldName, fieldName)
                 .returns(TypeName.VOID)
                 .build();
         type.addMethod(setter);
 
     }
 
-    void addGetter(JpaEntity jpaEntity, JpaEntityProperty field, Builder type, FieldSpec.Builder fieldSpec) {
+    void addGetter(JpaEntity jpaEntity, Builder type, FieldSpec.Builder fieldSpec) {
         if (jpaEntity.lombok().useGetter()) {
             // there is a @Getter class annotation
             return;
         }
 
-        MethodSpec getter = MethodSpec.methodBuilder("get" + StringUtils.capitalize(field.normalizedName()))
+        var fieldName = fieldSpec.build().name;
+        MethodSpec getter = MethodSpec.methodBuilder("get" + StringUtils.capitalize(fieldName))
                 .addModifiers(Modifier.PUBLIC)
-                .addStatement("return this.$L", fieldSpec.build().name)
+                .addStatement("return this.$L", fieldName)
                 .returns(fieldSpec.build().type)
                 .build();
         type.addMethod(getter);
@@ -125,7 +128,7 @@ class JpaEntityJavaSourceCodeGenerator implements JpaEntitySourceCodeGenerator {
     void addIdProperty(JpaEntity jpaEntity, Builder type) {
         var idField = jpaEntity.id();
         var idTypeName = this.typeResolver.resolve(idField.type()).getTypeName();
-        var fieldSpec = FieldSpec.builder(idTypeName, idField.normalizedName(), Modifier.PRIVATE)
+        var fieldSpec = FieldSpec.builder(idTypeName, idField.fieldName(), Modifier.PRIVATE)
                 .addAnnotation(AnnotationSpec.builder(ClassName.get("javax.persistence", "Id")).build());
 
         //        switch (id.generationStrategy()) {
@@ -136,8 +139,8 @@ class JpaEntityJavaSourceCodeGenerator implements JpaEntitySourceCodeGenerator {
                 .build());
         //        }
 
-        this.addGetter(jpaEntity, idField, type, fieldSpec);
-        this.addSetter(jpaEntity, idField, type, fieldSpec);
+        this.addGetter(jpaEntity, type, fieldSpec);
+        this.addSetter(jpaEntity, type, fieldSpec);
 
         type.addField(fieldSpec.build());
     }
