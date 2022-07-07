@@ -57,7 +57,7 @@ class OneToManyWithJoinColumnRelationImpl extends JpaEntityFieldImpl implements 
                     Annotation.withType(JpaAnnotations.OneToMany),
                     Annotation.withType(JpaAnnotations.JoinColumn)
                             .withMembers(members -> {
-                                var joinColumnName = joinColumnName(sourceEntityName.get(), this.canonicalName());
+                                var joinColumnName = joinColumnName(sourceEntityName.get(), this.normalizedName());
                                 members.put("name", joinColumnName);
                             })
             ),

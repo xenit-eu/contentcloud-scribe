@@ -6,7 +6,8 @@ import java.util.stream.Stream;
 
 public interface JavaBeanProperty {
 
-    String canonicalName();
+    String name();
+    String normalizedName();
     String fieldName();
 
     JavaBeanProperty name(String name);

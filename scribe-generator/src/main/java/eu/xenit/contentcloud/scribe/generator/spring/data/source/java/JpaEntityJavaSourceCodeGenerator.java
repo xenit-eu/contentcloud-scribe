@@ -17,7 +17,6 @@ import eu.xenit.contentcloud.scribe.generator.spring.data.model.SpringDataPackag
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.JpaEntity;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.JpaEntityProperty;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.JpaEntitySourceCodeGenerator;
-import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Modifier;
 import lombok.AccessLevel;
 import lombok.NonNull;
@@ -99,10 +98,10 @@ class JpaEntityJavaSourceCodeGenerator implements JpaEntitySourceCodeGenerator {
             return;
         }
 
-        MethodSpec setter = MethodSpec.methodBuilder("set" + StringUtils.capitalize(field.canonicalName()))
+        MethodSpec setter = MethodSpec.methodBuilder("set" + StringUtils.capitalize(field.normalizedName()))
                 .addModifiers(Modifier.PUBLIC)
-                .addParameter(fieldSpec.build().type, field.canonicalName())
-                .addStatement("this.$L = $L", fieldSpec.build().name, field.canonicalName())
+                .addParameter(fieldSpec.build().type, field.normalizedName())
+                .addStatement("this.$L = $L", fieldSpec.build().name, field.normalizedName())
                 .returns(TypeName.VOID)
                 .build();
         type.addMethod(setter);
@@ -115,7 +114,7 @@ class JpaEntityJavaSourceCodeGenerator implements JpaEntitySourceCodeGenerator {
             return;
         }
 
-        MethodSpec getter = MethodSpec.methodBuilder("get" + StringUtils.capitalize(field.canonicalName()))
+        MethodSpec getter = MethodSpec.methodBuilder("get" + StringUtils.capitalize(field.normalizedName()))
                 .addModifiers(Modifier.PUBLIC)
                 .addStatement("return this.$L", fieldSpec.build().name)
                 .returns(fieldSpec.build().type)
@@ -126,7 +125,7 @@ class JpaEntityJavaSourceCodeGenerator implements JpaEntitySourceCodeGenerator {
     void addIdProperty(JpaEntity jpaEntity, Builder type) {
         var idField = jpaEntity.id();
         var idTypeName = this.typeResolver.resolve(idField.type()).getTypeName();
-        var fieldSpec = FieldSpec.builder(idTypeName, idField.canonicalName(), Modifier.PRIVATE)
+        var fieldSpec = FieldSpec.builder(idTypeName, idField.normalizedName(), Modifier.PRIVATE)
                 .addAnnotation(AnnotationSpec.builder(ClassName.get("javax.persistence", "Id")).build());
 
         //        switch (id.generationStrategy()) {

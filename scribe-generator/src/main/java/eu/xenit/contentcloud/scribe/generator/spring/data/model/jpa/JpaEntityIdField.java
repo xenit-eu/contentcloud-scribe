@@ -55,7 +55,7 @@ class JpaEntityIdFieldImpl implements JpaEntityIdField {
     }
 
     @Override
-    public String canonicalName() {
+    public String normalizedName() {
         return this.name;
     }
 

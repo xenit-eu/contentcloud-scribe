@@ -19,7 +19,6 @@ import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.JpaEntityCus
 import io.spring.initializr.generator.condition.ConditionalOnLanguage;
 import io.spring.initializr.generator.language.java.JavaLanguage;
 import io.spring.initializr.generator.project.ProjectGenerationConfiguration;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 
@@ -84,18 +83,18 @@ public class SpringContentProjectionGenerationConfiguration {
                 // - @Mimetype String mimetype
                 // - @OriginalFilename String originalFilename
                 contentAttributes.forEach(attr -> {
-                    jpaEntity.removeProperty(attr.canonicalName());
+                    jpaEntity.removeProperty(attr.name());
 
-                    jpaEntity.addProperty(SemanticType.STRING, attr.canonicalName() + "Id", field -> {
+                    jpaEntity.addProperty(SemanticType.STRING, attr.name() + "Id", field -> {
                             field.addAnnotation(SpringContentAnnotations.ContentId);
                     });
-                    jpaEntity.addProperty(SemanticType.NUMBER, attr.canonicalName() + "Length", field -> {
+                    jpaEntity.addProperty(SemanticType.NUMBER, attr.name() + "Length", field -> {
                         field.addAnnotation(SpringContentAnnotations.ContentLength);
                     });
-                    jpaEntity.addProperty(SemanticType.STRING, attr.canonicalName() + "Mimetype", field -> {
+                    jpaEntity.addProperty(SemanticType.STRING, attr.name() + "Mimetype", field -> {
                         field.addAnnotation(SpringContentAnnotations.Mimetype);
                     });
-                    jpaEntity.addProperty(SemanticType.STRING, attr.canonicalName() + "Filename", field -> {
+                    jpaEntity.addProperty(SemanticType.STRING, attr.name() + "Filename", field -> {
                         field.addAnnotation(SpringContentAnnotations.OriginalFilename);
                     });
                 });

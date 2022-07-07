@@ -7,7 +7,6 @@ import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.JpaEntityFie
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.lombok.LombokTypeAnnotations;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.lombok.LombokTypeAnnotationsConfig;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.lombok.LombokTypeAnnotationsCustomizer;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -78,9 +77,9 @@ class JpaEntityImpl implements JpaEntity {
     public JpaEntity addProperty(SemanticType fieldType, String name, Consumer<JavaBeanProperty> customizer) {
         var property = JpaEntityProperty.create(fieldType, name);
         customizer.accept(property);
-        var old = this.fields.putIfAbsent(property.canonicalName(), property);
+        var old = this.fields.putIfAbsent(property.normalizedName(), property);
         if (old != null) {
-            var msg = "Entity %s already contains field '%s'".formatted(this.entityName(), old.canonicalName());
+            var msg = "Entity %s already contains field '%s'".formatted(this.entityName(), old.normalizedName());
             throw new IllegalArgumentException(msg);
         }
 
@@ -107,7 +106,7 @@ class JpaEntityImpl implements JpaEntity {
             Consumer<OneToOneRelation> customizer) {
         var relation = new OneToOneRelationImpl(targetClass, fieldName);
         customizer.accept(relation);
-        this.fields.put(relation.canonicalName(), relation);
+        this.fields.put(relation.normalizedName(), relation);
         return this;
     }
 
@@ -116,7 +115,7 @@ class JpaEntityImpl implements JpaEntity {
             Consumer<OneToManyRelation> customizer) {
         var relation = new OneToManyWithJoinColumnRelationImpl(this::entityName, targetClass, fieldName);
         customizer.accept(relation);
-        this.fields.put(relation.canonicalName(), relation);
+        this.fields.put(relation.normalizedName(), relation);
         return this;
     }
 
@@ -125,7 +124,7 @@ class JpaEntityImpl implements JpaEntity {
             Consumer<ManyToOneRelation> customizer) {
         var relation = new ManyToOneRelationImpl(targetClass, fieldName);
         customizer.accept(relation);
-        this.fields.put(relation.canonicalName(), relation);
+        this.fields.put(relation.normalizedName(), relation);
         return this;
     }
 
@@ -156,26 +155,18 @@ class JpaEntityImpl implements JpaEntity {
             return new JpaEntityNaming(name, deriveClassName(name));
         }
 
-        public static String deriveClassName(String name) {
-            var className =
-                    // split kebab case
-                    // note that there are no consecutive hyphens, and name does not lead or end with a hyphen
-                    // which means that every part is a non-empty string
-                    Arrays.stream(name.split("-"))
+        static String deriveClassName(String name) {
+            var className = Stream.of(name
+                            // first use regex to find number- and letter-segments
+                            // and insert a hyphen after every segment
+                            .replaceAll("\\d+|\\D+", "$0-")
 
-                            // split each part in letter- and number-segments
-                            .flatMap(part -> {
-                                var segments = part
-                                        // first use regex to find letter- and number-segments
-                                        .replaceAll("\\d+|\\D+", "$0-")
-
-                                        // split by hyphen again
-                                        .split("-");
-
-                                return Stream.of(segments);
-                            })
-
-                    // reconcatenate all the segments as TitleCase
+                            // split kebab case
+                            // there can be consecutive hyphens, resulting in empty-string parts
+                            .split("-")
+                    )
+                    // re-concatenate all the segments as TitleCase
+                    // empty string segments are not a problem
                     .reduce("", (buffer, segment) -> buffer + StringUtils.capitalize(segment));
 
             if (!SourceVersion.isName(className)) {

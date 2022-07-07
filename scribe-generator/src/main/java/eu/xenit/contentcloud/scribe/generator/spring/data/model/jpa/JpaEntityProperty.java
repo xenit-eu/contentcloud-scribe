@@ -6,6 +6,7 @@ import eu.xenit.contentcloud.scribe.generator.spring.data.model.JavaBeanProperty
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.Stream;
@@ -44,7 +45,7 @@ class JpaEntityFieldImpl implements JpaEntityProperty {
 
     private Modifier modifiers = Modifier.DEFAULT;
 
-    private Collection<Annotation> annotations = new HashSet<>();
+    private Collection<Annotation> annotations = new LinkedHashSet<>();
 
     @Nullable
     private String column;
@@ -63,7 +64,12 @@ class JpaEntityFieldImpl implements JpaEntityProperty {
     }
 
     @Override
-    public String canonicalName() {
+    public String name() {
+        return this.naming.original();
+    }
+
+    @Override
+    public String normalizedName() {
         return this.naming.normalized();
     }
 
@@ -122,7 +128,7 @@ class JpaEntityFieldImpl implements JpaEntityProperty {
             return fieldName;
         }
 
-        public static String normalized(String source) {
+        static String normalized(String source) {
             return source.replaceAll("-", "").toLowerCase(Locale.ROOT);
         }
 
