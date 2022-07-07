@@ -7,7 +7,7 @@ public class OpenApiRelationReference extends OpenApiDataType {
     private String example;
 
     public OpenApiRelationReference() {
-        super("string");
+        super("string", null);
     }
 
     public OpenApiRelationReference(String example) {

@@ -10,7 +10,7 @@ public class OpenApiObjectDataType extends OpenApiDataType {
     private final Map<String, OpenApiSchema> properties = new LinkedHashMap<>();
 
     public OpenApiObjectDataType() {
-        super("object");
+        super("object", null);
     }
 
     public OpenApiObjectDataType(Map<String, OpenApiSchema> properties) {

@@ -7,7 +7,7 @@ public class OpenApiArrayDataType extends OpenApiDataType {
     private OpenApiSchema items;
 
     public OpenApiArrayDataType() {
-        super("array");
+        super("array", null);
     }
 
     public OpenApiArrayDataType(OpenApiSchema items) {

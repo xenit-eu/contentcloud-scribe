@@ -266,7 +266,7 @@ public class OpenApiProjectContributor implements ProjectContributor {
             var entitySchema = new OpenApiObjectDataType();
             for (var attribute : attributes) {
                 entitySchema.getProperties().putAll(linkedMapOf(
-                        StringUtils.uncapitalize(attribute.getName()), OpenApiDataTypes.STRING));
+                        StringUtils.uncapitalize(attribute.getName()), OpenApiDataTypes.of(attribute.getType())));
             }
             model.getComponents().getSchemas().put(entity.getName(), entitySchema);
 
