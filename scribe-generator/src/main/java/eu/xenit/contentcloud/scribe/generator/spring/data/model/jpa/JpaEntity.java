@@ -3,46 +3,49 @@ package eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa;
 import eu.xenit.contentcloud.scribe.generator.source.types.SemanticType;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.JavaBean;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.JavaBeanProperty;
+import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.JpaEntityFieldImpl.JpaFieldNaming;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.lombok.LombokTypeAnnotations;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.lombok.LombokTypeAnnotationsConfig;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.lombok.LombokTypeAnnotationsCustomizer;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
+import javax.lang.model.SourceVersion;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
 import org.springframework.util.StringUtils;
 
 public interface JpaEntity extends JavaBean {
-    
-    static JpaEntity withName(String entityName) {
-        return new JpaEntityImpl(entityName);
+
+    static JpaEntity withName(String name) {
+        return new JpaEntityImpl(name);
     }
 
     String entityName();
 
     JpaEntityIdField id();
+
     JpaEntity id(Consumer<JpaEntityIdField> customizer);
 
     @Override
     Stream<JpaEntityProperty> fields();
 
     JpaEntity addOneToOneRelation(String fieldName, SemanticType targetClass, Consumer<OneToOneRelation> customizer);
+
     JpaEntity addOneToManyRelation(String fieldName, SemanticType targetClass, Consumer<OneToManyRelation> customizer);
+
     JpaEntity addManyToOneRelation(String fieldName, SemanticType targetClass, Consumer<ManyToOneRelation> customizer);
 }
 
 
 @Accessors(fluent = true, chain = true)
-@RequiredArgsConstructor
 class JpaEntityImpl implements JpaEntity {
 
-    @Getter
-    private final String entityName;
+    private final JpaEntityNaming naming;
 
     @Getter
     private final JpaEntityIdField id = JpaEntityIdField.named("id");
@@ -51,9 +54,17 @@ class JpaEntityImpl implements JpaEntity {
 
     private final LombokTypeAnnotations lombok = new LombokTypeAnnotations();
 
+    public JpaEntityImpl(String name) {
+        this.naming = JpaEntityNaming.from(name);
+    }
+
+    public String entityName() {
+        return this.naming.name();
+    }
+
     @Override
     public String className() {
-        return this.entityName;
+        return this.naming.className();
     }
 
     @Override
@@ -66,20 +77,21 @@ class JpaEntityImpl implements JpaEntity {
     public JpaEntity addProperty(SemanticType fieldType, String name, Consumer<JavaBeanProperty> customizer) {
         var property = JpaEntityProperty.create(fieldType, name);
         customizer.accept(property);
-        var old = this.fields.putIfAbsent(property.name(), property);
+        var old = this.fields.putIfAbsent(property.normalizedName(), property);
         if (old != null) {
-            throw new IllegalArgumentException("Entity "+entityName+" already contains field '"+name+"'");
+            var msg = "Entity %s already contains field '%s'".formatted(this.entityName(), old.normalizedName());
+            throw new IllegalArgumentException(msg);
         }
 
         return this;
     }
 
     @Override
-    public JavaBean removeProperty(String name) {
-        name = asFieldName(name);
-        var field = this.fields.remove(name);
+    public JavaBean removeProperty(@NonNull String name) {
+        var field = this.fields.remove(JpaFieldNaming.normalized(name));
         if (field == null) {
-            throw new IllegalArgumentException("Entity "+entityName+" does not contain a field '"+name+"'");
+            var msg = "Entity %s does not contain a field named '%s'".formatted(this.entityName(), name);
+            throw new IllegalArgumentException(msg);
         }
         return this;
     }
@@ -94,7 +106,7 @@ class JpaEntityImpl implements JpaEntity {
             Consumer<OneToOneRelation> customizer) {
         var relation = new OneToOneRelationImpl(targetClass, fieldName);
         customizer.accept(relation);
-        this.fields.put(relation.name(), relation);
+        this.fields.put(relation.normalizedName(), relation);
         return this;
     }
 
@@ -103,7 +115,7 @@ class JpaEntityImpl implements JpaEntity {
             Consumer<OneToManyRelation> customizer) {
         var relation = new OneToManyWithJoinColumnRelationImpl(this::entityName, targetClass, fieldName);
         customizer.accept(relation);
-        this.fields.put(relation.name(), relation);
+        this.fields.put(relation.normalizedName(), relation);
         return this;
     }
 
@@ -112,7 +124,7 @@ class JpaEntityImpl implements JpaEntity {
             Consumer<ManyToOneRelation> customizer) {
         var relation = new ManyToOneRelationImpl(targetClass, fieldName);
         customizer.accept(relation);
-        this.fields.put(relation.name(), relation);
+        this.fields.put(relation.normalizedName(), relation);
         return this;
     }
 
@@ -127,17 +139,62 @@ class JpaEntityImpl implements JpaEntity {
         return this.lombok;
     }
 
+    /**
+     * JpaEntityNaming is a class that encapsulate naming conventions around JPA entities
+     */
+    @Getter
+    @AllArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class JpaEntityNaming {
 
-    static String asFieldName(@NonNull String fieldName) {
-        // changesets allow (non-consecutive) hyphens '-' in field names
-        return kebabToCamelCase(fieldName);
-    }
+        private String name;
+        private String className;
 
-    static String kebabToCamelCase(@NonNull String source) {
-        var titleCase = Arrays.stream(source.split("-"))
-                .reduce("", (buffer, part) -> buffer + StringUtils.capitalize(part));
+        static JpaEntityNaming from(@NonNull String name) {
+            validate(name);
 
-        return StringUtils.uncapitalize(titleCase);
+            return new JpaEntityNaming(name, deriveClassName(name));
+        }
+
+        static String deriveClassName(String name) {
+            var className = Stream.of(name
+                            // first use regex to find number- and letter-segments
+                            // and insert a hyphen after every segment
+                            .replaceAll("\\d+|\\D+", "$0-")
+
+                            // split kebab case
+                            // there can be consecutive hyphens, resulting in empty-string parts
+                            .split("-")
+                    )
+                    // re-concatenate all the segments as TitleCase
+                    // empty string segments are not a problem
+                    .reduce("", (buffer, segment) -> buffer + StringUtils.capitalize(segment));
+
+            if (!SourceVersion.isName(className)) {
+                throw new IllegalArgumentException("Cannot derive valid classname from '" + name + "'");
+            }
+
+            return className;
+        }
+
+        private static void validate(String name) {
+            if (name.length() < 3 || name.length() > 50) {
+                var msg = "Expected name '%s' to be 3 to 50 characters long, but was %d".formatted(name, name.length());
+                throw new IllegalArgumentException(msg);
+            }
+
+            if (!name.matches("^[A-Za-z0-9\\-]{3,50}$")) {
+                throw new IllegalArgumentException("Only alphanumeric characters and single hyphens are allowed");
+            }
+
+            if (name.startsWith("-") || name.endsWith("-")) {
+                throw new IllegalArgumentException("Cannot start or end with a hyphen");
+            }
+
+            if (name.indexOf("--") > 0) {
+                throw new IllegalArgumentException("Only alphanumeric characters and single hyphens are allowed");
+            }
+        }
+
     }
 
 }

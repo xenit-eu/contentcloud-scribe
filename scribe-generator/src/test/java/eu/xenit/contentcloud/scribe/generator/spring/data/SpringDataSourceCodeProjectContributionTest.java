@@ -80,16 +80,75 @@ class SpringDataSourceCodeProjectContributionTest {
                 \t@Id
                 \t@GeneratedValue(strategy = GenerationType.AUTO)
                 \tprivate UUID id;
-                
+                                
                 \tprivate String name;
-                
+                                
                 \tprivate long number;
-               
+                                
                 \tprivate boolean check;
-                
+                                
                 \tprivate UUID uuid;
-                
+                                
                 \tprivate Instant datetime;
+                }
+                """.split("\n")
+        );
+    }
+
+    @Test
+    void keywordFieldNames_shouldBePrefixed() {
+        var description = new ScribeProjectDescription();
+        description.setChangeset(Changeset.builder()
+                .entities(List.of(
+                        Entity.builder().name("Package")
+                                .attribute(Attribute.builder("code").number().naturalId(true).build())
+                                .build(),
+                        Entity.builder().name("Document")
+                                .attribute(Attribute.builder("name").string().build())
+                                .attribute(Attribute.builder("public").bool().build())
+                                .relation(Relation.builder().name("package").source("Document").target("Package").manySourcePerTarget(true).build())
+                                .build()
+                ))
+                .operations(List.of())
+                .build());
+        var project = this.projectTester.generate(description);
+
+        String path = "src/main/java/com/example/demo/model/Document.java";
+        assertThat(project).containsFiles(path);
+        assertThat(project).textFile(path).containsExactly("""
+                package com.example.demo.model;
+                                
+                import com.fasterxml.jackson.annotation.JsonProperty;
+                import java.lang.String;
+                import java.util.UUID;
+                import javax.persistence.Entity;
+                import javax.persistence.GeneratedValue;
+                import javax.persistence.GenerationType;
+                import javax.persistence.Id;
+                import javax.persistence.ManyToOne;
+                import lombok.Getter;
+                import lombok.NoArgsConstructor;
+                import lombok.Setter;
+                import org.springframework.data.rest.core.annotation.RestResource;
+                                
+                @Entity
+                @NoArgsConstructor
+                @Getter
+                @Setter
+                public class Document {
+                \t@Id
+                \t@GeneratedValue(strategy = GenerationType.AUTO)
+                \tprivate UUID id;
+                                
+                \tprivate String name;
+                                
+                \t@JsonProperty("public")
+                \tprivate boolean _public;
+                                
+                \t@ManyToOne
+                \t@JsonProperty("package")
+                \t@RestResource(rel = "package", path = "package")
+                \tprivate Package _package;
                 }
                 """.split("\n")
         );

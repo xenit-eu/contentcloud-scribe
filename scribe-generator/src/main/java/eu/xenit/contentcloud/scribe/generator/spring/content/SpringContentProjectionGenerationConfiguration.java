@@ -17,10 +17,8 @@ import eu.xenit.contentcloud.scribe.generator.spring.data.model.SpringDataPackag
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.JpaEntity;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.JpaEntityCustomizer;
 import io.spring.initializr.generator.condition.ConditionalOnLanguage;
-import io.spring.initializr.generator.language.Language;
 import io.spring.initializr.generator.language.java.JavaLanguage;
 import io.spring.initializr.generator.project.ProjectGenerationConfiguration;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 
@@ -77,7 +75,7 @@ public class SpringContentProjectionGenerationConfiguration {
                 // collect all the content-attributes
                 var contentAttributes = jpaEntity.fields()
                         .filter(field -> field.type() instanceof ContentDataType)
-                        .collect(Collectors.toUnmodifiableList());
+                        .toList();
 
                 // Replace/expand the CONTENT attribute into the following properties:
                 // - @ContentId String/UUID <name>Id

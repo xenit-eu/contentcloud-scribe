@@ -55,6 +55,16 @@ class JpaEntityIdFieldImpl implements JpaEntityIdField {
     }
 
     @Override
+    public String normalizedName() {
+        return this.name;
+    }
+
+    @Override
+    public String fieldName() {
+        return this.name;
+    }
+
+    @Override
     public JavaBeanProperty addAnnotation(Annotation annotation) {
         this.annotations.add(annotation);
         return this;

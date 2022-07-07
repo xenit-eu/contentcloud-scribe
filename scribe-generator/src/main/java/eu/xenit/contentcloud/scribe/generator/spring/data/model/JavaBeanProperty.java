@@ -7,6 +7,9 @@ import java.util.stream.Stream;
 public interface JavaBeanProperty {
 
     String name();
+    String normalizedName();
+    String fieldName();
+
     JavaBeanProperty name(String name);
 
     SemanticType type();

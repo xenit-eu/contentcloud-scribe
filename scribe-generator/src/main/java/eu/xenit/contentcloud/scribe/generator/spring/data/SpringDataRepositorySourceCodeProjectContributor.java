@@ -18,6 +18,7 @@ package eu.xenit.contentcloud.scribe.generator.spring.data;
 
 import eu.xenit.contentcloud.scribe.changeset.Entity;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.EntityModel;
+import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.JpaEntity;
 import eu.xenit.contentcloud.scribe.generator.spring.data.source.SpringDataSourceCodeGenerator;
 import eu.xenit.contentcloud.scribe.generator.source.SourceFile;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.JpaRepository;
@@ -52,9 +53,8 @@ public class SpringDataRepositorySourceCodeProjectContributor implements Project
     }
 
     private SourceFile contributeJpaRepository(Entity entity) {
-
-        var repo = JpaRepository.forEntity(entity.getClassName());
-
+        var className = JpaEntity.withName(entity.getName()).className();
+        var repo = JpaRepository.forEntity(className);
         return this.sourceGenerator.createSourceFile(repo);
     }
 }
