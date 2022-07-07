@@ -130,7 +130,7 @@ class SpringDataSourceCodeProjectContributionTest {
                 import lombok.NoArgsConstructor;
                 import lombok.Setter;
                 import org.springframework.data.rest.core.annotation.RestResource;
-                
+                                
                 @Entity
                 @NoArgsConstructor
                 @Getter
@@ -139,15 +139,15 @@ class SpringDataSourceCodeProjectContributionTest {
                 \t@Id
                 \t@GeneratedValue(strategy = GenerationType.AUTO)
                 \tprivate UUID id;
-                
+                                
                 \tprivate String name;
                                 
                 \t@JsonProperty("public")
                 \tprivate boolean _public;
-                
+                                
                 \t@ManyToOne
-                \t@RestResource(rel = "package", path = "package")
                 \t@JsonProperty("package")
+                \t@RestResource(rel = "package", path = "package")
                 \tprivate Package _package;
                 }
                 """.split("\n")
