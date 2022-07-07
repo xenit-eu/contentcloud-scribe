@@ -14,7 +14,7 @@ jobs:
         with:
           java-version: 17
       - name: Build with Gradle
-        run: ./gradlew build
+        run: ./gradlew build --info
       - name: Publish
         if: ${{ github.ref == 'refs/heads/main' || startswith(github.ref, 'refs/tags/') }}
         run: ./gradlew publish
