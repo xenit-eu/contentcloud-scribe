@@ -7,6 +7,7 @@ public class OpenApiDataTypes {
     public static final OpenApiDataType INTEGER = new OpenApiDataType("integer", null);
     public static final OpenApiDataType LONG = new OpenApiDataType("integer", "int64");
     public static final OpenApiDataType BOOLEAN = new OpenApiDataType("boolean", null);
+    public static final OpenApiDataType CONTENT = new OpenApiDataType("string", "binary");
 
     public static OpenApiDataType of(String type) {
         switch (type) {
@@ -18,6 +19,8 @@ public class OpenApiDataTypes {
                 return LONG;
             case "BOOLEAN":
                 return BOOLEAN;
+            case "CONTENT":
+                return CONTENT;
             default:
                 return STRING;
         }
