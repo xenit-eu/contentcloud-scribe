@@ -293,15 +293,15 @@ class OpenApiProjectContributorTest {
                         schema:
                           type: "string"
                       responses:
-                       "200":
-                         description: "A file"
-                         content:
-                           "*/*":
-                             schema:
-                               type: "string"
-                               format: "binary"
-                       "404":
-                         description: "Not Found"
+                        "200":
+                          description: "A file"
+                          content:
+                            '*/*':
+                              schema:
+                                type: "string"
+                                format: "binary"
+                        "404":
+                          description: "Not Found"
                     put:
                       tags:
                       - "Party"
@@ -313,7 +313,7 @@ class OpenApiProjectContributorTest {
                           type: "string"
                       requestBody:
                         content:
-                          "*/*":
+                          '*/*':
                             schema:
                               type: "string"
                               format: "binary"
@@ -322,7 +322,7 @@ class OpenApiProjectContributorTest {
                           description: "File uploaded"
                     delete:
                       tags:
-                      - "broker"
+                      - "Party"
                       parameters:
                       - name: "id"
                         in: "path"
@@ -357,9 +357,14 @@ class OpenApiProjectContributorTest {
                           type: "string"
                         name:
                           type: "string"
-                        summary:
+                        summaryId:
                           type: "string"
-                          format: "binary"
+                        summaryLength:
+                          type: "integer"
+                        summaryMimetype:
+                          type: "string"
+                        summaryFilename:
+                          type: "string"
                     PartyLinks:
                       type: "object"
                       properties:
@@ -369,6 +374,8 @@ class OpenApiProjectContributorTest {
                             self:
                               $ref: "#/components/schemas/Link"
                             party:
+                              $ref: "#/components/schemas/Link"
+                            summary:
                               $ref: "#/components/schemas/Link"
                             subsidiary:
                               $ref: "#/components/schemas/Link"
