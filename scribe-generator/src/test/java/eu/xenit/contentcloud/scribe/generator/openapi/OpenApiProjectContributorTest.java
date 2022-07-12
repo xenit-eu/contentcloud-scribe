@@ -5,6 +5,7 @@ import eu.xenit.contentcloud.scribe.changeset.Changeset;
 import eu.xenit.contentcloud.scribe.changeset.Entity;
 import eu.xenit.contentcloud.scribe.changeset.Relation;
 import eu.xenit.contentcloud.scribe.generator.ScribeProjectDescription;
+import eu.xenit.contentcloud.scribe.generator.spring.content.SpringContentProjectionGenerationConfiguration;
 import eu.xenit.contentcloud.scribe.generator.spring.data.SpringDataProjectGenerationConfiguration;
 import io.spring.initializr.generator.buildsystem.gradle.GradleBuildSystem;
 import io.spring.initializr.generator.language.java.JavaLanguage;
@@ -31,6 +32,7 @@ class OpenApiProjectContributorTest {
                 .withConfiguration(
                         OpenApiProjectGenerationConfiguration.class,
                         SpringDataProjectGenerationConfiguration.class,
+                        SpringContentProjectionGenerationConfiguration.class,
                         JavaProjectGenerationConfiguration.class)
                 .withDirectory(directory)
                 .withDescriptionCustomizer((description) -> {
