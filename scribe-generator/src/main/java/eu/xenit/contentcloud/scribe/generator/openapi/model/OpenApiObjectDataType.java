@@ -1,6 +1,7 @@
 package eu.xenit.contentcloud.scribe.generator.openapi.model;
 
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -10,7 +11,7 @@ public class OpenApiObjectDataType extends OpenApiDataType {
     private final Map<String, OpenApiSchema> properties = new LinkedHashMap<>();
 
     public OpenApiObjectDataType() {
-        super("object");
+        super("object", null);
     }
 
     public OpenApiObjectDataType(Map<String, OpenApiSchema> properties) {

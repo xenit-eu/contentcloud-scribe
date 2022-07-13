@@ -5,6 +5,7 @@ import eu.xenit.contentcloud.scribe.changeset.Changeset;
 import eu.xenit.contentcloud.scribe.changeset.Entity;
 import eu.xenit.contentcloud.scribe.changeset.Relation;
 import eu.xenit.contentcloud.scribe.generator.ScribeProjectDescription;
+import eu.xenit.contentcloud.scribe.generator.spring.content.SpringContentProjectionGenerationConfiguration;
 import eu.xenit.contentcloud.scribe.generator.spring.data.SpringDataProjectGenerationConfiguration;
 import io.spring.initializr.generator.buildsystem.gradle.GradleBuildSystem;
 import io.spring.initializr.generator.language.java.JavaLanguage;
@@ -31,6 +32,7 @@ class OpenApiProjectContributorTest {
                 .withConfiguration(
                         OpenApiProjectGenerationConfiguration.class,
                         SpringDataProjectGenerationConfiguration.class,
+                        SpringContentProjectionGenerationConfiguration.class,
                         JavaProjectGenerationConfiguration.class)
                 .withDirectory(directory)
                 .withDescriptionCustomizer((description) -> {
@@ -48,6 +50,7 @@ class OpenApiProjectContributorTest {
                         Entity.builder().name("Party")
                                 .attribute(Attribute.builder("Vat").string().naturalId(true).build())
                                 .attribute(Attribute.builder("name").string().build())
+                                .attribute(Attribute.builder("summary").content().build())
                                 .relation(Relation.builder().name("Subsidiary").required(false).source("Party").target("Party")
                                         .manyTargetPerSource(true).manySourcePerTarget(false).build())
                                 .build()
@@ -132,7 +135,7 @@ class OpenApiProjectContributorTest {
                         in: "path"
                         required: true
                         schema:
-                          type: "integer"
+                          type: "string"
                       responses:
                         "200":
                           description: "OK"
@@ -152,7 +155,7 @@ class OpenApiProjectContributorTest {
                         in: "path"
                         required: true
                         schema:
-                          type: "integer"
+                          type: "string"
                       responses:
                         "204":
                           description: "No Content"
@@ -166,7 +169,7 @@ class OpenApiProjectContributorTest {
                         in: "path"
                         required: true
                         schema:
-                          type: "integer"
+                          type: "string"
                       responses:
                         "204":
                           description: "No Content"
@@ -180,7 +183,7 @@ class OpenApiProjectContributorTest {
                         in: "path"
                         required: true
                         schema:
-                          type: "integer"
+                          type: "string"
                       responses:
                         "204":
                           description: "No Content"
@@ -194,7 +197,7 @@ class OpenApiProjectContributorTest {
                         in: "path"
                         required: true
                         schema:
-                          type: "integer"
+                          type: "string"
                       responses:
                         "204":
                           description: "No Content"
@@ -209,7 +212,7 @@ class OpenApiProjectContributorTest {
                         in: "path"
                         required: true
                         schema:
-                          type: "integer"
+                          type: "string"
                       responses:
                         "200":
                           description: "OK"
@@ -229,7 +232,7 @@ class OpenApiProjectContributorTest {
                         in: "path"
                         required: true
                         schema:
-                          type: "integer"
+                          type: "string"
                       requestBody:
                         description: "Create Party"
                         required: true
@@ -251,7 +254,7 @@ class OpenApiProjectContributorTest {
                         in: "path"
                         required: true
                         schema:
-                          type: "integer"
+                          type: "string"
                       requestBody:
                         description: "Create Party"
                         required: true
@@ -273,12 +276,62 @@ class OpenApiProjectContributorTest {
                         in: "path"
                         required: true
                         schema:
-                          type: "integer"
+                          type: "string"
                       responses:
                         "204":
                           description: "No Content"
                         "405":
                           description: "Not Allowed"
+                  /parties/{id}/summary:
+                    get:
+                      tags:
+                      - "Party"
+                      parameters:
+                      - name: "id"
+                        in: "path"
+                        required: true
+                        schema:
+                          type: "string"
+                      responses:
+                        "200":
+                          description: "A file"
+                          content:
+                            '*/*':
+                              schema:
+                                type: "string"
+                                format: "binary"
+                        "404":
+                          description: "Not Found"
+                    put:
+                      tags:
+                      - "Party"
+                      parameters:
+                      - name: "id"
+                        in: "path"
+                        required: true
+                        schema:
+                          type: "string"
+                      requestBody:
+                        content:
+                          '*/*':
+                            schema:
+                              type: "string"
+                              format: "binary"
+                      responses:
+                        "200":
+                          description: "File uploaded"
+                    delete:
+                      tags:
+                      - "Party"
+                      parameters:
+                      - name: "id"
+                        in: "path"
+                        required: true
+                        schema:
+                          type: "string"
+                      responses:
+                        "204":
+                          description: "File deleted"
                 components:
                   schemas:
                     Link:
@@ -304,6 +357,14 @@ class OpenApiProjectContributorTest {
                           type: "string"
                         name:
                           type: "string"
+                        summaryId:
+                          type: "string"
+                        summaryLength:
+                          type: "integer"
+                        summaryMimetype:
+                          type: "string"
+                        summaryFilename:
+                          type: "string"
                     PartyLinks:
                       type: "object"
                       properties:
@@ -313,6 +374,8 @@ class OpenApiProjectContributorTest {
                             self:
                               $ref: "#/components/schemas/Link"
                             party:
+                              $ref: "#/components/schemas/Link"
+                            summary:
                               $ref: "#/components/schemas/Link"
                             subsidiary:
                               $ref: "#/components/schemas/Link"
@@ -340,5 +403,4 @@ class OpenApiProjectContributorTest {
                 """.split("\n")
         );
     }
-
 }
