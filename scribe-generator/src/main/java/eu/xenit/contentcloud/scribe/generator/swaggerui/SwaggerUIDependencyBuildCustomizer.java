@@ -19,6 +19,8 @@ public class SwaggerUIDependencyBuildCustomizer implements BuildCustomizer<Build
         if (this.description.enableSwaggerUI()) {
             var swaggerUI = Optional.ofNullable(metadata.getDependencies().get("swagger-ui")).orElseThrow();
             build.dependencies().add(swaggerUI.getId(), MetadataBuildItemMapper.toDependency(swaggerUI));
+            var webjarsLocator = Optional.ofNullable(metadata.getDependencies().get("webjars-locator-core")).orElseThrow();
+            build.dependencies().add(webjarsLocator.getId(), MetadataBuildItemMapper.toDependency(webjarsLocator));
         }
     }
 }
