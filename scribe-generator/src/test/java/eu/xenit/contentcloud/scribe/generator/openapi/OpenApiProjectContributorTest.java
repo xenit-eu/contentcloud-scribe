@@ -49,7 +49,7 @@ class OpenApiProjectContributorTest {
                 .entities(List.of(
                         Entity.builder().name("Party")
                                 .attribute(Attribute.builder("Vat").string().naturalId(true).build())
-                                .attribute(Attribute.builder("name").string().build())
+                                .attribute(Attribute.builder("name").string().indexed(true).build())
                                 .attribute(Attribute.builder("summary").content().build())
                                 .relation(Relation.builder().name("Subsidiary").required(false).source("Party").target("Party")
                                         .manyTargetPerSource(true).manySourcePerTarget(false).build())
@@ -77,6 +77,11 @@ class OpenApiProjectContributorTest {
                       tags:
                       - "Party"
                       parameters:
+                      - name: "name"
+                        in: "query"
+                        required: false
+                        schema:
+                          type: "string"
                       - name: "page"
                         in: "query"
                         required: false
