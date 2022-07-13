@@ -18,6 +18,10 @@ public class Model {
     @NonNull
     List<Entity> entities;
 
+    @Singular
+    @NonNull
+    List<Policy> policies;
+
     public Optional<Entity> getEntity(String name) {
         return entities.stream()
                 .filter(entity -> Objects.equals(entity.getName(), name))

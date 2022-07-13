@@ -34,18 +34,17 @@ public class ChangesetFactory {
             operations.add(new Operation(
                     operation.getType(),
                     operation.getProperties(),
-                    new Model(beforeModel.toDto().getEntities()),
-                    new Model(afterModel.toDto().getEntities())
+                    beforeModel.toDto().toModel(),
+                    afterModel.toDto().toModel()
             ));
         }
 
 
         return Changeset.builder()
                 .parentLoader(parentLoader)
-                .baseModel(new Model(baseModel.toDto().getEntities()))
+                .baseModel(baseModel.toDto().toModel())
                 .project(project.getName())
                 .organization(project.getOrganization())
-                .entities(changeset.getEntities())
                 .operations(operations)
                 .build();
     }

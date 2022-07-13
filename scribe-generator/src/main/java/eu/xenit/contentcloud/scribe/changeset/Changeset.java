@@ -19,11 +19,12 @@ import lombok.experimental.Accessors;
 @AllArgsConstructor
 public class Changeset {
 
+    @Getter(value = AccessLevel.NONE)
+    @NonNull
+    Model baseModel;
+
     String project;
     String organization;
-
-    @NonNull
-    List<Entity> entities;
 
     @NonNull
     List<Operation> operations;
@@ -36,10 +37,18 @@ public class Changeset {
                 .map(Supplier::get);
     }
 
+    public Model getAfterModel() {
+        if(operations.isEmpty()) {
+            return baseModel;
+        }
+        return operations.get(operations.size()-1).getAfterModel();
+    }
+
+    public List<Entity> getEntities() {
+        return getAfterModel().getEntities();
+    }
+
     public static class ChangesetBuilder {
-        @Setter
-        @Accessors(fluent = true)
-        private Model baseModel;
         public ChangesetBuilder operation(String type, Map<String, Object> properties, Model nextModel) {
             var beforeModel = baseModel;
             if(this.operations != null && !this.operations.isEmpty()) {
@@ -54,7 +63,6 @@ public class Changeset {
                 this.operations = new ArrayList<>();
             }
             this.operations.add(operation);
-            entities(operation.getAfterModel().getEntities());
             return this;
         }
 
