@@ -89,6 +89,15 @@ public class OpenApiProjectContributor implements ProjectContributor {
         // GET
         var pathGet = new OpenApiModelPath(tags);
 
+        var attributes = entity.getAttributes();
+        for (var attribute : attributes) {
+            if (attribute.isIndexed()) {
+                pathGet.getParameters().addAll(List.of(
+                        new OpenApiParameters(attribute.getName(), ParameterType.QUERY, false, OpenApiDataTypes.of(attribute.getType()))
+                ));
+            }
+        }
+
         pathGet.getParameters().addAll(List.of(
                 new OpenApiParameters("page", ParameterType.QUERY, false, OpenApiDataTypes.INTEGER),
                 new OpenApiParameters("size", ParameterType.QUERY, false, OpenApiDataTypes.INTEGER),
