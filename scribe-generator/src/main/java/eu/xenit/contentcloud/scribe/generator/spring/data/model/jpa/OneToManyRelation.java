@@ -46,11 +46,6 @@ class OneToManyWithJoinColumnRelationImpl extends JpaEntityFieldImpl implements 
     }
 
     @Override
-    public JpaEntityFieldImpl type(@NonNull SemanticType type) {
-        return super.type(type);
-    }
-
-    @Override
     public Stream<Annotation> annotations() {
         return Stream.concat(
             Stream.of(

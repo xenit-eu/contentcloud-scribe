@@ -23,10 +23,6 @@ import org.springframework.util.StringUtils;
 
 public interface JpaEntityProperty extends JavaBeanProperty {
 
-    JpaEntityProperty name(String name);
-
-    JpaEntityProperty type(SemanticType type);
-
     static JpaEntityProperty create(SemanticType type, String name) {
         return new JpaEntityFieldImpl(type, name);
     }
@@ -38,7 +34,7 @@ public interface JpaEntityProperty extends JavaBeanProperty {
 class JpaEntityFieldImpl implements JpaEntityProperty {
 
     @NonNull
-    private SemanticType type;
+    private final SemanticType type;
 
     @NonNull
     JpaFieldNaming naming;
@@ -87,12 +83,6 @@ class JpaEntityFieldImpl implements JpaEntityProperty {
     public Stream<Annotation> annotations() {
         return this.annotations.stream();
     }
-
-    @Override
-    public JpaEntityProperty name(String name) {
-        return null;
-    }
-
 
     @Getter
     @AllArgsConstructor(access = AccessLevel.PRIVATE)

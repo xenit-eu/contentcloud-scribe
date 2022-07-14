@@ -1,6 +1,7 @@
 package eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa;
 
 import eu.xenit.contentcloud.scribe.generator.source.types.SemanticType;
+import eu.xenit.contentcloud.scribe.generator.spring.data.model.JavaBeanBuilder;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.JavaBean;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.JavaBeanProperty;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.JpaEntityFieldImpl.JpaFieldNaming;
@@ -26,7 +27,7 @@ import org.springframework.util.StringUtils;
 
 public interface JpaEntity extends JavaBean {
 
-    static JpaEntity withName(String name) {
+    static JpaEntityBuilder withName(String name) {
         return new JpaEntityImpl(name);
     }
 
@@ -42,21 +43,17 @@ public interface JpaEntity extends JavaBean {
 
     JpaEntityIdField id();
 
-    JpaEntity id(Consumer<JpaEntityIdField> customizer);
+
 
     @Override
     Stream<JpaEntityProperty> fields();
 
-    JpaEntity addOneToOneRelation(String fieldName, SemanticType targetClass, Consumer<OneToOneRelation> customizer);
 
-    JpaEntity addOneToManyRelation(String fieldName, SemanticType targetClass, Consumer<OneToManyRelation> customizer);
-
-    JpaEntity addManyToOneRelation(String fieldName, SemanticType targetClass, Consumer<ManyToOneRelation> customizer);
 }
 
 
 @Accessors(fluent = true, chain = true)
-class JpaEntityImpl implements JpaEntity {
+class JpaEntityImpl implements JpaEntity, JpaEntityBuilder {
 
     private final JpaEntityNaming naming;
 
@@ -85,13 +82,13 @@ class JpaEntityImpl implements JpaEntity {
     }
 
     @Override
-    public JpaEntity id(Consumer<JpaEntityIdField> customizer) {
+    public JpaEntityBuilder id(Consumer<JpaEntityIdField> customizer) {
         customizer.accept(this.id);
         return this;
     }
 
     @Override
-    public JpaEntity addProperty(SemanticType fieldType, String name, Consumer<JavaBeanProperty> customizer) {
+    public JpaEntityBuilder addProperty(SemanticType fieldType, String name, Consumer<JavaBeanProperty> customizer) {
         var property = JpaEntityProperty.create(fieldType, name);
         customizer.accept(property);
         var old = this.fields.putIfAbsent(property.normalizedName(), property);
@@ -104,7 +101,7 @@ class JpaEntityImpl implements JpaEntity {
     }
 
     @Override
-    public JavaBean removeProperty(@NonNull String name) {
+    public JpaEntityBuilder removeProperty(@NonNull String name) {
         var field = this.fields.remove(JpaFieldNaming.normalized(name));
         if (field == null) {
             var msg = "Entity %s does not contain a field named '%s'".formatted(this.entityName(), name);
@@ -119,7 +116,7 @@ class JpaEntityImpl implements JpaEntity {
     }
 
     @Override
-    public JpaEntity addOneToOneRelation(String fieldName, SemanticType targetClass,
+    public JpaEntityBuilder addOneToOneRelation(String fieldName, SemanticType targetClass,
             Consumer<OneToOneRelation> customizer) {
         var relation = new OneToOneRelationImpl(targetClass, fieldName);
         customizer.accept(relation);
@@ -128,7 +125,7 @@ class JpaEntityImpl implements JpaEntity {
     }
 
     @Override
-    public JpaEntity addOneToManyRelation(String fieldName, SemanticType targetClass,
+    public JpaEntityBuilder addOneToManyRelation(String fieldName, SemanticType targetClass,
             Consumer<OneToManyRelation> customizer) {
         var relation = new OneToManyWithJoinColumnRelationImpl(this::entityName, targetClass, fieldName);
         customizer.accept(relation);
@@ -137,7 +134,7 @@ class JpaEntityImpl implements JpaEntity {
     }
 
     @Override
-    public JpaEntity addManyToOneRelation(String fieldName, SemanticType targetClass,
+    public JpaEntityBuilder addManyToOneRelation(String fieldName, SemanticType targetClass,
             Consumer<ManyToOneRelation> customizer) {
         var relation = new ManyToOneRelationImpl(targetClass, fieldName);
         customizer.accept(relation);
@@ -146,7 +143,7 @@ class JpaEntityImpl implements JpaEntity {
     }
 
     @Override
-    public JavaBean lombokTypeAnnotations(Consumer<LombokTypeAnnotationsCustomizer> customizer) {
+    public JpaEntityBuilder lombokTypeAnnotations(Consumer<LombokTypeAnnotationsCustomizer> customizer) {
         customizer.accept(this.lombok);
         return this;
     }

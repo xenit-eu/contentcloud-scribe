@@ -15,6 +15,7 @@ import eu.xenit.contentcloud.scribe.generator.spring.content.source.java.SpringC
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.EntityModel;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.SpringDataPackageStructure;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.JpaEntity;
+import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.JpaEntityBuilder;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.JpaEntityCustomizer;
 import io.spring.initializr.generator.condition.ConditionalOnLanguage;
 import io.spring.initializr.generator.language.java.JavaLanguage;
@@ -71,7 +72,7 @@ public class SpringContentProjectionGenerationConfiguration {
     JpaEntityCustomizer contentAttributesJpaEntityCustomizer() {
         return new JpaEntityCustomizer() {
             @Override
-            public void customize(JpaEntity jpaEntity) {
+            public void customize(JpaEntityBuilder jpaEntity) {
                 // collect all the content-attributes
                 var contentAttributes = jpaEntity.fields()
                         .filter(field -> field.type() instanceof ContentDataType)

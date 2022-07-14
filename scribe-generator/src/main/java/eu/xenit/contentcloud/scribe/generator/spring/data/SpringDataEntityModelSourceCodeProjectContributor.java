@@ -6,6 +6,7 @@ import eu.xenit.contentcloud.scribe.generator.source.SourceFile;
 import eu.xenit.contentcloud.scribe.generator.source.types.DataTypeResolver;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.EntityModel;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.JpaEntity;
+import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.JpaEntityBuilder;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.JpaEntityCustomizer;
 import eu.xenit.contentcloud.scribe.generator.spring.data.rest.RestResourceEntity;
 import eu.xenit.contentcloud.scribe.generator.spring.data.source.SpringDataSourceCodeGenerator;
@@ -100,7 +101,7 @@ public class SpringDataEntityModelSourceCodeProjectContributor implements Projec
         return this.sourceGenerator.createSourceFile(jpaEntity);
     }
 
-    private void customizeJpaEntity(JpaEntity jpaEntity) {
+    private void customizeJpaEntity(JpaEntityBuilder jpaEntity) {
         List<JpaEntityCustomizer> customizers = this.jpaEntityCustomizers.orderedStream().collect(Collectors.toList());
         LambdaSafe.callbacks(JpaEntityCustomizer.class, customizers, jpaEntity)
                 .invoke((customizer) -> customizer.customize(jpaEntity));
