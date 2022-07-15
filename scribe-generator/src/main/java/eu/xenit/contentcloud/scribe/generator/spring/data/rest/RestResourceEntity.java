@@ -1,12 +1,13 @@
 package eu.xenit.contentcloud.scribe.generator.spring.data.rest;
 
 import eu.xenit.contentcloud.scribe.changeset.Entity;
+import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.JpaEntity;
 import lombok.Getter;
 import lombok.Value;
 import org.atteo.evo.inflector.English;
 import org.springframework.util.StringUtils;
 
-public interface RestResourceModel {
+public interface RestResourceEntity {
 
     /**
      * Flag indicating whether this resource is exported at all.
@@ -22,14 +23,18 @@ public interface RestResourceModel {
      *
      * @return A valid path segment.
      */
-    String pathSegment();
+    String getPathSegment();
 
     CollectionResourceInformation getCollectionResource();
 
     ItemResourceInformation getItemResource();
 
-    static RestResourceModel forEntity(Entity entity) {
-        return new RestResourceModelImpl(entity);
+    static RestResourceEntity forEntity(Entity entity) {
+        return new RestResourceEntityImpl(entity.getName());
+    }
+
+    static RestResourceEntity forSpringDefaults(JpaEntity entity) {
+        return new RestResourceEntityImpl(entity.className());
     }
 
 
@@ -38,7 +43,7 @@ public interface RestResourceModel {
 
         String relationName;
         String description;
-        String uriTemplate;
+        ResourceURITemplate uriTemplate;
     }
 
     @Value
@@ -46,11 +51,11 @@ public interface RestResourceModel {
 
         String relationName;
         String description;
-        String uriTemplate;
+        ResourceURITemplate uriTemplate;
     }
 }
 
-class RestResourceModelImpl implements RestResourceModel {
+class RestResourceEntityImpl implements RestResourceEntity {
 
     @Getter
     private final ItemResourceInformation itemResource;
@@ -58,24 +63,26 @@ class RestResourceModelImpl implements RestResourceModel {
     @Getter
     private final CollectionResourceInformation collectionResource;
 
-    public RestResourceModelImpl(Entity entity) {
+    @Getter
+    private final String pathSegment;
+
+    public RestResourceEntityImpl(String entityName) {
+        String singularName = StringUtils.uncapitalize(entityName);
+        String pluralName = English.plural(singularName);
+        this.pathSegment = pluralName;
+
+        var collectionURI = ResourceURITemplate.of(ResourceURIComponent.path(this.pathSegment));
         this.itemResource = new ItemResourceInformation(
-                StringUtils.uncapitalize(entity.getName()),
+                singularName,
                 null,
-                "/{plural}/{id}"
-
-
+                collectionURI.slash(ResourceURIComponent.variable("id"))
         );
+
         this.collectionResource = new CollectionResourceInformation(
-                English.plural(StringUtils.uncapitalize(entity.getName())),
+                pluralName,
                 null,
-                "/{plural}"
+                collectionURI
         );
-    }
-
-    @Override
-    public String pathSegment() {
-        return null;
     }
 }
 
