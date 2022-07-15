@@ -7,6 +7,7 @@ import eu.xenit.contentcloud.scribe.generator.source.types.DataTypeResolver;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.EntityModel;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.JpaEntity;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.JpaEntityCustomizer;
+import eu.xenit.contentcloud.scribe.generator.spring.data.rest.RestResourceEntity;
 import eu.xenit.contentcloud.scribe.generator.spring.data.source.SpringDataSourceCodeGenerator;
 import io.spring.initializr.generator.language.Language;
 import io.spring.initializr.generator.language.SourceStructure;
@@ -49,6 +50,7 @@ public class SpringDataEntityModelSourceCodeProjectContributor implements Projec
 
     private SourceFile generate(Entity entity) {
         var jpaEntity = JpaEntity.withName(entity.getName());
+        jpaEntity.restResource(RestResourceEntity.forEntity(entity));
         jpaEntity.lombokTypeAnnotations(lombok -> lombok
                 .useGetter(this.description.useLombok())
                 .useSetter(this.description.useLombok())
