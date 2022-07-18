@@ -37,7 +37,6 @@ public interface JpaEntity extends JavaBean {
 
     RestResourceEntity restResource();
 
-    JpaEntity restResource(RestResourceEntity restResource);
 
     String entityName();
 
