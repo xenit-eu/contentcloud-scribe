@@ -16,12 +16,9 @@
 
 package eu.xenit.contentcloud.scribe.generator.spring.data;
 
-import eu.xenit.contentcloud.scribe.changeset.Entity;
-import eu.xenit.contentcloud.scribe.generator.spring.data.model.EntityModel;
+import eu.xenit.contentcloud.scribe.generator.spring.data.model.JpaEntityModel;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.JpaEntity;
-import eu.xenit.contentcloud.scribe.generator.spring.data.rest.RestResourceEntity;
 import eu.xenit.contentcloud.scribe.generator.spring.data.source.SpringDataSourceCodeGenerator;
-import eu.xenit.contentcloud.scribe.generator.source.SourceFile;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.JpaRepository;
 import io.spring.initializr.generator.language.SourceStructure;
 import io.spring.initializr.generator.project.ProjectDescription;
@@ -39,7 +36,7 @@ public class SpringDataRepositorySourceCodeProjectContributor implements Project
 
     private final ProjectDescription description;
 
-    private final EntityModel entityModel;
+    private final JpaEntityModel entityModel;
 
     private final SpringDataSourceCodeGenerator sourceGenerator;
 
@@ -47,16 +44,11 @@ public class SpringDataRepositorySourceCodeProjectContributor implements Project
     public void contribute(Path projectRoot) throws IOException {
         SourceStructure mainSource = this.description.getBuildSystem().getMainSource(projectRoot, this.description.getLanguage());
 
-        for (Entity entity : this.entityModel.entities()) {
-            var sourceFile = contributeJpaRepository(entity);
+        for (JpaEntity entity : this.entityModel.entities()) {
+            var repo = JpaRepository.forEntity(entity);
+            var sourceFile = this.sourceGenerator.createSourceFile(repo);
             sourceFile.writeTo(mainSource.getSourcesDirectory());
         }
     }
 
-    private SourceFile contributeJpaRepository(Entity entity) {
-        var jpaEntity = JpaEntity.withName(entity.getName());
-        jpaEntity.restResource(RestResourceEntity.forEntity(entity));
-        var repo = JpaRepository.forEntity(jpaEntity);
-        return this.sourceGenerator.createSourceFile(repo);
-    }
 }

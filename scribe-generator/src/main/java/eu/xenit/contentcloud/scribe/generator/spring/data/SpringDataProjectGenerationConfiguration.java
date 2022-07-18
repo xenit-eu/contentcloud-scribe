@@ -12,9 +12,11 @@ import eu.xenit.contentcloud.scribe.generator.source.types.DataTypeResolver;
 import eu.xenit.contentcloud.scribe.generator.source.types.DefaultDataTypeResolver;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.DefaultSpringDataPackageStructure;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.EntityModel;
+import eu.xenit.contentcloud.scribe.generator.spring.data.model.JpaEntityModel;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.SpringDataPackageStructure;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.EntityDataTypeResolver;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.JpaEntityCustomizer;
+import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.JpaEntityFactory;
 import eu.xenit.contentcloud.scribe.generator.spring.data.source.SpringDataSourceCodeGenerator;
 import eu.xenit.contentcloud.scribe.generator.spring.data.source.java.JacksonAnnotationTypeResolver;
 import eu.xenit.contentcloud.scribe.generator.spring.data.source.java.JavaEntityTypeNameResolver;
@@ -50,6 +52,11 @@ public class SpringDataProjectGenerationConfiguration {
         }
 
         return new EntityModel(changeSet.getEntities());
+    }
+
+    @Bean
+    JpaEntityModel jpaEntityModel(EntityModel entityModel, DataTypeResolver dataTypeResolver, ObjectProvider<JpaEntityCustomizer> entityCustomizers) {
+        return JpaEntityModel.fromModel(entityModel, new JpaEntityFactory(description, dataTypeResolver, entityModel, entityCustomizers));
     }
 
     @Bean
@@ -121,15 +128,12 @@ public class SpringDataProjectGenerationConfiguration {
 
     @Bean
     public SpringDataEntityModelSourceCodeProjectContributor entityModelSourceCodeProjectContributor(
-            EntityModel entityModel, SpringDataSourceCodeGenerator sourceGenerator,
-            SpringDataPackageStructure packageStructure, DataTypeResolver dataTypeResolver,
-            ObjectProvider<JpaEntityCustomizer> jpaEntityCustomizers) {
-        return new SpringDataEntityModelSourceCodeProjectContributor(this.description, entityModel, sourceGenerator,
-                dataTypeResolver, jpaEntityCustomizers);
+            JpaEntityModel entityModel, SpringDataSourceCodeGenerator sourceGenerator) {
+        return new SpringDataEntityModelSourceCodeProjectContributor(this.description, entityModel, sourceGenerator);
     }
 
     @Bean
-    SpringDataRepositorySourceCodeProjectContributor repositoriesSourceCodeProjectContributor(EntityModel entityModel,
+    SpringDataRepositorySourceCodeProjectContributor repositoriesSourceCodeProjectContributor(JpaEntityModel entityModel,
             SpringDataSourceCodeGenerator sourceGenerator) {
         return new SpringDataRepositorySourceCodeProjectContributor(this.description, entityModel, sourceGenerator);
     }
