@@ -7,8 +7,11 @@ import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.JpaEntityFie
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.lombok.LombokTypeAnnotations;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.lombok.LombokTypeAnnotationsConfig;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.lombok.LombokTypeAnnotationsCustomizer;
+import eu.xenit.contentcloud.scribe.generator.spring.data.rest.RestResourceEntity;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 import javax.lang.model.SourceVersion;
@@ -16,6 +19,8 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.Setter;
+import lombok.Singular;
 import lombok.experimental.Accessors;
 import org.springframework.util.StringUtils;
 
@@ -24,6 +29,14 @@ public interface JpaEntity extends JavaBean {
     static JpaEntity withName(String name) {
         return new JpaEntityImpl(name);
     }
+
+    default RestResourceEntity defaultRestResource() {
+        return RestResourceEntity.forSpringDefaults(this);
+    }
+
+    RestResourceEntity restResource();
+
+    JpaEntity restResource(RestResourceEntity restResource);
 
     String entityName();
 
@@ -46,6 +59,10 @@ public interface JpaEntity extends JavaBean {
 class JpaEntityImpl implements JpaEntity {
 
     private final JpaEntityNaming naming;
+
+    @Getter
+    @Setter
+    private RestResourceEntity restResource;
 
     @Getter
     private final JpaEntityIdField id = JpaEntityIdField.named("id");
