@@ -72,21 +72,21 @@ class RestResourceEntityImplTest {
                     .build();
             var restEntity = RestResourceEntity.forEntity(entity);
 
-            assertThat(restEntity.getPathSegment()).isEqualTo("footBridges");
+            assertThat(restEntity.getPathSegment()).isEqualTo("FootBridges");
             assertThat(restEntity.getItemResource()).satisfies(itemResource -> {
-                assertThat(itemResource.getRelationName()).isEqualTo("footBridge");
+                assertThat(itemResource.getRelationName()).isEqualTo("FootBridge");
                 assertThat(itemResource.getUriTemplate()).isEqualTo(
                         ResourceURITemplate.of(
-                                ResourceURIComponent.path("footBridges"),
+                                ResourceURIComponent.path("FootBridges"),
                                 ResourceURIComponent.variable("id")
                         )
                 );
             });
             assertThat(restEntity.getCollectionResource()).satisfies(itemResource -> {
-                assertThat(itemResource.getRelationName()).isEqualTo("footBridges");
+                assertThat(itemResource.getRelationName()).isEqualTo("FootBridges");
                 assertThat(itemResource.getUriTemplate()).isEqualTo(
                         ResourceURITemplate.of(
-                                ResourceURIComponent.path("footBridges")
+                                ResourceURIComponent.path("FootBridges")
                         )
                 );
             });

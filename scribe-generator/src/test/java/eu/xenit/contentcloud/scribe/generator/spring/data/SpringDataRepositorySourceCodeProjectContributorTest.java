@@ -41,7 +41,7 @@ class SpringDataRepositorySourceCodeProjectContributorTest {
         description.setChangeset(Changeset.builder()
                 .entities(List.of(
                         Entity.builder()
-                                .name("Document")
+                                .name("document")
                                 .build()
                 ))
                 .operations(List.of())
