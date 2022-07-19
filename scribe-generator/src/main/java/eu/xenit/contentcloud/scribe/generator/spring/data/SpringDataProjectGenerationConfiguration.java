@@ -17,6 +17,7 @@ import eu.xenit.contentcloud.scribe.generator.spring.data.model.SpringDataPackag
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.EntityDataTypeResolver;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.JpaEntityCustomizer;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.JpaEntityFactory;
+import eu.xenit.contentcloud.scribe.generator.spring.data.rest.RestResourceEntityModel;
 import eu.xenit.contentcloud.scribe.generator.spring.data.source.SpringDataSourceCodeGenerator;
 import eu.xenit.contentcloud.scribe.generator.spring.data.source.java.JacksonAnnotationTypeResolver;
 import eu.xenit.contentcloud.scribe.generator.spring.data.source.java.JavaEntityTypeNameResolver;
@@ -57,6 +58,11 @@ public class SpringDataProjectGenerationConfiguration {
     @Bean
     JpaEntityModel jpaEntityModel(EntityModel entityModel, DataTypeResolver dataTypeResolver, ObjectProvider<JpaEntityCustomizer> entityCustomizers) {
         return JpaEntityModel.fromModel(entityModel, new JpaEntityFactory(description, dataTypeResolver, entityModel, entityCustomizers));
+    }
+
+    @Bean
+    RestResourceEntityModel restResourceEntityModel(EntityModel entityModel) {
+        return RestResourceEntityModel.fromModel(entityModel);
     }
 
     @Bean
