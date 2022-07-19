@@ -5,6 +5,7 @@ import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.JpaEntity;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.JpaEntityFactory;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -26,6 +27,20 @@ public class JpaEntityModel {
 
     public Optional<JpaEntity> find(Entity entity) {
         return Optional.ofNullable(entities.get(entity));
+    }
+
+    public Optional<JpaEntity> findByClassname(String className) {
+        return entities()
+                .stream()
+                .filter(jpaEntity -> Objects.equals(jpaEntity.className(), className))
+                .findAny();
+    }
+
+    public Optional<JpaEntity> findByEntityName(String entityName) {
+        return entities()
+                .stream()
+                .filter(jpaEntity -> Objects.equals(jpaEntity.entityName(), entityName))
+                .findAny();
     }
 
 }
