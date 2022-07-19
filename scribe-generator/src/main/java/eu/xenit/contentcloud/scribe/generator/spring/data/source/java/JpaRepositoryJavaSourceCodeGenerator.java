@@ -47,8 +47,8 @@ class JpaRepositoryJavaSourceCodeGenerator implements JpaRepositorySourceCodeGen
     private AnnotationSpec createRestRepositoryResourceAnnotation(JpaRepository repository) {
         var repositoryRestResourceAnnotation = AnnotationSpec.builder(ClassName.get("org.springframework.data.rest.core.annotation", "RepositoryRestResource"));
 
-        if(repository.defaultRestResource().exported() != repository.restResource().exported()) {
-            repositoryRestResourceAnnotation.addMember("exported", "$L", repository.restResource().exported());
+        if(repository.defaultRestResource().isExported() != repository.restResource().isExported()) {
+            repositoryRestResourceAnnotation.addMember("exported", "$L", repository.restResource().isExported());
         }
         if(!Objects.equals(repository.defaultRestResource().getPathSegment(), repository.restResource().getPathSegment())) {
             repositoryRestResourceAnnotation.addMember("path", "$S", repository.restResource().getPathSegment());
