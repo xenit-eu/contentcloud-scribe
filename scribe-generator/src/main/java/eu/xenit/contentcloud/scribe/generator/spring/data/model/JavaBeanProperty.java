@@ -10,11 +10,7 @@ public interface JavaBeanProperty {
     String normalizedName();
     String fieldName();
 
-    JavaBeanProperty name(String name);
-
     SemanticType type();
-    JavaBeanProperty type(SemanticType type);
-
 
     JavaBeanProperty addAnnotation(Annotation annotation);
     default JavaBeanProperty addAnnotation(SemanticType type) {
