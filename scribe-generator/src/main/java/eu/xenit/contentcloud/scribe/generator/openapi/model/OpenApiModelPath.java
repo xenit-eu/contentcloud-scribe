@@ -14,6 +14,8 @@ public class OpenApiModelPath {
 
     private final List<String> tags;
 
+    private final String operationId;
+
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private final List<OpenApiParameters> parameters = new ArrayList<>();
 
@@ -22,7 +24,8 @@ public class OpenApiModelPath {
 
     private final Map<String, OpenApiResponse> responses = new LinkedHashMap<>();
 
-    public OpenApiModelPath(List<String> tags) {
+    public OpenApiModelPath(List<String> tags, String operationId) {
         this.tags = tags;
+        this.operationId = operationId;
     }
 }
