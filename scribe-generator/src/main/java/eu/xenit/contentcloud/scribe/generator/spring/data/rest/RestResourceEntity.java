@@ -34,7 +34,7 @@ public interface RestResourceEntity {
     }
 
     static RestResourceEntity forSpringDefaults(JpaEntity entity) {
-        return new RestResourceEntityImpl(entity.className());
+        return new RestResourceEntityImpl(StringUtils.uncapitalize(entity.className()));
     }
 
 
@@ -67,13 +67,12 @@ class RestResourceEntityImpl implements RestResourceEntity {
     private final String pathSegment;
 
     public RestResourceEntityImpl(String entityName) {
-        String singularName = StringUtils.uncapitalize(entityName);
-        String pluralName = English.plural(singularName);
+        String pluralName = English.plural(entityName);
         this.pathSegment = pluralName;
 
         var collectionURI = ResourceURITemplate.of(ResourceURIComponent.path(this.pathSegment));
         this.itemResource = new ItemResourceInformation(
-                singularName,
+                entityName,
                 null,
                 collectionURI.slash(ResourceURIComponent.variable("id"))
         );
