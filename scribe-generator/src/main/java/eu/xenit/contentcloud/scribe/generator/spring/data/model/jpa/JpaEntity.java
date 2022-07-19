@@ -1,7 +1,6 @@
 package eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa;
 
 import eu.xenit.contentcloud.scribe.generator.source.types.SemanticType;
-import eu.xenit.contentcloud.scribe.generator.spring.data.model.JavaBeanBuilder;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.JavaBean;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.JavaBeanProperty;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.JpaEntityFieldImpl.JpaFieldNaming;
@@ -11,8 +10,6 @@ import eu.xenit.contentcloud.scribe.generator.spring.data.model.lombok.LombokTyp
 import eu.xenit.contentcloud.scribe.generator.spring.data.rest.RestResourceEntity;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 import javax.lang.model.SourceVersion;
@@ -21,7 +18,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
-import lombok.Singular;
 import lombok.experimental.Accessors;
 import org.springframework.util.StringUtils;
 
@@ -41,13 +37,6 @@ public interface JpaEntity extends JavaBean {
     String entityName();
 
     JpaEntityIdField id();
-
-
-
-    @Override
-    Stream<JpaEntityProperty> fields();
-
-
 }
 
 
@@ -63,11 +52,11 @@ class JpaEntityImpl implements JpaEntity, JpaEntityBuilder {
     @Getter
     private final JpaEntityIdField id = JpaEntityIdField.named("id");
 
-    private final Map<String, JpaEntityProperty> fields = new LinkedHashMap<>();
+    private final Map<String, JavaBeanProperty> fields = new LinkedHashMap<>();
 
     private final LombokTypeAnnotations lombok = new LombokTypeAnnotations();
 
-    public JpaEntityImpl(String name) {
+    JpaEntityImpl(String name) {
         this.naming = JpaEntityNaming.from(name);
     }
 
@@ -110,7 +99,7 @@ class JpaEntityImpl implements JpaEntity, JpaEntityBuilder {
     }
 
     @Override
-    public Stream<JpaEntityProperty> fields() {
+    public Stream<JavaBeanProperty> fields() {
         return this.fields.values().stream();
     }
 

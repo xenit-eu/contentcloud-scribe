@@ -7,13 +7,13 @@ import java.util.stream.Stream;
 import org.atteo.evo.inflector.English;
 import org.springframework.util.StringUtils;
 
-public interface OneToOneRelation extends JpaEntityProperty {
+public interface OneToOneRelation extends JpaEntityRelationship {
 
     OneToOneRelation required(boolean isRequired);
 
 }
 
-class OneToOneRelationImpl extends JpaEntityFieldImpl implements OneToOneRelation {
+class OneToOneRelationImpl extends JpaEntityRelationshipImpl implements OneToOneRelation {
 
     private boolean required = false;
 

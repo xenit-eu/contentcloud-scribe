@@ -5,7 +5,6 @@ import eu.xenit.contentcloud.scribe.generator.source.types.SemanticType;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.JavaBeanProperty;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.Objects;

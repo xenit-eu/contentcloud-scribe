@@ -5,12 +5,12 @@ import eu.xenit.contentcloud.scribe.generator.source.types.SemanticType;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-public interface ManyToOneRelation extends JpaEntityProperty {
+public interface ManyToOneRelation extends JpaEntityRelationship {
 
     ManyToOneRelation required(boolean isRequired);
 }
 
-class ManyToOneRelationImpl extends JpaEntityFieldImpl implements ManyToOneRelation {
+class ManyToOneRelationImpl extends JpaEntityRelationshipImpl implements ManyToOneRelation {
 
     private boolean isRequired = false;
 

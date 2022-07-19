@@ -11,12 +11,12 @@ import org.atteo.evo.inflector.English;
 import org.springframework.data.util.ParsingUtils;
 import org.springframework.util.StringUtils;
 
-public interface OneToManyRelation extends JpaEntityProperty {
+public interface OneToManyRelation extends JpaEntityRelationship {
 
 
 }
 
-class OneToManyWithJoinColumnRelationImpl extends JpaEntityFieldImpl implements OneToManyRelation {
+class OneToManyWithJoinColumnRelationImpl extends JpaEntityRelationshipImpl implements OneToManyRelation {
 
     @NonNull
     private final Supplier<String> sourceEntityName;
