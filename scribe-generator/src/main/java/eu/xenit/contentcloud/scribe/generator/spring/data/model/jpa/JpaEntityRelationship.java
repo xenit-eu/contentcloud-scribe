@@ -17,6 +17,9 @@ import org.springframework.lang.Nullable;
 
 public interface JpaEntityRelationship extends JavaBeanProperty {
 
+    default boolean isBidirectional() {
+        return false;
+    }
 }
 
 interface JpaEntityRelationshipBuilder {
@@ -51,6 +54,15 @@ class JpaEntityRelationshipImpl implements JpaEntityRelationship, JpaEntityRelat
             this.addAnnotation(Annotation.withType(JacksonAnnotations.JsonProperty)
                     .withMembers(members -> {
                         members.put("value", name);
+                    }));
+        }
+
+        // if the field has been renamed, add a `@RestResource` annotation
+        if (!Objects.equals(name, this.naming.fieldName())) {
+            this.addAnnotation(Annotation.withType(SpringDataRestAnnotations.RestResource)
+                    .withMembers(members -> {
+                        members.put("rel", name);
+                        members.put("path", name);
                     }));
         }
     }

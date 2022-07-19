@@ -131,6 +131,15 @@ class JpaEntityImpl implements JpaEntity, JpaEntityBuilder {
     }
 
     @Override
+    public JpaEntityBuilder addManyToManyRelation(String fieldName, SemanticType targetType,
+            Consumer<ManyToManyRelation> customizer) {
+        var relation = new ManyToManyRelationImpl(targetType, fieldName);
+        customizer.accept(relation);
+        this.fields.put(relation.normalizedName(), relation);
+        return this;
+    }
+
+    @Override
     public JpaEntityBuilder lombokTypeAnnotations(Consumer<LombokTypeAnnotationsCustomizer> customizer) {
         customizer.accept(this.lombok);
         return this;

@@ -19,4 +19,6 @@ public interface JpaEntityBuilder extends JavaBeanBuilder<JpaEntityBuilder>, Jpa
 
     JpaEntityBuilder addManyToOneRelation(String fieldName, SemanticType targetClass,
             Consumer<ManyToOneRelation> customizer);
+
+    JpaEntityBuilder addManyToManyRelation(String fieldName, SemanticType targetType, Consumer<ManyToManyRelation> o);
 }
