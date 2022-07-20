@@ -28,6 +28,8 @@ public interface RestResourceEntity {
         return true;
     }
 
+    String getModelEntityName();
+
     /**
      * The path segment under which this resource is to be exported.
      *
@@ -57,10 +59,10 @@ public interface RestResourceEntity {
     }
 
     static RestResourceEntity forEntity(Entity entity) {
-        var restResourceEntity = new RestResourceEntityImpl(entity.getName());
+        var restResourceEntity = new RestResourceEntityImpl(entity.getName(), entity.getName());
 
         for (Attribute attribute : entity.getAttributes()) {
-            restResourceEntity.addAttribute(attribute.getName(), attribute.getName());
+            restResourceEntity.addAttribute(attribute.getName(), attribute.getName(), attribute.isIndexed());
         }
 
         for (Relation relation : entity.getRelations()) {
@@ -71,12 +73,12 @@ public interface RestResourceEntity {
     }
 
     static RestResourceEntity forSpringDefaults(JpaEntity entity) {
-        var restResourceEntity = new RestResourceEntityImpl(StringUtils.uncapitalize(entity.className()));
+        var restResourceEntity = new RestResourceEntityImpl(entity.entityName(), StringUtils.uncapitalize(entity.className()));
 
         entity.fields()
                 .filter(field -> field instanceof JpaEntityProperty)
                 .forEachOrdered(field -> {
-                    restResourceEntity.addRelation(field.name(), field.fieldName());
+                    restResourceEntity.addAttribute(field.name(), field.fieldName(), false);
                 });
         entity.fields()
                 .filter(field -> field instanceof ManyToOneRelation || field instanceof OneToManyRelation || field instanceof OneToOneRelation)
@@ -114,19 +116,23 @@ class RestResourceEntityImpl implements RestResourceEntity {
     private final CollectionResourceInformation collectionResource;
 
     @Getter
+    private final String modelEntityName;
+
+    @Getter
     private final String pathSegment;
 
     private final Map<String, RestResourceAttribute> attributes = new LinkedHashMap<>();
 
     private final Map<String, RestResourceRelation> relations = new LinkedHashMap<>();
 
-    public RestResourceEntityImpl(String entityName) {
-        String pluralName = English.plural(entityName);
+    public RestResourceEntityImpl(String modelEntityName, String restEntityName) {
+        this.modelEntityName = modelEntityName;
+        String pluralName = English.plural(restEntityName);
         this.pathSegment = pluralName;
 
         var collectionURI = ResourceURITemplate.of(ResourceURIComponent.path(this.pathSegment));
         this.itemResource = new ItemResourceInformation(
-                entityName,
+                restEntityName,
                 null,
                 collectionURI.slash(ResourceURIComponent.variable("id"))
         );
@@ -138,8 +144,8 @@ class RestResourceEntityImpl implements RestResourceEntity {
         );
     }
 
-    void addAttribute(String modelName, String propertyName) {
-        attributes.put(modelName, new RestResourceAttributeImpl(true, modelName, propertyName));
+    void addAttribute(String modelName, String propertyName, boolean searchable) {
+        attributes.put(modelName, new RestResourceAttributeImpl(true, searchable, modelName, propertyName));
     }
 
     void addRelation(String modelName, String relationName) {

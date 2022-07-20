@@ -4,6 +4,7 @@ import lombok.Value;
 
 public interface RestResourceAttribute {
     boolean isExported();
+    boolean isSearchable();
     String getModelAttributeName();
     String getRestAttributeName();
 }
@@ -11,5 +12,6 @@ public interface RestResourceAttribute {
 @Value
 class RestResourceAttributeImpl implements RestResourceAttribute {
     boolean exported;
+    boolean searchable;
     String modelAttributeName, restAttributeName;
 }
