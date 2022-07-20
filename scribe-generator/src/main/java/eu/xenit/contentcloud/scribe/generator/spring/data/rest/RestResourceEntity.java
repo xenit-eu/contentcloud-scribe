@@ -58,6 +58,18 @@ public interface RestResourceEntity {
         return findRelation(relation.getName());
     }
 
+    default Optional<? extends RestResourceEntityComponent> findComponent(String name) {
+        var relation = findRelation(name);
+        if(relation.isPresent()) {
+            return relation;
+        }
+        return findAttribute(name);
+    }
+
+    default Optional<? extends RestResourceEntityComponent> findComponent(JpaEntityProperty property) {
+        return findComponent(property.name());
+    }
+
     static RestResourceEntity forEntity(Entity entity) {
         var restResourceEntity = new RestResourceEntityImpl(entity.getName(), entity.getName());
 
@@ -149,7 +161,7 @@ class RestResourceEntityImpl implements RestResourceEntity {
     }
 
     void addRelation(String modelName, String relationName) {
-        relations.put(modelName, new RestResourceRelationImpl(true, modelName, relationName, itemResource.getUriTemplate().slash(ResourceURIComponent.path(relationName))));
+        relations.put(modelName, new RestResourceRelationImpl(true, modelName, relationName, relationName, itemResource.getUriTemplate()));
     }
 
     @Override

@@ -15,9 +15,14 @@ import eu.xenit.contentcloud.scribe.generator.language.java.JavaTypeName;
 import eu.xenit.contentcloud.scribe.generator.source.SourceFile;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.JavaBeanProperty;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.SpringDataPackageStructure;
+import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.JacksonAnnotations;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.JpaEntity;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.JpaEntityProperty;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.JpaEntitySourceCodeGenerator;
+import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.SpringDataRestAnnotations;
+import eu.xenit.contentcloud.scribe.generator.spring.data.rest.RestResourceEntityComponent;
+import java.util.Objects;
+import java.util.Optional;
 import javax.lang.model.element.Modifier;
 import lombok.AccessLevel;
 import lombok.NonNull;
@@ -73,9 +78,11 @@ class JpaEntityJavaSourceCodeGenerator implements JpaEntitySourceCodeGenerator {
                 field.fieldName(),
                 Modifier.PRIVATE);
 
+        var maybeRestField = jpaEntity.restResource().findComponent(field);
+        var maybeDefaultRestField = jpaEntity.defaultRestResource().findComponent(field);
+
         this.addGetter(jpaEntity, type, fieldSpec);
         this.addSetter(jpaEntity, type, fieldSpec);
-
 
         field.annotations().forEach(annotationType -> {
             var annotationClassName = typeResolver.resolve(annotationType.getType());
@@ -88,6 +95,44 @@ class JpaEntityJavaSourceCodeGenerator implements JpaEntitySourceCodeGenerator {
             });
 
             fieldSpec.addAnnotation(annotation.build());
+        });
+
+        maybeRestField.flatMap(RestResourceEntityComponent::asAttribute).ifPresent(restResourceAttribute -> {
+            maybeDefaultRestField.flatMap(RestResourceEntityComponent::asAttribute).ifPresent(defaultRestResourceAttribute -> {
+                if(!Objects.equals(restResourceAttribute.getRestAttributeName(), defaultRestResourceAttribute.getRestAttributeName())) {
+                    var jsonPropertyTypeName = typeResolver.resolve(JacksonAnnotations.JsonProperty).getTypeName();
+                    var jsonPropertyAnnotation = AnnotationSpec.builder((ClassName) jsonPropertyTypeName);
+                    jsonPropertyAnnotation.addMember("value", "$S", restResourceAttribute.getRestAttributeName());
+                    fieldSpec.addAnnotation(jsonPropertyAnnotation.build());
+                }
+                if(!Objects.equals(restResourceAttribute.isExported(), defaultRestResourceAttribute.isExported())) {
+                    var jsonIgnoreTypeName = typeResolver.resolve(JacksonAnnotations.JsonIgnore).getTypeName();
+                    var jsonIgnoreAnnotation = AnnotationSpec.builder((ClassName) jsonIgnoreTypeName);
+                    fieldSpec.addAnnotation(jsonIgnoreAnnotation.build());
+                }
+            });
+        });
+
+        maybeRestField.flatMap(RestResourceEntityComponent::asRelation).ifPresent(restResourceRelation -> {
+            maybeDefaultRestField.flatMap(RestResourceEntityComponent::asRelation).ifPresent(defaultRestResourceRelation -> {
+                var restResourceTypeName = typeResolver.resolve(SpringDataRestAnnotations.RestResource).getTypeName();
+                var restResourceAnnotationBuilder = AnnotationSpec.builder((ClassName) restResourceTypeName);
+                if(!Objects.equals(restResourceRelation.getRestRelationName(), defaultRestResourceRelation.getRestRelationName())) {
+                    restResourceAnnotationBuilder.addMember("rel", "$S", restResourceRelation.getRestRelationName());
+                }
+                if(!Objects.equals(restResourceRelation.getPathSegment(), defaultRestResourceRelation.getPathSegment())) {
+                    restResourceAnnotationBuilder.addMember("path", "$S", restResourceRelation.getPathSegment());
+                }
+                if(!Objects.equals(restResourceRelation.isExported(), defaultRestResourceRelation.isExported())) {
+                    restResourceAnnotationBuilder.addMember("exported", "$L", restResourceRelation.isExported());
+                }
+
+                var restResourceAnnotation = restResourceAnnotationBuilder.build();
+
+                if(!restResourceAnnotation.members.isEmpty()) {
+                    fieldSpec.addAnnotation(restResourceAnnotation);
+                }
+            });
         });
 
         type.addField(fieldSpec.build());

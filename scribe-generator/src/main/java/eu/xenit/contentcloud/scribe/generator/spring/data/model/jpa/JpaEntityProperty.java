@@ -48,14 +48,6 @@ class JpaEntityFieldImpl implements JpaEntityProperty {
     JpaEntityFieldImpl(SemanticType fieldType, String name) {
         this.type = fieldType;
         this.naming = JpaFieldNaming.from(name);
-
-        // if the field has been renamed, add a `@JsonProperty` annotation
-        if (!Objects.equals(name, this.naming.fieldName())) {
-            this.addAnnotation(Annotation.withType(JacksonAnnotations.JsonProperty)
-                    .withMembers(members -> {
-                        members.put("value", name);
-                    }));
-        }
     }
 
     @Override
