@@ -5,6 +5,7 @@ import eu.xenit.contentcloud.scribe.generator.ScribeProjectDescription;
 import eu.xenit.contentcloud.scribe.generator.openapi.model.*;
 import eu.xenit.contentcloud.scribe.generator.openapi.model.OpenApiParameters.ParameterType;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.EntityModel;
+import eu.xenit.contentcloud.scribe.generator.spring.data.rest.RestResourceEntity;
 import io.spring.initializr.generator.language.SourceStructure;
 import io.spring.initializr.generator.project.contributor.ProjectContributor;
 import java.io.BufferedWriter;
@@ -16,7 +17,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
-import org.atteo.evo.inflector.English;
 import org.springframework.util.StringUtils;
 
 @RequiredArgsConstructor
@@ -86,16 +86,8 @@ public class OpenApiProjectContributor implements ProjectContributor {
         List<String> tags = List.of(entity.getName());
         Map<String, OpenApiModelPath> pathMap = new LinkedHashMap<>();
 
-        var pathGet = new OpenApiModelPath(tags, "get-" + modifiedName(entity.getName()));
-        var attributes = entity.getAttributes();
-        for (var attribute : attributes) {
-            if (attribute.isIndexed()) {
-                pathGet.getParameters().addAll(List.of(
-                        new OpenApiParameters(attribute.getName(), ParameterType.QUERY, false, OpenApiDataTypes.of(attribute.getType()))
-                ));
-            }
-        }
-
+//        var pathGet = new OpenApiModelPath(tags, "get-" + modifiedName(entity.getName()));
+        var pathGet = new OpenApiModelPath(tags, "get-" + RestResourceEntity.forEntity(entity).getPathSegment());
         var attributes = entity.getAttributes();
         for (var attribute : attributes) {
             if (attribute.isIndexed()) {
@@ -117,7 +109,7 @@ public class OpenApiProjectContributor implements ProjectContributor {
         ));
         pathMap.put("get", pathGet);
 
-        var pathPost = new OpenApiModelPath(tags, "create-" + modifiedName(entity.getName()));
+        var pathPost = new OpenApiModelPath(tags, "create-" + RestResourceEntity.forEntity(entity).getPathSegment());
         pathPost.setRequestBody(new OpenApiRequestBody(
                 "Create " + entity.getName(), true,
                 linkedMapOf("application/json", new OpenApiMediaTypeObject(createOrReferencePostModel(model, entity))))
@@ -129,14 +121,14 @@ public class OpenApiProjectContributor implements ProjectContributor {
         ));
         pathMap.put("post", pathPost);
 
-        model.getPaths().put("/" + modifiedName(entity.getName()), pathMap);
+        model.getPaths().put("/" + RestResourceEntity.forEntity(entity).getPathSegment(), pathMap);
     }
 
     private void contributeItemResources(Entity entity, OpenApiModel model) {
         List<String> tags = List.of(entity.getName());
         Map<String, OpenApiModelPath> pathMap = new LinkedHashMap<>();
 
-        var pathGet = new OpenApiModelPath(tags, "get-" + StringUtils.uncapitalize(entity.getName()));
+        var pathGet = new OpenApiModelPath(tags, "get-" + RestResourceEntity.forEntity(entity).getItemResource().getRelationName());
         pathGet.getParameters().addAll(List.of(
                 new OpenApiParameters("id", ParameterType.PATH, true, OpenApiDataTypes.STRING)
         ));
@@ -146,7 +138,7 @@ public class OpenApiProjectContributor implements ProjectContributor {
         ));
         pathMap.put("get", pathGet);
 
-        var pathPut = new OpenApiModelPath(tags, "update-" + StringUtils.uncapitalize(entity.getName()));
+        var pathPut = new OpenApiModelPath(tags, "update-" + RestResourceEntity.forEntity(entity).getItemResource().getRelationName());
         pathPut.getParameters().addAll(List.of(
                 new OpenApiParameters("id", ParameterType.PATH, true, OpenApiDataTypes.STRING)
         ));
@@ -161,7 +153,7 @@ public class OpenApiProjectContributor implements ProjectContributor {
         ));
         pathMap.put("put", pathPut);
 
-        var pathPatch = new OpenApiModelPath(tags, "patch-" + StringUtils.uncapitalize(entity.getName()));
+        var pathPatch = new OpenApiModelPath(tags, "patch-" + RestResourceEntity.forEntity(entity).getItemResource().getRelationName());
         pathPatch.getParameters().addAll(List.of(
                 new OpenApiParameters("id", ParameterType.PATH, true, OpenApiDataTypes.STRING)
         ));
@@ -176,7 +168,7 @@ public class OpenApiProjectContributor implements ProjectContributor {
         ));
         pathMap.put("patch", pathPatch);
 
-        var pathDelete = new OpenApiModelPath(tags, "delete-" + StringUtils.uncapitalize(entity.getName()));
+        var pathDelete = new OpenApiModelPath(tags, "delete-" + RestResourceEntity.forEntity(entity).getItemResource().getRelationName());
         pathDelete.getParameters().addAll(List.of(
                 new OpenApiParameters("id", ParameterType.PATH, true, OpenApiDataTypes.STRING)
         ));
@@ -186,7 +178,7 @@ public class OpenApiProjectContributor implements ProjectContributor {
         ));
         pathMap.put("delete", pathDelete);
 
-        model.getPaths().put("/" + modifiedName(entity.getName()) + "/{id}", pathMap);
+        model.getPaths().put("/" + RestResourceEntity.forEntity(entity).getPathSegment() + "/{id}", pathMap);
     }
 
     private void contributeContentAttribute(Entity entity, OpenApiModel model) {
@@ -227,7 +219,7 @@ public class OpenApiProjectContributor implements ProjectContributor {
                 ));
                 pathMap.put("delete", pathDelete);
 
-                model.getPaths().put("/" + modifiedName(entity.getName()) + "/{id}/" +
+                model.getPaths().put("/" + RestResourceEntity.forEntity(entity).getPathSegment() + "/{id}/" +
                         StringUtils.uncapitalize(attribute.getName()), pathMap);
             }
         }
@@ -288,7 +280,7 @@ public class OpenApiProjectContributor implements ProjectContributor {
             ));
             pathMap.put("delete", pathDelete);
 
-            model.getPaths().put("/" + modifiedName(entity.getName()) + "/{id}/" +
+            model.getPaths().put("/" + RestResourceEntity.forEntity(entity).getPathSegment() + "/{id}/" +
                     StringUtils.uncapitalize(relation.getName()), pathMap);
         }
     }
@@ -390,7 +382,7 @@ public class OpenApiProjectContributor implements ProjectContributor {
             entitySchema.getProperties().putAll(attributesMap);
             LinkedHashMap<String, OpenApiSchema> linksMap = linkedMapOf(
                     "self", new OpenApiReferenceObject("#/components/schemas/Link"),
-                    StringUtils.uncapitalize(entity.getName()), new OpenApiReferenceObject("#/components/schemas/Link")
+                    RestResourceEntity.forEntity(entity).getItemResource().getRelationName(), new OpenApiReferenceObject("#/components/schemas/Link")
             );
             for (var attribute : attributes) {
                 if (attribute.getType().equals("CONTENT")) {
@@ -411,21 +403,21 @@ public class OpenApiProjectContributor implements ProjectContributor {
 
     private OpenApiReferenceObject createOrReferenceCollectionModel(OpenApiModel model, Entity entity) {
         // add collection item to model.components, before returning the reference
-        if (!model.getComponents().getSchemas().containsKey(modifiedName(entity.getName()) + "Collection")) {
+        if (!model.getComponents().getSchemas().containsKey(RestResourceEntity.forEntity(entity).getPathSegment() + "Collection")) {
             var collectionSchema = new OpenApiObjectDataType();
             collectionSchema.getProperties().putAll(linkedMapOf(
                     "_embedded", new OpenApiObjectDataType(linkedMapOf(
-                            modifiedName(entity.getName()), new OpenApiArrayDataType(createOrReferenceResponseModel(model, entity)))),
+                            RestResourceEntity.forEntity(entity).getPathSegment(), new OpenApiArrayDataType(createOrReferenceResponseModel(model, entity)))),
                     "_links", new OpenApiObjectDataType(linkedMapOf(
                             "self", new OpenApiReferenceObject("#/components/schemas/Link"),
                             "profile", new OpenApiReferenceObject("#/components/schemas/Link"))
                     ),
                     "page", new OpenApiReferenceObject("#/components/schemas/page")
             ));
-            model.getComponents().getSchemas().put(modifiedName(entity.getName()) + "Collection", collectionSchema);
+            model.getComponents().getSchemas().put(RestResourceEntity.forEntity(entity).getPathSegment() + "Collection", collectionSchema);
         }
 
-        return new OpenApiReferenceObject("#/components/schemas/" + modifiedName(entity.getName()) + "Collection");
+        return new OpenApiReferenceObject("#/components/schemas/" + RestResourceEntity.forEntity(entity).getPathSegment() + "Collection");
     }
 
     private void componentInitialization(OpenApiModel model) {
@@ -472,7 +464,4 @@ public class OpenApiProjectContributor implements ProjectContributor {
         return map;
     }
 
-    private static String modifiedName(String myString) {
-        return English.plural(StringUtils.uncapitalize(myString));
-    }
 }
