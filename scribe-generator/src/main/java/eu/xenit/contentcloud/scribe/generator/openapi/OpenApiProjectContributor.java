@@ -86,8 +86,9 @@ public class OpenApiProjectContributor implements ProjectContributor {
         List<String> tags = List.of(entity.getName());
         Map<String, OpenApiModelPath> pathMap = new LinkedHashMap<>();
 
-//        var pathGet = new OpenApiModelPath(tags, "get-" + modifiedName(entity.getName()));
-        var pathGet = new OpenApiModelPath(tags, "get-" + RestResourceEntity.forEntity(entity).getPathSegment());
+//        var pathGet = new OpenApiModelPath(tags, "get-" + RestResourceEntity.forEntity(entity).getPathSegment());
+        var pathGet = new OpenApiModelPath(tags, "get-" + RestResourceEntity.forEntity(entity).getCollectionResource().getRelationName());
+
         var attributes = entity.getAttributes();
         for (var attribute : attributes) {
             if (attribute.isIndexed()) {
@@ -109,7 +110,7 @@ public class OpenApiProjectContributor implements ProjectContributor {
         ));
         pathMap.put("get", pathGet);
 
-        var pathPost = new OpenApiModelPath(tags, "create-" + RestResourceEntity.forEntity(entity).getPathSegment());
+        var pathPost = new OpenApiModelPath(tags, "create-" + RestResourceEntity.forEntity(entity).getCollectionResource().getRelationName());
         pathPost.setRequestBody(new OpenApiRequestBody(
                 "Create " + entity.getName(), true,
                 linkedMapOf("application/json", new OpenApiMediaTypeObject(createOrReferencePostModel(model, entity))))
@@ -121,7 +122,7 @@ public class OpenApiProjectContributor implements ProjectContributor {
         ));
         pathMap.put("post", pathPost);
 
-        model.getPaths().put("/" + RestResourceEntity.forEntity(entity).getPathSegment(), pathMap);
+        model.getPaths().put("/" + RestResourceEntity.forEntity(entity).getCollectionResource().getUriTemplate().toUriTemplate(), pathMap);
     }
 
     private void contributeItemResources(Entity entity, OpenApiModel model) {
@@ -178,7 +179,7 @@ public class OpenApiProjectContributor implements ProjectContributor {
         ));
         pathMap.put("delete", pathDelete);
 
-        model.getPaths().put("/" + RestResourceEntity.forEntity(entity).getPathSegment() + "/{id}", pathMap);
+        model.getPaths().put("/" + RestResourceEntity.forEntity(entity).getItemResource().getUriTemplate().toUriTemplate(), pathMap);
     }
 
     private void contributeContentAttribute(Entity entity, OpenApiModel model) {
@@ -188,7 +189,7 @@ public class OpenApiProjectContributor implements ProjectContributor {
 
         for (var attribute : attributes) {
             if (attribute.getType().equals("CONTENT")) {
-                var pathGet = new OpenApiModelPath(tags, "get-" + StringUtils.uncapitalize(attribute.getName()));
+                var pathGet = new OpenApiModelPath(tags, "get-" + attribute.getName());
                 pathGet.getParameters().addAll(List.of(
                         new OpenApiParameters("id", ParameterType.PATH, true, OpenApiDataTypes.STRING)
                 ));
@@ -198,7 +199,7 @@ public class OpenApiProjectContributor implements ProjectContributor {
                 ));
                 pathMap.put("get", pathGet);
 
-                var pathPut = new OpenApiModelPath(tags, "update-" + StringUtils.uncapitalize(attribute.getName()));
+                var pathPut = new OpenApiModelPath(tags, "update-" + attribute.getName());
                 pathPut.getParameters().addAll(List.of(
                         new OpenApiParameters("id", ParameterType.PATH, true, OpenApiDataTypes.STRING)
                 ));
@@ -210,7 +211,7 @@ public class OpenApiProjectContributor implements ProjectContributor {
                 );
                 pathMap.put("put", pathPut);
 
-                var pathDelete = new OpenApiModelPath(tags, "delete-" + StringUtils.uncapitalize(attribute.getName()));
+                var pathDelete = new OpenApiModelPath(tags, "delete-" + attribute.getName());
                 pathDelete.getParameters().addAll(List.of(
                         new OpenApiParameters("id", ParameterType.PATH, true, OpenApiDataTypes.STRING)
                 ));
@@ -220,7 +221,7 @@ public class OpenApiProjectContributor implements ProjectContributor {
                 pathMap.put("delete", pathDelete);
 
                 model.getPaths().put("/" + RestResourceEntity.forEntity(entity).getPathSegment() + "/{id}/" +
-                        StringUtils.uncapitalize(attribute.getName()), pathMap);
+                        attribute.getName(), pathMap);
             }
         }
     }
@@ -231,7 +232,7 @@ public class OpenApiProjectContributor implements ProjectContributor {
 
         var relations = entity.getRelations();
         for (var relation : relations) {
-            var pathGet = new OpenApiModelPath(tags, "get-" + StringUtils.uncapitalize(relation.getName()));
+            var pathGet = new OpenApiModelPath(tags, "get-" + relation.getName());
             pathGet.getParameters().addAll(List.of(
                     new OpenApiParameters("id", ParameterType.PATH, true, OpenApiDataTypes.STRING)
             ));
@@ -242,7 +243,7 @@ public class OpenApiProjectContributor implements ProjectContributor {
             ));
             pathMap.put("get", pathGet);
 
-            var pathPut = new OpenApiModelPath(tags, "update-" + StringUtils.uncapitalize(relation.getName()));
+            var pathPut = new OpenApiModelPath(tags, "update-" + relation.getName());
             pathPut.getParameters().addAll(List.of(
                     new OpenApiParameters("id", ParameterType.PATH, true, OpenApiDataTypes.STRING)
             ));
@@ -256,7 +257,7 @@ public class OpenApiProjectContributor implements ProjectContributor {
             );
             pathMap.put("put", pathPut);
 
-            var pathPost = new OpenApiModelPath(tags, "create-" + StringUtils.uncapitalize(relation.getName()));
+            var pathPost = new OpenApiModelPath(tags, "create-" + relation.getName());
             pathPost.getParameters().addAll(List.of(
                     new OpenApiParameters("id", ParameterType.PATH, true, OpenApiDataTypes.STRING)
             ));
@@ -270,7 +271,7 @@ public class OpenApiProjectContributor implements ProjectContributor {
             );
             pathMap.put("post", pathPost);
 
-            var pathDelete = new OpenApiModelPath(tags, "delete-" + StringUtils.uncapitalize(relation.getName()));
+            var pathDelete = new OpenApiModelPath(tags, "delete-" + relation.getName());
             pathDelete.getParameters().addAll(List.of(
                     new OpenApiParameters("id", ParameterType.PATH, true, OpenApiDataTypes.STRING)
             ));
@@ -281,7 +282,7 @@ public class OpenApiProjectContributor implements ProjectContributor {
             pathMap.put("delete", pathDelete);
 
             model.getPaths().put("/" + RestResourceEntity.forEntity(entity).getPathSegment() + "/{id}/" +
-                    StringUtils.uncapitalize(relation.getName()), pathMap);
+                    relation.getName(), pathMap);
         }
     }
 
@@ -292,7 +293,7 @@ public class OpenApiProjectContributor implements ProjectContributor {
             LinkedHashMap<String, OpenApiSchema> attributesMap = linkedMapOf(null, null);
             for (var attribute : attributes) {
                 if (!(attribute.getType().equals("CONTENT"))) {
-                    attributesMap.put(StringUtils.uncapitalize(attribute.getName()), OpenApiDataTypes.of(attribute.getType()));
+                    attributesMap.put(attribute.getName(), OpenApiDataTypes.of(attribute.getType()));
                 }
                 if (attribute.isRequired()) {
                     requestSchema.getRequired().add(attribute.getName());
@@ -301,7 +302,7 @@ public class OpenApiProjectContributor implements ProjectContributor {
             var relations = entity.getRelations();
             for (var relation: relations) {
                 if (!(relation.isManyTargetPerSource())) {
-                    attributesMap.put(StringUtils.uncapitalize(relation.getName()), OpenApiDataTypes.STRING);
+                    attributesMap.put(relation.getName(), OpenApiDataTypes.STRING);
                 }
             }
             requestSchema.getProperties().putAll(attributesMap);
@@ -318,7 +319,7 @@ public class OpenApiProjectContributor implements ProjectContributor {
             LinkedHashMap<String, OpenApiSchema> attributesMap = linkedMapOf(null, null);
             for (var attribute : attributes) {
                 if (!(attribute.getType().equals("CONTENT")) && !attribute.isNaturalId()) {
-                    attributesMap.put(StringUtils.uncapitalize(attribute.getName()), OpenApiDataTypes.of(attribute.getType()));
+                    attributesMap.put(attribute.getName(), OpenApiDataTypes.of(attribute.getType()));
                 }
                 if (attribute.isRequired() && !attribute.isNaturalId()) {
                     requestSchema.getRequired().add(attribute.getName());
@@ -327,7 +328,7 @@ public class OpenApiProjectContributor implements ProjectContributor {
             var relations = entity.getRelations();
             for (var relation: relations) {
                 if (!(relation.isManyTargetPerSource())) {
-                    attributesMap.put(StringUtils.uncapitalize(relation.getName()), OpenApiDataTypes.STRING);
+                    attributesMap.put(relation.getName(), OpenApiDataTypes.STRING);
                 }
             }
             requestSchema.getProperties().putAll(attributesMap);
@@ -344,13 +345,13 @@ public class OpenApiProjectContributor implements ProjectContributor {
             LinkedHashMap<String, OpenApiSchema> attributesMap = linkedMapOf(null, null);
             for (var attribute : attributes) {
                 if (!(attribute.getType().equals("CONTENT")) && !attribute.isNaturalId()) {
-                    attributesMap.put(StringUtils.uncapitalize(attribute.getName()), OpenApiDataTypes.of(attribute.getType()));
+                    attributesMap.put(attribute.getName(), OpenApiDataTypes.of(attribute.getType()));
                 }
             }
             var relations = entity.getRelations();
             for (var relation: relations) {
                 if (!(relation.isManyTargetPerSource())) {
-                    attributesMap.put(StringUtils.uncapitalize(relation.getName()), OpenApiDataTypes.STRING);
+                    attributesMap.put(relation.getName(), OpenApiDataTypes.STRING);
                 }
             }
             requestSchema.getProperties().putAll(attributesMap);
@@ -371,12 +372,12 @@ public class OpenApiProjectContributor implements ProjectContributor {
             LinkedHashMap<String, OpenApiSchema> attributesMap = linkedMapOf(null, null);
             for (var attribute : attributes) {
                 if (!(attribute.getType().equals("CONTENT"))) {
-                    attributesMap.put(StringUtils.uncapitalize(attribute.getName()), OpenApiDataTypes.of(attribute.getType()));
+                    attributesMap.put(attribute.getName(), OpenApiDataTypes.of(attribute.getType()));
                 } else {
-                    attributesMap.put(StringUtils.uncapitalize(attribute.getName()) + "Id", OpenApiDataTypes.STRING);
-                    attributesMap.put(StringUtils.uncapitalize(attribute.getName()) + "Length", OpenApiDataTypes.INTEGER);
-                    attributesMap.put(StringUtils.uncapitalize(attribute.getName()) + "Mimetype", OpenApiDataTypes.STRING);
-                    attributesMap.put(StringUtils.uncapitalize(attribute.getName()) + "Filename", OpenApiDataTypes.STRING);
+                    attributesMap.put(attribute.getName() + "Id", OpenApiDataTypes.STRING);
+                    attributesMap.put(attribute.getName() + "Length", OpenApiDataTypes.INTEGER);
+                    attributesMap.put(attribute.getName() + "Mimetype", OpenApiDataTypes.STRING);
+                    attributesMap.put(attribute.getName() + "Filename", OpenApiDataTypes.STRING);
                 }
             }
             entitySchema.getProperties().putAll(attributesMap);
@@ -386,12 +387,12 @@ public class OpenApiProjectContributor implements ProjectContributor {
             );
             for (var attribute : attributes) {
                 if (attribute.getType().equals("CONTENT")) {
-                    linksMap.put(StringUtils.uncapitalize(attribute.getName()), new OpenApiReferenceObject("#/components/schemas/Link"));
+                    linksMap.put(attribute.getName(), new OpenApiReferenceObject("#/components/schemas/Link"));
                 }
             }
             var relations = entity.getRelations();
             for (var relation : relations) {
-                linksMap.put(StringUtils.uncapitalize(relation.getName()), new OpenApiReferenceObject("#/components/schemas/Link"));
+                linksMap.put(relation.getName(), new OpenApiReferenceObject("#/components/schemas/Link"));
             }
             entitySchema.getProperties().putAll(linkedMapOf("_links", new OpenApiObjectDataType(linksMap)));
             model.getComponents().getSchemas().put(entity.getName() + "Response", entitySchema);
