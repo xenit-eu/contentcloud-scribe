@@ -3,6 +3,7 @@ package eu.xenit.contentcloud.scribe.generator.spring.data.model;
 import eu.xenit.contentcloud.scribe.changeset.Entity;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.JpaEntity;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.JpaEntityFactory;
+import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.JpaRepository;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
@@ -23,6 +24,12 @@ public class JpaEntityModel {
 
     public Collection<JpaEntity> entities() {
         return entities.values();
+    }
+
+    public Collection<JpaRepository> repositories() {
+        return entities().stream()
+                .map(JpaRepository::forEntity)
+                .toList();
     }
 
     public Optional<JpaEntity> find(Entity entity) {
