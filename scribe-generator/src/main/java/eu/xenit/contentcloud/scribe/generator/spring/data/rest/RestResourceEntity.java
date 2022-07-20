@@ -12,6 +12,7 @@ import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.OneToManyRel
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.OneToOneRelation;
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import lombok.Getter;
@@ -73,14 +74,14 @@ public interface RestResourceEntity {
     }
 
     static RestResourceEntity forEntity(Entity entity) {
-        var restResourceEntity = new RestResourceEntityImpl(entity.getName(), entity.getName());
+        var restResourceEntity = new RestResourceEntityImpl(entity.getName(), RestResourceEntityImpl.dashifyName(entity.getName()));
 
         for (Attribute attribute : entity.getAttributes()) {
-            restResourceEntity.addAttribute(attribute.getName(), attribute.getName(), attribute.isIndexed());
+            restResourceEntity.addAttribute(attribute.getName(), RestResourceEntityImpl.dashifyName(attribute.getName()), attribute.isIndexed());
         }
 
         for (Relation relation : entity.getRelations()) {
-            restResourceEntity.addRelation(relation.getName(), relation.getName());
+            restResourceEntity.addRelation(relation.getName(), RestResourceEntityImpl.dashifyName(relation.getName()));
         }
 
         return restResourceEntity;
@@ -164,6 +165,18 @@ class RestResourceEntityImpl implements RestResourceEntity {
 
     void addRelation(String modelName, String relationName) {
         relations.put(modelName, new RestResourceRelationImpl(true, modelName, relationName, relationName, itemResource.getUriTemplate()));
+    }
+
+    static String dashifyName(String name) {
+        String dashedName = name
+                // Replace
+                .replaceAll("[A-Z][a-z]*", "-$0")
+                .replaceAll("-+", "-");
+        if(dashedName.startsWith("-")) {
+            // Strip first dash from the name
+            dashedName = dashedName.substring(1);
+        }
+        return dashedName.toLowerCase(Locale.ROOT);
     }
 
     @Override
