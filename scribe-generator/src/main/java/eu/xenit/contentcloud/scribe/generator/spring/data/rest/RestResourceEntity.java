@@ -41,13 +41,13 @@ public interface RestResourceEntity {
 
     ItemResourceInformation getItemResource();
 
-    Collection<RestResourceProperty> getProperties();
-    Optional<RestResourceProperty> findProperty(String name);
-    default Optional<RestResourceProperty> findProperty(JpaEntityProperty property) {
-        return findProperty(property.name());
+    Collection<RestResourceAttribute> getAttributes();
+    Optional<RestResourceAttribute> findAttribute(String name);
+    default Optional<RestResourceAttribute> findAttribute(JpaEntityProperty property) {
+        return findAttribute(property.name());
     }
-    default Optional<RestResourceProperty> findProperty(Attribute attribute) {
-        return findProperty(attribute.getName());
+    default Optional<RestResourceAttribute> findAttribute(Attribute attribute) {
+        return findAttribute(attribute.getName());
     }
     Collection<RestResourceRelation> getRelations();
     Optional<RestResourceRelation> findRelation(String name);
@@ -62,7 +62,7 @@ public interface RestResourceEntity {
         var restResourceEntity = new RestResourceEntityImpl(entity.getName());
 
         for (Attribute attribute : entity.getAttributes()) {
-            restResourceEntity.addProperty(attribute.getName(), attribute.getName());
+            restResourceEntity.addAttribute(attribute.getName(), attribute.getName());
         }
 
         for (Relation relation : entity.getRelations()) {
@@ -118,7 +118,7 @@ class RestResourceEntityImpl implements RestResourceEntity {
     @Getter
     private final String pathSegment;
 
-    private final Map<String, RestResourceProperty> properties = new LinkedHashMap<>();
+    private final Map<String, RestResourceAttribute> attributes = new LinkedHashMap<>();
 
     private final Map<String, RestResourceRelation> relations = new LinkedHashMap<>();
 
@@ -140,8 +140,8 @@ class RestResourceEntityImpl implements RestResourceEntity {
         );
     }
 
-    void addProperty(String modelName, String propertyName) {
-        properties.put(modelName, new RestResourcePropertyImpl(true, modelName, propertyName));
+    void addAttribute(String modelName, String propertyName) {
+        attributes.put(modelName, new RestResourceAttributeImpl(true, modelName, propertyName));
     }
 
     void addRelation(String modelName, String relationName) {
@@ -149,13 +149,13 @@ class RestResourceEntityImpl implements RestResourceEntity {
     }
 
     @Override
-    public Collection<RestResourceProperty> getProperties() {
-        return properties.values();
+    public Collection<RestResourceAttribute> getAttributes() {
+        return attributes.values();
     }
 
     @Override
-    public Optional<RestResourceProperty> findProperty(String name) {
-        return Optional.ofNullable(properties.get(name));
+    public Optional<RestResourceAttribute> findAttribute(String name) {
+        return Optional.ofNullable(attributes.get(name));
     }
 
     @Override
