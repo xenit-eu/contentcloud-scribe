@@ -5,7 +5,7 @@ import lombok.Value;
 public interface RestResourceRelation {
     boolean isExported();
     String getModelRelationName();
-    String getRelationName();
+    String getRestRelationName();
     ResourceURITemplate getUriTemplate();
 }
 
@@ -13,6 +13,6 @@ public interface RestResourceRelation {
 class RestResourceRelationImpl implements RestResourceRelation {
     boolean exported;
     String modelRelationName;
-    String relationName;
+    String restRelationName;
     ResourceURITemplate uriTemplate;
 }
