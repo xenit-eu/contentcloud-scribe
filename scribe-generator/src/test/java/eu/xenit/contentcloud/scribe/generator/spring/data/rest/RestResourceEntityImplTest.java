@@ -8,6 +8,18 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 class RestResourceEntityImplTest {
+
+    @Test
+    void dashifyName() {
+        assertThat(RestResourceEntityImpl.dashifyName("claim-document")).isEqualTo("claim-document");
+        assertThat(RestResourceEntityImpl.dashifyName("ClaimDocument")).isEqualTo("claim-document");
+        assertThat(RestResourceEntityImpl.dashifyName("Claim-Document")).isEqualTo("claim-document");
+        assertThat(RestResourceEntityImpl.dashifyName("claimDocument")).isEqualTo("claim-document");
+        assertThat(RestResourceEntityImpl.dashifyName("node12")).isEqualTo("node12");
+        assertThat(RestResourceEntityImpl.dashifyName("Node12")).isEqualTo("node12");
+        assertThat(RestResourceEntityImpl.dashifyName("ElementX")).isEqualTo("element-x");
+    }
+
     @Nested
     class EntityNamingTests {
 
@@ -72,21 +84,21 @@ class RestResourceEntityImplTest {
                     .build();
             var restEntity = RestResourceEntity.forEntity(entity);
 
-            assertThat(restEntity.getPathSegment()).isEqualTo("FootBridges");
+            assertThat(restEntity.getPathSegment()).isEqualTo("foot-bridges");
             assertThat(restEntity.getItemResource()).satisfies(itemResource -> {
-                assertThat(itemResource.getRelationName()).isEqualTo("FootBridge");
+                assertThat(itemResource.getRelationName()).isEqualTo("foot-bridge");
                 assertThat(itemResource.getUriTemplate()).isEqualTo(
                         ResourceURITemplate.of(
-                                ResourceURIComponent.path("FootBridges"),
+                                ResourceURIComponent.path("foot-bridges"),
                                 ResourceURIComponent.variable("id")
                         )
                 );
             });
             assertThat(restEntity.getCollectionResource()).satisfies(itemResource -> {
-                assertThat(itemResource.getRelationName()).isEqualTo("FootBridges");
+                assertThat(itemResource.getRelationName()).isEqualTo("foot-bridges");
                 assertThat(itemResource.getUriTemplate()).isEqualTo(
                         ResourceURITemplate.of(
-                                ResourceURIComponent.path("FootBridges")
+                                ResourceURIComponent.path("foot-bridges")
                         )
                 );
             });

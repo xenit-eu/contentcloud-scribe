@@ -416,7 +416,7 @@ class SpringDataSourceCodeProjectContributionTest {
                 "import org.springframework.data.querydsl.QuerydslPredicateExecutor;",
                 "import org.springframework.data.rest.core.annotation.RepositoryRestResource;",
                 "",
-                "@RepositoryRestResource(path = \"Invoices\", collectionResourceRel = \"Invoices\", itemResourceRel = \"Invoice\")",
+                "@RepositoryRestResource",
                 "interface InvoiceRepository extends JpaRepository<Invoice, UUID>, QuerydslPredicateExecutor<Invoice> {",
                 "}"
         );
