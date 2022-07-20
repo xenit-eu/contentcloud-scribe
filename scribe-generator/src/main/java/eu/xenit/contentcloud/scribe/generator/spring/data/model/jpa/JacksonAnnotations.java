@@ -9,6 +9,7 @@ import lombok.ToString;
 public interface JacksonAnnotations {
 
     JacksonAnnotation JsonProperty = new JacksonAnnotation("JsonProperty");
+    JacksonAnnotation JsonIgnore = new JacksonAnnotation("JsonIgnore");
 
     @ToString
     @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
