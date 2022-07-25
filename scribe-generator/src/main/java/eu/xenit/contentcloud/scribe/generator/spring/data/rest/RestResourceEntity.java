@@ -168,7 +168,7 @@ class RestResourceEntityImpl implements RestResourceEntity {
     static String dashifyName(String name) {
         String dashedName = name
                 // Replace
-                .replaceAll("[A-Z][a-z]*", "-$0")
+                .replaceAll("([A-Z][a-z]*)|\\d+", "-$0")
                 .replaceAll("-+", "-");
         if(dashedName.startsWith("-")) {
             // Strip first dash from the name
