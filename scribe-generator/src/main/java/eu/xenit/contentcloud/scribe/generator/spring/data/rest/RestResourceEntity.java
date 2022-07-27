@@ -3,11 +3,9 @@ package eu.xenit.contentcloud.scribe.generator.spring.data.rest;
 import eu.xenit.contentcloud.scribe.changeset.Attribute;
 import eu.xenit.contentcloud.scribe.changeset.Entity;
 import eu.xenit.contentcloud.scribe.changeset.Relation;
-import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.JpaEntity;
-import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.JpaEntityProperty;
-import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.ManyToOneRelation;
-import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.OneToManyRelation;
-import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.OneToOneRelation;
+import eu.xenit.contentcloud.scribe.generator.spring.data.model.JavaBeanProperty;
+import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.*;
+
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Locale;
@@ -67,7 +65,7 @@ public interface RestResourceEntity {
         return findAttribute(name);
     }
 
-    default Optional<? extends RestResourceEntityComponent> findComponent(JpaEntityProperty property) {
+    default Optional<? extends RestResourceEntityComponent> findComponent(JavaBeanProperty property) {
         return findComponent(property.name());
     }
 
@@ -75,11 +73,11 @@ public interface RestResourceEntity {
         var restResourceEntity = new RestResourceEntityImpl(entity.getName(), RestResourceEntityImpl.dashifyName(entity.getName()));
 
         for (Attribute attribute : entity.getAttributes()) {
-            restResourceEntity.addAttribute(attribute.getName(), RestResourceEntityImpl.dashifyName(attribute.getName()), attribute.isIndexed());
+            restResourceEntity.addAttribute(attribute.getName(), RestResourceEntityImpl.dashifyName(attribute.getName()), attribute.isIndexed(), attribute.getType(), attribute.isRequired(), attribute.isNaturalId());
         }
 
         for (Relation relation : entity.getRelations()) {
-            restResourceEntity.addRelation(relation.getName(), RestResourceEntityImpl.dashifyName(relation.getName()));
+            restResourceEntity.addRelation(relation.getName(), RestResourceEntityImpl.dashifyName(relation.getName()), relation.isManyTargetPerSource(), relation.isManySourcePerTarget());
         }
 
         return restResourceEntity;
@@ -91,12 +89,13 @@ public interface RestResourceEntity {
         entity.fields()
                 .filter(field -> field instanceof JpaEntityProperty)
                 .forEachOrdered(field -> {
-                    restResourceEntity.addAttribute(field.name(), field.fieldName(), false);
+                    restResourceEntity.addAttribute(field.name(), field.fieldName(), false, field.type().toString(), false, false);
                 });
         entity.fields()
-                .filter(field -> field instanceof ManyToOneRelation || field instanceof OneToManyRelation || field instanceof OneToOneRelation)
-                .forEachOrdered(field -> {
-                    restResourceEntity.addRelation(field.name(), field.fieldName());
+                .filter(field -> field instanceof JpaEntityRelationship)
+                .map(JpaEntityRelationship.class::cast)
+                .forEachOrdered(relationship -> {
+                    restResourceEntity.addRelation(relationship.name(), relationship.fieldName(), relationship.manyTargets(), relationship.manySources());
                 });
 
         return restResourceEntity;
@@ -157,12 +156,12 @@ class RestResourceEntityImpl implements RestResourceEntity {
         );
     }
 
-    void addAttribute(String modelName, String propertyName, boolean searchable) {
-        attributes.put(modelName, new RestResourceAttributeImpl(true, searchable, modelName, propertyName));
+    void addAttribute(String modelName, String propertyName, boolean searchable, String type, boolean required, boolean naturalId) {
+        attributes.put(modelName, new RestResourceAttributeImpl(true, searchable, modelName, propertyName, type, required, naturalId));
     }
 
-    void addRelation(String modelName, String relationName) {
-        relations.put(modelName, new RestResourceRelationImpl(true, modelName, relationName, relationName, itemResource.getUriTemplate()));
+    void addRelation(String modelName, String relationName, boolean manyTargetPerSource, boolean manySourcePerTarget) {
+        relations.put(modelName, new RestResourceRelationImpl(true, modelName, relationName, relationName, itemResource.getUriTemplate(), manyTargetPerSource, manySourcePerTarget));
     }
 
     static String dashifyName(String name) {
