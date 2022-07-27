@@ -43,7 +43,9 @@ public class JpaEntityFactory {
             if (relation.isManySourcePerTarget()) {
                 if (relation.isManyTargetPerSource()) {
                     // many-to-many
+                    jpaEntity.addManyToManyRelation(relation.getName(), targetType, manyToMany -> {
 
+                    });
                 } else {
                     // many-to-one
                     jpaEntity.addManyToOneRelation(relation.getName(), targetType, manyToOne -> {

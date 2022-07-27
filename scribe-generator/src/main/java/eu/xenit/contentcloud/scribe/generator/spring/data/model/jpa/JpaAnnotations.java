@@ -11,9 +11,8 @@ public interface JpaAnnotations {
     JpaAnnotation OneToOne = new JpaAnnotation("OneToOne");
     JpaAnnotation OneToMany = new JpaAnnotation("OneToMany");
     JpaAnnotation ManyToOne = new JpaAnnotation("ManyToOne");
+    JpaAnnotation ManyToMany = new JpaAnnotation("ManyToMany");
     JpaAnnotation JoinColumn = new JpaAnnotation("JoinColumn");
-
-
 
     @ToString
     @RequiredArgsConstructor(access = AccessLevel.PRIVATE)

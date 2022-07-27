@@ -13,6 +13,7 @@ import eu.xenit.contentcloud.bard.TypeSpec.Builder;
 import eu.xenit.contentcloud.scribe.generator.language.SemanticTypeResolver;
 import eu.xenit.contentcloud.scribe.generator.language.java.JavaTypeName;
 import eu.xenit.contentcloud.scribe.generator.source.SourceFile;
+import eu.xenit.contentcloud.scribe.generator.spring.data.model.JavaBeanProperty;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.SpringDataPackageStructure;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.JpaEntity;
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.JpaEntityProperty;
@@ -65,7 +66,7 @@ class JpaEntityJavaSourceCodeGenerator implements JpaEntitySourceCodeGenerator {
         }
     }
 
-    void addProperty(JpaEntity jpaEntity, Builder type, JpaEntityProperty field) {
+    void addProperty(JpaEntity jpaEntity, Builder type, JavaBeanProperty field) {
 
         var fieldSpec = FieldSpec.builder(
                 this.typeResolver.resolve(field.type()).getTypeName(),

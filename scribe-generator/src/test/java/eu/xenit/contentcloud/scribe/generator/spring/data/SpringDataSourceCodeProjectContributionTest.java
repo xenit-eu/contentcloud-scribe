@@ -329,6 +329,65 @@ class SpringDataSourceCodeProjectContributionTest {
     }
 
     @Test
+    void manyToManyRelation() {
+        var description = new ScribeProjectDescription();
+        description.setChangeset(Changeset.builder()
+                .entities(List.of(
+                        Entity.builder().name("Contract")
+                                .attribute(Attribute.builder("number").string().naturalId(true).build())
+                                .attribute(Attribute.builder("type").string().build())
+                                .build(),
+                        Entity.builder().name("Claim")
+                                .attribute(Attribute.builder("number").string().naturalId(true).build())
+                                .relation(Relation.builder()
+                                        .name("contracts")
+                                        .source("Claim")
+                                        .target("Contract")
+                                        .manySourcePerTarget(true)
+                                        .manyTargetPerSource(true)
+                                        .build())
+                                .build()
+                ))
+                .operations(List.of())
+                .build());
+        ProjectStructure project = this.projectTester.generate(description);
+
+        String path = "src/main/java/com/example/demo/model/Claim.java";
+        assertThat(project).containsFiles(path);
+        assertThat(project).textFile(path).containsExactly("""
+                package com.example.demo.model;
+                                
+                import java.lang.String;
+                import java.util.List;
+                import java.util.UUID;
+                import javax.persistence.Entity;
+                import javax.persistence.GeneratedValue;
+                import javax.persistence.GenerationType;
+                import javax.persistence.Id;
+                import javax.persistence.ManyToMany;
+                import lombok.Getter;
+                import lombok.NoArgsConstructor;
+                import lombok.Setter;
+                                
+                @Entity
+                @NoArgsConstructor
+                @Getter
+                @Setter
+                public class Claim {
+                \t@Id
+                \t@GeneratedValue(strategy = GenerationType.AUTO)
+                \tprivate UUID id;
+                
+                \tprivate String number;
+                
+                \t@ManyToMany
+                \tprivate List<Contract> contracts;
+                }
+                """.split("\n")
+        );
+    }
+
+    @Test
     void repositoryClassIsContributed() {
 
         var description = new ScribeProjectDescription();

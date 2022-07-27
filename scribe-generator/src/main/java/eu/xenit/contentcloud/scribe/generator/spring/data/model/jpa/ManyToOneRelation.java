@@ -5,26 +5,17 @@ import eu.xenit.contentcloud.scribe.generator.source.types.SemanticType;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-public interface ManyToOneRelation extends JpaEntityProperty {
+public interface ManyToOneRelation extends JpaEntityRelationship {
 
     ManyToOneRelation required(boolean isRequired);
 }
 
-class ManyToOneRelationImpl extends JpaEntityFieldImpl implements ManyToOneRelation {
+class ManyToOneRelationImpl extends JpaEntityRelationshipImpl implements ManyToOneRelation {
 
     private boolean isRequired = false;
 
     ManyToOneRelationImpl(SemanticType fieldType, String name) {
         super(fieldType, name);
-
-        // if the field has been renamed, add a `@RestResource` annotation
-        if (!Objects.equals(name, this.naming.fieldName())) {
-            this.addAnnotation(Annotation.withType(SpringDataRestAnnotations.RestResource)
-                    .withMembers(members -> {
-                        members.put("rel", name);
-                        members.put("path", name);
-                    }));
-        }
     }
 
     @Override

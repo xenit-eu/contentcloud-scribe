@@ -7,27 +7,18 @@ import java.util.stream.Stream;
 import org.atteo.evo.inflector.English;
 import org.springframework.util.StringUtils;
 
-public interface OneToOneRelation extends JpaEntityProperty {
+public interface OneToOneRelation extends JpaEntityRelationship {
 
     OneToOneRelation required(boolean isRequired);
 
 }
 
-class OneToOneRelationImpl extends JpaEntityFieldImpl implements OneToOneRelation {
+class OneToOneRelationImpl extends JpaEntityRelationshipImpl implements OneToOneRelation {
 
     private boolean required = false;
 
     OneToOneRelationImpl(SemanticType fieldType, String name) {
         super(fieldType, name);
-
-        // if the field has been renamed, add a `@RestResource` annotation
-        if (!Objects.equals(name, this.naming.fieldName())) {
-            this.addAnnotation(Annotation.withType(SpringDataRestAnnotations.RestResource)
-                    .withMembers(members -> {
-                        members.put("rel", name);
-                        members.put("path", name);
-                    }));
-        }
     }
 
     @Override
