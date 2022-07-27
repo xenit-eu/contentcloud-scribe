@@ -19,6 +19,9 @@ public interface JpaEntityRelationship extends JavaBeanProperty {
     default boolean isBidirectional() {
         return false;
     }
+    boolean manyTargets();
+    boolean manySources();
+
 }
 
 interface JpaEntityRelationshipBuilder {
@@ -29,7 +32,7 @@ interface JpaEntityRelationshipBuilder {
 @Getter
 @Setter
 @Accessors(fluent = true, chain = true)
-class JpaEntityRelationshipImpl implements JpaEntityRelationship, JpaEntityRelationshipBuilder {
+abstract class JpaEntityRelationshipImpl implements JpaEntityRelationship, JpaEntityRelationshipBuilder {
 
     @NonNull
     private final SemanticType type;

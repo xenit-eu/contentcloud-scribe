@@ -10,6 +10,8 @@ public interface RestResourceRelation extends RestResourceEntityComponent {
     String getRestRelationName();
     String getPathSegment();
     ResourceURITemplate getUriTemplate();
+    boolean isManyTargetPerSource();
+    boolean isManySourcePerTarget();
 
     @Override
     default Optional<RestResourceAttribute> asAttribute() {
@@ -25,6 +27,16 @@ public interface RestResourceRelation extends RestResourceEntityComponent {
             }
 
             @Override
+            public boolean isRequired() {
+                return false;
+            }
+
+            @Override
+            public boolean isNaturalId() {
+                return false;
+            }
+
+            @Override
             public String getModelAttributeName() {
                 return getModelRelationName();
             }
@@ -32,6 +44,11 @@ public interface RestResourceRelation extends RestResourceEntityComponent {
             @Override
             public String getRestAttributeName() {
                 return getRestRelationName();
+            }
+
+            @Override
+            public String getType() {
+                return null;
             }
         });
     }
@@ -45,6 +62,8 @@ class RestResourceRelationImpl implements RestResourceRelation {
     String pathSegment;
     @Getter(value = AccessLevel.NONE)
     ResourceURITemplate baseUriTemplate;
+    boolean manyTargetPerSource;
+    boolean manySourcePerTarget;
 
     @Override
     public ResourceURITemplate getUriTemplate() {

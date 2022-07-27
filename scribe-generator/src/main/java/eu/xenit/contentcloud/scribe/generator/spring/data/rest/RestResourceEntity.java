@@ -77,11 +77,11 @@ public interface RestResourceEntity {
         var restResourceEntity = new RestResourceEntityImpl(entity.getName(), RestResourceEntityImpl.dashifyName(entity.getName()));
 
         for (Attribute attribute : entity.getAttributes()) {
-            restResourceEntity.addAttribute(attribute.getName(), RestResourceEntityImpl.dashifyName(attribute.getName()), attribute.isIndexed());
+            restResourceEntity.addAttribute(attribute.getName(), RestResourceEntityImpl.dashifyName(attribute.getName()), attribute.isIndexed(), attribute.getType(), attribute.isRequired(), attribute.isNaturalId());
         }
 
         for (Relation relation : entity.getRelations()) {
-            restResourceEntity.addRelation(relation.getName(), RestResourceEntityImpl.dashifyName(relation.getName()));
+            restResourceEntity.addRelation(relation.getName(), RestResourceEntityImpl.dashifyName(relation.getName()), relation.isManyTargetPerSource(), relation.isManySourcePerTarget());
         }
 
         return restResourceEntity;
@@ -93,12 +93,13 @@ public interface RestResourceEntity {
         entity.fields()
                 .filter(field -> field instanceof JpaEntityProperty)
                 .forEachOrdered(field -> {
-                    restResourceEntity.addAttribute(field.name(), field.fieldName(), false);
+                    restResourceEntity.addAttribute(field.name(), field.fieldName(), false, field.type().toString(), false, false);
                 });
         entity.fields()
                 .filter(field -> field instanceof JpaEntityRelationship)
-                .forEachOrdered(field -> {
-                    restResourceEntity.addRelation(field.name(), field.fieldName());
+                .map(JpaEntityRelationship.class::cast)
+                .forEachOrdered(relationship -> {
+                    restResourceEntity.addRelation(relationship.name(), relationship.fieldName(), relationship.manyTargets(), relationship.manySources());
                 });
 
         return restResourceEntity;
@@ -159,12 +160,12 @@ class RestResourceEntityImpl implements RestResourceEntity {
         );
     }
 
-    void addAttribute(String modelName, String propertyName, boolean searchable) {
-        attributes.put(modelName, new RestResourceAttributeImpl(true, searchable, modelName, propertyName));
+    void addAttribute(String modelName, String propertyName, boolean searchable, String type, boolean required, boolean naturalId) {
+        attributes.put(modelName, new RestResourceAttributeImpl(true, searchable, modelName, propertyName, type, required, naturalId));
     }
 
-    void addRelation(String modelName, String relationName) {
-        relations.put(modelName, new RestResourceRelationImpl(true, modelName, relationName, relationName, itemResource.getUriTemplate()));
+    void addRelation(String modelName, String relationName, boolean manyTargetPerSource, boolean manySourcePerTarget) {
+        relations.put(modelName, new RestResourceRelationImpl(true, modelName, relationName, relationName, itemResource.getUriTemplate(), manyTargetPerSource, manySourcePerTarget));
     }
 
     static String dashifyName(String name) {

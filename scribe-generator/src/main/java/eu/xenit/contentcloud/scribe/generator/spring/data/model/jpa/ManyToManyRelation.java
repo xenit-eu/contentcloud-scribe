@@ -26,4 +26,14 @@ class ManyToManyRelationImpl extends JpaEntityRelationshipImpl implements ManyTo
                 super.annotations()
         );
     }
+
+    @Override
+    public boolean manyTargets() {
+        return true;
+    }
+
+    @Override
+    public boolean manySources() {
+        return true;
+    }
 }
