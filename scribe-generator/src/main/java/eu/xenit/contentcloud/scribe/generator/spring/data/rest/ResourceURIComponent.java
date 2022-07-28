@@ -1,9 +1,11 @@
 package eu.xenit.contentcloud.scribe.generator.spring.data.rest;
 
+import java.util.Map;
 import lombok.Value;
 
 public interface ResourceURIComponent {
     boolean isVariable();
+    ResourceURIComponent expand(Map<String, String> variables);
     String toUriTemplateComponent();
 
     static ResourceURIComponent variable(String variableName) {
@@ -25,6 +27,11 @@ class StringResourceURIComponent implements ResourceURIComponent {
     }
 
     @Override
+    public ResourceURIComponent expand(Map<String, String> variables) {
+        return this;
+    }
+
+    @Override
     public String toUriTemplateComponent() {
         return pathSegment;
     }
@@ -37,6 +44,14 @@ class VariableResourceURIComponent implements ResourceURIComponent {
     @Override
     public boolean isVariable() {
         return true;
+    }
+
+    @Override
+    public ResourceURIComponent expand(Map<String, String> variables) {
+        if(variables.containsKey(variableName)) {
+            return new StringResourceURIComponent(variables.get(variableName));
+        }
+        return this;
     }
 
     @Override

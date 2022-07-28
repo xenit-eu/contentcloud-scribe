@@ -51,7 +51,7 @@ class OpenApiProjectContributorTest {
                                 .attribute(Attribute.builder("vat").string().naturalId(true).required(true).unique(true).build())
                                 .attribute(Attribute.builder("name").string().indexed(true).required(true).build())
                                 .attribute(Attribute.builder("summary").content().build())
-                                .relation(Relation.builder().name("subsidiary").required(false).source("party").target("party")
+                                .relation(Relation.builder().name("subsidiary").required(false).source("Party").target("Party")
                                         .manyTargetPerSource(false).manySourcePerTarget(true).build())
                                 .build()
                 ))
@@ -70,12 +70,12 @@ class OpenApiProjectContributorTest {
                 servers:
                 - url: "http://localhost:8000"
                 tags:
-                - name: "party"
+                - name: "Party"
                 paths:
                   /parties:
                     get:
                       tags:
-                      - "party"
+                      - "Party"
                       operationId: "get-parties"
                       parameters:
                       - name: "name"
@@ -104,27 +104,27 @@ class OpenApiProjectContributorTest {
                           content:
                             application/json:
                               schema:
-                                $ref: "#/components/schemas/partiesCollection"
+                                $ref: "#/components/schemas/PartyCollection"
                         "405":
                           description: "Not Allowed"
                     post:
                       tags:
-                      - "party"
-                      operationId: "create-parties"
+                      - "Party"
+                      operationId: "create-party"
                       requestBody:
-                        description: "Create party"
+                        description: "Create Party"
                         required: true
                         content:
                           application/json:
                             schema:
-                              $ref: "#/components/schemas/partyPostModel"
+                              $ref: "#/components/schemas/PartyPostModel"
                       responses:
                         "201":
                           description: "Created"
                           content:
                             application/json:
                               schema:
-                                $ref: "#/components/schemas/partyResponse"
+                                $ref: "#/components/schemas/PartyResponse"
                         "204":
                           description: "No Content"
                         "405":
@@ -132,7 +132,7 @@ class OpenApiProjectContributorTest {
                   /parties/{id}:
                     get:
                       tags:
-                      - "party"
+                      - "Party"
                       operationId: "get-party"
                       parameters:
                       - name: "id"
@@ -146,12 +146,12 @@ class OpenApiProjectContributorTest {
                           content:
                             application/json:
                               schema:
-                                $ref: "#/components/schemas/partyResponse"
+                                $ref: "#/components/schemas/PartyResponse"
                         "405":
                           description: "Not Allowed"
                     put:
                       tags:
-                      - "party"
+                      - "Party"
                       operationId: "update-party"
                       parameters:
                       - name: "id"
@@ -160,26 +160,26 @@ class OpenApiProjectContributorTest {
                         schema:
                           type: "string"
                       requestBody:
-                        description: "Update party"
+                        description: "Update Party"
                         required: true
                         content:
                           application/json:
                             schema:
-                              $ref: "#/components/schemas/partyPutModel"
+                              $ref: "#/components/schemas/PartyPutModel"
                       responses:
                         "200":
                           description: "OK"
                           content:
                             application/json:
                               schema:
-                                $ref: "#/components/schemas/partyResponse"
+                                $ref: "#/components/schemas/PartyResponse"
                         "204":
                           description: "No Content"
                         "405":
                           description: "Not Allowed"
                     patch:
                       tags:
-                      - "party"
+                      - "Party"
                       operationId: "patch-party"
                       parameters:
                       - name: "id"
@@ -188,26 +188,26 @@ class OpenApiProjectContributorTest {
                         schema:
                           type: "string"
                       requestBody:
-                        description: "Partially update party"
+                        description: "Partially update Party"
                         required: true
                         content:
                           application/json:
                             schema:
-                              $ref: "#/components/schemas/partyPatchModel"
+                              $ref: "#/components/schemas/PartyPatchModel"
                       responses:
                         "200":
                           description: "OK"
                           content:
                             application/json:
                               schema:
-                                $ref: "#/components/schemas/partyResponse"
+                                $ref: "#/components/schemas/PartyResponse"
                         "204":
                           description: "No Content"
                         "405":
                           description: "Not Allowed"
                     delete:
                       tags:
-                      - "party"
+                      - "Party"
                       operationId: "delete-party"
                       parameters:
                       - name: "id"
@@ -223,8 +223,8 @@ class OpenApiProjectContributorTest {
                   /parties/{id}/summary:
                     get:
                       tags:
-                      - "party"
-                      operationId: "get-summary"
+                      - "Party"
+                      operationId: "get-party-summary"
                       parameters:
                       - name: "id"
                         in: "path"
@@ -243,8 +243,8 @@ class OpenApiProjectContributorTest {
                           description: "Not Found"
                     put:
                       tags:
-                      - "party"
-                      operationId: "update-summary"
+                      - "Party"
+                      operationId: "update-party-summary"
                       parameters:
                       - name: "id"
                         in: "path"
@@ -262,8 +262,8 @@ class OpenApiProjectContributorTest {
                           description: "File uploaded"
                     delete:
                       tags:
-                      - "party"
-                      operationId: "delete-summary"
+                      - "Party"
+                      operationId: "delete-party-summary"
                       parameters:
                       - name: "id"
                         in: "path"
@@ -276,8 +276,8 @@ class OpenApiProjectContributorTest {
                   /parties/{id}/subsidiary:
                     get:
                       tags:
-                      - "party"
-                      operationId: "get-subsidiary"
+                      - "Party"
+                      operationId: "get-party-subsidiary"
                       parameters:
                       - name: "id"
                         in: "path"
@@ -290,13 +290,13 @@ class OpenApiProjectContributorTest {
                           content:
                             application/json:
                               schema:
-                                $ref: "#/components/schemas/partyResponse"
+                                $ref: "#/components/schemas/PartyResponse"
                         "405":
                           description: "Not Allowed"
                     put:
                       tags:
-                      - "party"
-                      operationId: "update-subsidiary"
+                      - "Party"
+                      operationId: "update-party-subsidiary"
                       parameters:
                       - name: "id"
                         in: "path"
@@ -310,7 +310,7 @@ class OpenApiProjectContributorTest {
                           text/uri-list:
                             schema:
                               type: "string"
-                              example: "/party/5"
+                              example: "/parties/00000000-0000-0000-0000-000000000000"
                       responses:
                         "204":
                           description: "No Content"
@@ -318,8 +318,8 @@ class OpenApiProjectContributorTest {
                           description: "Bad Request"
                     post:
                       tags:
-                      - "party"
-                      operationId: "create-subsidiary"
+                      - "Party"
+                      operationId: "create-party-subsidiary"
                       parameters:
                       - name: "id"
                         in: "path"
@@ -333,7 +333,7 @@ class OpenApiProjectContributorTest {
                           text/uri-list:
                             schema:
                               type: "string"
-                              example: "/party/5"
+                              example: "/parties/00000000-0000-0000-0000-000000000000"
                       responses:
                         "204":
                           description: "No Content"
@@ -341,8 +341,8 @@ class OpenApiProjectContributorTest {
                           description: "Bad Request"
                     delete:
                       tags:
-                      - "party"
-                      operationId: "delete-subsidiary"
+                      - "Party"
+                      operationId: "delete-party-subsidiary"
                       parameters:
                       - name: "id"
                         in: "path"
@@ -372,7 +372,7 @@ class OpenApiProjectContributorTest {
                           type: "integer"
                         number:
                           type: "integer"
-                    partyResponse:
+                    PartyResponse:
                       type: "object"
                       properties:
                         vat:
@@ -398,7 +398,7 @@ class OpenApiProjectContributorTest {
                               $ref: "#/components/schemas/Link"
                             subsidiary:
                               $ref: "#/components/schemas/Link"
-                    partiesCollection:
+                    PartyCollection:
                       type: "object"
                       properties:
                         _embedded:
@@ -407,7 +407,7 @@ class OpenApiProjectContributorTest {
                             parties:
                               type: "array"
                               items:
-                                $ref: "#/components/schemas/partyResponse"
+                                $ref: "#/components/schemas/PartyResponse"
                         _links:
                           type: "object"
                           properties:
@@ -417,7 +417,7 @@ class OpenApiProjectContributorTest {
                               $ref: "#/components/schemas/Link"
                         page:
                           $ref: "#/components/schemas/page"
-                    partyPostModel:
+                    PartyPostModel:
                       type: "object"
                       properties:
                         vat:
@@ -429,7 +429,7 @@ class OpenApiProjectContributorTest {
                       required:
                       - "vat"
                       - "name"
-                    partyPutModel:
+                    PartyPutModel:
                       type: "object"
                       properties:
                         name:
@@ -438,7 +438,7 @@ class OpenApiProjectContributorTest {
                           type: "string"
                       required:
                       - "name"
-                    partyPatchModel:
+                    PartyPatchModel:
                       type: "object"
                       properties:
                         name:
