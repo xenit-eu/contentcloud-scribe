@@ -44,9 +44,8 @@ public class SpringDataRepositorySourceCodeProjectContributor implements Project
     public void contribute(Path projectRoot) throws IOException {
         SourceStructure mainSource = this.description.getBuildSystem().getMainSource(projectRoot, this.description.getLanguage());
 
-        for (JpaEntity entity : this.entityModel.entities()) {
-            var repo = JpaRepository.forEntity(entity);
-            var sourceFile = this.sourceGenerator.createSourceFile(repo);
+        for (JpaRepository repository : this.entityModel.repositories()) {
+            var sourceFile = this.sourceGenerator.createSourceFile(repository);
             sourceFile.writeTo(mainSource.getSourcesDirectory());
         }
     }

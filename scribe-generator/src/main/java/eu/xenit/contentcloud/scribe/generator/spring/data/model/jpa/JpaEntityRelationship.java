@@ -6,7 +6,6 @@ import eu.xenit.contentcloud.scribe.generator.spring.data.model.JavaBeanProperty
 import eu.xenit.contentcloud.scribe.generator.spring.data.model.jpa.JpaEntityFieldImpl.JpaFieldNaming;
 import java.util.Collection;
 import java.util.LinkedHashSet;
-import java.util.Objects;
 import java.util.stream.Stream;
 import javax.lang.model.element.Modifier;
 import lombok.Getter;
@@ -48,23 +47,6 @@ class JpaEntityRelationshipImpl implements JpaEntityRelationship, JpaEntityRelat
     JpaEntityRelationshipImpl(SemanticType fieldType, String name) {
         this.type = fieldType;
         this.naming = JpaFieldNaming.from(name);
-
-        // if the field has been renamed, add a `@JsonProperty` annotation
-        if (!Objects.equals(name, this.naming.fieldName())) {
-            this.addAnnotation(Annotation.withType(JacksonAnnotations.JsonProperty)
-                    .withMembers(members -> {
-                        members.put("value", name);
-                    }));
-        }
-
-        // if the field has been renamed, add a `@RestResource` annotation
-        if (!Objects.equals(name, this.naming.fieldName())) {
-            this.addAnnotation(Annotation.withType(SpringDataRestAnnotations.RestResource)
-                    .withMembers(members -> {
-                        members.put("rel", name);
-                        members.put("path", name);
-                    }));
-        }
     }
 
     @Override
