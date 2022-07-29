@@ -50,7 +50,6 @@ public class OpenApiProjectContributor implements ProjectContributor {
         OpenApiInfo info = new OpenApiInfo(description.getDescription(), description.getVersion(), description.getApplicationName());
         var model = new OpenApiModel("3.0.2", info, new OpenApiComponents());
 
-        model.getServers().add(new OpenApiServers("http://localhost:8000"));
         componentInitialization(model);
 
         for (RestResourceEntity entity : entityModel.entities()) {
