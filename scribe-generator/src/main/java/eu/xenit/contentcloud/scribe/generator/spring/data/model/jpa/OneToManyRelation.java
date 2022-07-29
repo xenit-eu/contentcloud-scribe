@@ -50,4 +50,14 @@ class OneToManyWithJoinColumnRelationImpl extends JpaEntityRelationshipImpl impl
                 ParsingUtils.reconcatenateCamelCase(relationName, "_")
         );
     }
+
+    @Override
+    public boolean manyTargets() {
+        return true;
+    }
+
+    @Override
+    public boolean manySources() {
+        return false;
+    }
 }

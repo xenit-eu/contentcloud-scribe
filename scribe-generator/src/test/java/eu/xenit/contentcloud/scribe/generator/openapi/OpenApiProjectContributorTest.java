@@ -104,13 +104,13 @@ class OpenApiProjectContributorTest {
                           content:
                             application/json:
                               schema:
-                                $ref: "#/components/schemas/partiesCollection"
+                                $ref: "#/components/schemas/PartyCollection"
                         "405":
                           description: "Not Allowed"
                     post:
                       tags:
                       - "Party"
-                      operationId: "create-parties"
+                      operationId: "create-party"
                       requestBody:
                         description: "Create Party"
                         required: true
@@ -224,7 +224,7 @@ class OpenApiProjectContributorTest {
                     get:
                       tags:
                       - "Party"
-                      operationId: "get-summary"
+                      operationId: "get-party-summary"
                       parameters:
                       - name: "id"
                         in: "path"
@@ -244,7 +244,7 @@ class OpenApiProjectContributorTest {
                     put:
                       tags:
                       - "Party"
-                      operationId: "update-summary"
+                      operationId: "update-party-summary"
                       parameters:
                       - name: "id"
                         in: "path"
@@ -263,7 +263,7 @@ class OpenApiProjectContributorTest {
                     delete:
                       tags:
                       - "Party"
-                      operationId: "delete-summary"
+                      operationId: "delete-party-summary"
                       parameters:
                       - name: "id"
                         in: "path"
@@ -277,7 +277,7 @@ class OpenApiProjectContributorTest {
                     get:
                       tags:
                       - "Party"
-                      operationId: "get-subsidiary"
+                      operationId: "get-party-subsidiary"
                       parameters:
                       - name: "id"
                         in: "path"
@@ -296,7 +296,7 @@ class OpenApiProjectContributorTest {
                     put:
                       tags:
                       - "Party"
-                      operationId: "update-subsidiary"
+                      operationId: "update-party-subsidiary"
                       parameters:
                       - name: "id"
                         in: "path"
@@ -310,7 +310,7 @@ class OpenApiProjectContributorTest {
                           text/uri-list:
                             schema:
                               type: "string"
-                              example: "/Party/5"
+                              example: "/parties/00000000-0000-0000-0000-000000000000"
                       responses:
                         "204":
                           description: "No Content"
@@ -319,7 +319,7 @@ class OpenApiProjectContributorTest {
                     post:
                       tags:
                       - "Party"
-                      operationId: "create-subsidiary"
+                      operationId: "create-party-subsidiary"
                       parameters:
                       - name: "id"
                         in: "path"
@@ -333,7 +333,7 @@ class OpenApiProjectContributorTest {
                           text/uri-list:
                             schema:
                               type: "string"
-                              example: "/Party/5"
+                              example: "/parties/00000000-0000-0000-0000-000000000000"
                       responses:
                         "204":
                           description: "No Content"
@@ -342,7 +342,7 @@ class OpenApiProjectContributorTest {
                     delete:
                       tags:
                       - "Party"
-                      operationId: "delete-subsidiary"
+                      operationId: "delete-party-subsidiary"
                       parameters:
                       - name: "id"
                         in: "path"
@@ -398,7 +398,7 @@ class OpenApiProjectContributorTest {
                               $ref: "#/components/schemas/Link"
                             subsidiary:
                               $ref: "#/components/schemas/Link"
-                    partiesCollection:
+                    PartyCollection:
                       type: "object"
                       properties:
                         _embedded:

@@ -35,4 +35,14 @@ class ManyToOneRelationImpl extends JpaEntityRelationshipImpl implements ManyToO
                 super.annotations()
         );
     }
+
+    @Override
+    public boolean manyTargets() {
+        return false;
+    }
+
+    @Override
+    public boolean manySources() {
+        return true;
+    }
 }

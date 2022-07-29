@@ -35,4 +35,14 @@ class OneToOneRelationImpl extends JpaEntityRelationshipImpl implements OneToOne
         this.required = isRequired;
         return this;
     }
+
+    @Override
+    public boolean manyTargets() {
+        return false;
+    }
+
+    @Override
+    public boolean manySources() {
+        return false;
+    }
 }
